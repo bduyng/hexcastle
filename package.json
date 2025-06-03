@@ -1,7 +1,7 @@
 {
-  "name": "cubescape",
+  "name": "hexcastle",
   "version": "0.1.0",
-  "description": "CubeScape game",
+  "description": "HexCastle game",
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {

@@ -1,4 +1,4 @@
-# CubeScape
+# HexCastle
 
 
 ## Setup
