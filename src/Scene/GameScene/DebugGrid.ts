@@ -11,6 +11,11 @@ export default class DebugGrid extends THREE.Group {
     }
 
     private init(): void {
+        this.initGrid();
+        this.initGridCoordinates();
+    }
+
+    private initGrid(): void {
         const gridRadius: number = GridConfig.gridRadius;
         const vertices: number[] = [];
 
@@ -21,12 +26,16 @@ export default class DebugGrid extends THREE.Group {
                 const center = HexGridHelper.axialToWorld({ q, r }, GridConfig.hexSize, GridConfig.GridOrientation);
                 const corners = this.getHexCorners(center, GridConfig.hexSize, GridConfig.GridOrientation);
 
-                // Add 6 edges of the hex
                 for (let i = 0; i < 6; i++) {
                     const a = corners[i];
                     const b = corners[(i + 1) % 6];
                     vertices.push(a.x, a.y, a.z, b.x, b.y, b.z);
                 }
+
+                const midX = (corners[0].x + corners[1].x) / 2;
+                const midY = (corners[0].y + corners[1].y) / 2;
+                const midZ = (corners[0].z + corners[1].z) / 2;
+                vertices.push(center.x, center.y, center.z, midX, midY, midZ);
             }
         }
 
@@ -52,4 +61,7 @@ export default class DebugGrid extends THREE.Group {
         return corners;
     }
 
+    private initGridCoordinates(): void {
+        
+    }
 }

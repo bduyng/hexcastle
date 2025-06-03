@@ -6,11 +6,6 @@ const LightConfig = {
   directionalLight: {
     color: 0xffffff,
     intensity: 1.3,
-    position: {
-      bonusDistanceZ: 5,
-      angleX: -30,
-      angleY: 30,
-    },
     shadows: {
       enabled: true,
       helper: false,
@@ -24,14 +19,6 @@ const LightConfig = {
         sizeCoefficient: 1.6,
       },
     },
-  },
-  darkMode: {
-    duration: 400,
-    backgroundColor: 0x000000,
-  },
-  lightMode: {
-    duration: 400,
-    backgroundColor: 0x666666,
   }
 }
 

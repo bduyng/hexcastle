@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
-import GroundCell from './GroundCell';
+import GroundCell from './GroundCell/GroundCell';
 import { HexCoord } from '../../Data/Interfaces/ICell';
 import DebugGrid from './DebugGrid';
+import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -32,26 +33,29 @@ export default class GameScene extends THREE.Group {
             }
         }
 
-        cellsMap.forEach((coord, index) => {
+        cellsMap.forEach((coord) => {
             const cell = new GroundCell();
             cell.setCellPosition(coord);
-            cell.setCellRotation(1);
+            cell.setCellRotation(0);
             this.add(cell);
 
             this.groundCells.push(cell);
         });
 
-        // const cell: GroundCell = this.getCellByHexCoord({ q: -1, r: 0 });
-        // cell.position.y = 0.5;
+        const cell: GroundCell = this.getCellByHexCoord({ q: 0, r: 0 });
+        cell.setCellRotation(1);
+
+        const cell2: GroundCell = this.getCellByHexCoord({ q: 1, r: 0 });
+        cell2.setCellRotation(5);
 
         this.initDebugGrid();
     }
 
     private initDebugGrid(): void {
-        const debugGrid = new DebugGrid();
-        this.add(debugGrid);
-
-        debugGrid.position.set(0, 0.01, 0);
+        if (DebugConfig.game.grid) {
+            const debugGrid = new DebugGrid();
+            this.add(debugGrid);
+        }
     }
 
     private getCellByHexCoord(coord: HexCoord): GroundCell | null {

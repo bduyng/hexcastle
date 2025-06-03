@@ -12,6 +12,7 @@ import FogConfig from '../Data/Configs/Scene/FogConfig';
 import { ILibrariesData, IWindowSizes } from '../Data/Interfaces/IBaseSceneData';
 import DebugMenu from './DebugMenu/DebugMenu';
 import CameraConfig from '../Data/Configs/Scene/CameraConfig';
+import DebugConfig from '../Data/Configs/Debug/DebugConfig';
 
 export default class BaseScene {
     private scene: THREE.Scene;
@@ -88,6 +89,7 @@ export default class BaseScene {
         this.initCamera();
         this.initLights();
         this.initFog();
+        this.initAxisHelper();
         this.initLoadingOverlay();
         this.initAudioController();
         this.initOnResize();
@@ -128,7 +130,7 @@ export default class BaseScene {
         const camera = this.camera = new THREE.PerspectiveCamera(settings.fov, this.windowSizes.width / this.windowSizes.height, settings.near, settings.far);
         this.scene.add(camera);
 
-        this.camera.position.set(0, 10, 8);
+        this.camera.position.set(0, 12, 12);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
     }
 
@@ -150,6 +152,13 @@ export default class BaseScene {
             const far: number = FogConfig.far;
 
             this.scene.fog = new THREE.Fog(SceneConfig.backgroundColor, near, far);
+        }
+    }
+
+    private initAxisHelper(): void {
+        if (DebugConfig.showAxisHelper) {
+            const axisHelper = new THREE.AxesHelper(3);
+            this.scene.add(axisHelper);
         }
     }
 

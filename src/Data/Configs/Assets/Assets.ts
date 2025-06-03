@@ -3,7 +3,6 @@ const TextureAssets: string[] = [
 ];
 
 const ModelAssets: string[] = [
-    'coin.glb',
     'hex_road_M.glb',
 ];
 
@@ -13,7 +12,7 @@ const PixiAssets: string[] = [
 ];
 
 const AudioAssets: string[] = [
-    'coin.mp3',
+
 ];
 
 export {

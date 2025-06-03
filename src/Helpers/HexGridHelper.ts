@@ -18,4 +18,9 @@ export default class HexGridHelper {
             return new THREE.Vector3(x, 0, z);
         }
     }
+
+    public static setRotation(object: THREE.Object3D, rotation: number): void {
+        object.rotation.set(0, -(Math.PI / 3) * rotation, 0);
+    }
+
 }
