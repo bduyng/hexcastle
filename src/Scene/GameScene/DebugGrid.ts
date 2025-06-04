@@ -62,6 +62,54 @@ export default class DebugGrid extends THREE.Group {
     }
 
     private initGridCoordinates(): void {
-        
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const gridRadius = GridConfig.gridRadius;
+        const resolution = 100;
+        const canvasMargin = 2;
+
+        const worldWidth = (3 / 2 * gridRadius + canvasMargin) * GridConfig.hexSize;
+        const worldHeight = (Math.sqrt(3) * gridRadius + canvasMargin) * GridConfig.hexSize;
+
+        const canvasWidth = Math.ceil(worldWidth * resolution * 2);
+        const canvasHeight = Math.ceil(worldHeight * resolution * 2);
+
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+
+        const canvasCenterX = canvas.width / 2;
+        const canvasCenterY = canvas.height / 2;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `${0.2 * resolution}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let q = -gridRadius; q <= gridRadius; q++) {
+            const r1 = Math.max(-gridRadius, -q - gridRadius);
+            const r2 = Math.min(gridRadius, -q + gridRadius);
+            for (let r = r1; r <= r2; r++) {
+                const center = HexGridHelper.axialToWorld({ q, r }, GridConfig.hexSize, GridConfig.GridOrientation);
+
+                const cx = canvasCenterX + center.x * resolution * 0.9;
+                const cy = canvasCenterY + center.z * resolution - 0.5 * resolution;
+
+                ctx.fillText(`q: ${q}, r: ${r}`, cx, cy);
+            }
+        }
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.needsUpdate = true;
+
+        const planeSize = Math.max(canvasWidth, canvasHeight) / resolution;
+        const geometry = new THREE.PlaneGeometry(planeSize, planeSize);
+        const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+
+        const gridPlane = new THREE.Mesh(geometry, material);
+        this.add(gridPlane);
+
+        gridPlane.rotation.x = -Math.PI / 2;
+        gridPlane.position.set(0, 0.01, 0);
     }
 }
