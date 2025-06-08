@@ -4,6 +4,10 @@ import GroundCell from './GroundCell/GroundCell';
 import { HexCoord } from '../../Data/Interfaces/ICell';
 import DebugGrid from './DebugGrid';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
+import { GroundCellType } from '../../Data/Enums/GroundCellType';
+import { baseTileDefinitions } from '../../Data/Configs/CellsRules';
+import { HexWFC, ResolvedCell } from './WaveFunctionCollapse';
+
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -15,7 +19,9 @@ export default class GameScene extends THREE.Group {
 
         this.data = data;
 
-        this.init();
+        // this.init();
+        this.init3();
+        this.initDebugGrid();
     }
 
     public update(dt: number): void {
@@ -34,7 +40,8 @@ export default class GameScene extends THREE.Group {
         }
 
         cellsMap.forEach((coord) => {
-            const cell = new GroundCell();
+            // const type = Math.random() > 0.5 ? GroundCellType.Grass : GroundCellType.Sand;
+            const cell = new GroundCell(GroundCellType.RoadD);
             cell.setCellPosition(coord);
             cell.setCellRotation(0);
             this.add(cell);
@@ -42,13 +49,11 @@ export default class GameScene extends THREE.Group {
             this.groundCells.push(cell);
         });
 
-        const cell: GroundCell = this.getCellByHexCoord({ q: 0, r: 0 });
-        cell.setCellRotation(1);
+        // const cell: GroundCell = this.getCellByHexCoord({ q: 0, r: 0 });
+        // cell.setCellRotation(1);
 
-        const cell2: GroundCell = this.getCellByHexCoord({ q: 1, r: 0 });
-        cell2.setCellRotation(5);
-
-        this.initDebugGrid();
+        // const cell2: GroundCell = this.getCellByHexCoord({ q: 1, r: 0 });
+        // cell2.setCellRotation(5);
     }
 
     private initDebugGrid(): void {
@@ -67,6 +72,27 @@ export default class GameScene extends THREE.Group {
         }
 
         return null;
+    }
+
+
+    private init3(): void {
+        const wfc = new HexWFC(baseTileDefinitions);
+        wfc.initializeGrid(3);
+        const adjacency = wfc.generateAdjacencyMap();
+        const resolved = wfc.run(adjacency);
+        console.log(resolved);
+
+        this.renderGrid(resolved);
+    }
+
+    private renderGrid(grid: ResolvedCell[]): void {
+        grid.forEach(cell => {
+            const groundCell = new GroundCell(cell.type);
+            groundCell.setCellPosition(cell.coord);
+            groundCell.setCellRotation(cell.rotation);
+            this.add(groundCell);
+            this.groundCells.push(groundCell);
+        });
     }
 
 }

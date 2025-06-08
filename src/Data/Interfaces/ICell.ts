@@ -1,4 +1,9 @@
 export interface HexCoord {
-    q: number; // axial coordinate
-    r: number; // axial coordinate
+    q: number;
+    r: number;
+}
+
+export interface IGroundCellConfig {
+    modelName: string;
+    color?: number;
 }

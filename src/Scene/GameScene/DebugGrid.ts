@@ -69,11 +69,10 @@ export default class DebugGrid extends THREE.Group {
         const resolution = 100;
         const canvasMargin = 2;
 
-        const worldWidth = (3 / 2 * gridRadius + canvasMargin) * GridConfig.hexSize;
-        const worldHeight = (Math.sqrt(3) * gridRadius + canvasMargin) * GridConfig.hexSize;
+        const worldSize = (3 / 2 * gridRadius + canvasMargin) * GridConfig.hexSize;
 
-        const canvasWidth = Math.ceil(worldWidth * resolution * 2);
-        const canvasHeight = Math.ceil(worldHeight * resolution * 2);
+        const canvasWidth = Math.ceil(worldSize * resolution * 2);
+        const canvasHeight = Math.ceil(worldSize * resolution * 2);
 
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
@@ -92,7 +91,7 @@ export default class DebugGrid extends THREE.Group {
             for (let r = r1; r <= r2; r++) {
                 const center = HexGridHelper.axialToWorld({ q, r }, GridConfig.hexSize, GridConfig.GridOrientation);
 
-                const cx = canvasCenterX + center.x * resolution * 0.9;
+                const cx = canvasCenterX + center.x * resolution;
                 const cy = canvasCenterY + center.z * resolution - 0.5 * resolution;
 
                 ctx.fillText(`q: ${q}, r: ${r}`, cx, cy);

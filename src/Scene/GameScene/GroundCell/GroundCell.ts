@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import Materials from '../../../Core/Materials/Materials';
-import { MaterialType } from '../../../Data/Enums/MaterialType';
+// import Materials from '../../../Core/Materials/Materials';
+// import { MaterialType } from '../../../Data/Enums/MaterialType';
 import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
 import { HexCoord } from '../../../Data/Interfaces/ICell';
 import GridConfig from '../../../Data/Configs/GridConfig';
@@ -8,14 +8,21 @@ import HexGridHelper from '../../../Helpers/HexGridHelper';
 import { GridOrientation } from '../../../Data/Enums/GridOrientation';
 import GroundCellDebugInfo from './GroundCellDebugInfo';
 import DebugConfig from '../../../Data/Configs/Debug/DebugConfig';
+import { GroundCellType } from '../../../Data/Enums/GroundCellType';
+import GroundCellConfig from '../../../Data/Configs/GroundCellConfig';
+import Materials from '../../../Core/Materials/Materials';
+import { MaterialType } from '../../../Data/Enums/MaterialType';
 
 export default class GroundCell extends THREE.Group {
+    private cellType: GroundCellType;
     private cellPosition: HexCoord;
     private cellRotation: number;
     private debugInfo: GroundCellDebugInfo;
 
-    constructor() {
+    constructor(cellType: GroundCellType) {
         super();
+
+        this.cellType = cellType;
 
         this.init();
     }
@@ -51,7 +58,10 @@ export default class GroundCell extends THREE.Group {
     private initView(): void {
         const material: THREE.Material = Materials.getInstance().materials[MaterialType.Main];
 
-        const modelName: string = 'hex_road_M';
+        // const material: THREE.Material = new THREE.MeshPhongMaterial({
+        //     color: GroundCellConfig[this.cellType].color,
+        // });
+        const modelName: string = GroundCellConfig[this.cellType].modelName;
         const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel(modelName);
 
         const view: THREE.Mesh = new THREE.Mesh(geometry, material);
