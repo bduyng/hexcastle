@@ -7,6 +7,14 @@ import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import { GroundCellType } from '../../Data/Enums/GroundCellType';
 import HexGridHelper from '../../Helpers/HexGridHelper';
 import { HexRotation } from '../../Data/Enums/HexRotation';
+import { CellRulesConfig } from '../../Data/Configs/CellsRules';
+import { HexWFC } from './WaveFunctionCollapse';
+
+interface CellResult {
+    type: GroundCellType;
+    rotation: HexRotation;
+    position: HexCoord;
+}
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -27,7 +35,32 @@ export default class GameScene extends THREE.Group {
     }
 
     private init(): void {
-        this.initTestCells();
+        // this.initTestCells();
+        this.initWaveFunctionCollapse();
+    }
+
+    private initWaveFunctionCollapse(): void {
+        const wfc = new HexWFC(3, CellRulesConfig);
+        const success = wfc.generate();
+
+        if (success) {
+            const grid = wfc.getGrid();
+            console.log('Generated grid:', grid);
+            this.renderGrid(grid);
+        } else {
+            console.error('Failed to generate grid');
+        }
+    }
+
+    private renderGrid(grid: CellResult[]): void {
+        grid.forEach((cellResult) => {
+            const cell = new GroundCell(cellResult.type);
+            cell.setCellPosition(cellResult.position);
+            cell.setCellRotation(cellResult.rotation);
+
+            this.add(cell);
+            this.groundCells.push(cell);
+        });
     }
 
     private initTestCells(): void {
@@ -42,7 +75,7 @@ export default class GameScene extends THREE.Group {
         }
 
         cellsMap.forEach((coord) => {
-            const cell = new GroundCell(GroundCellType.Grass);
+            const cell = new GroundCell(GroundCellType.RoadC);
             cell.setCellPosition(coord);
             cell.setCellRotation(0);
             this.add(cell);
@@ -50,8 +83,8 @@ export default class GameScene extends THREE.Group {
             this.groundCells.push(cell);
         });
 
-        // const cell: GroundCell = HexGridHelper.getCellByHexCoord(this.groundCells, { q: 0, r: 0 });
-        // cell.setCellRotation(HexRotation.Rotate60);
+        const cell: GroundCell = HexGridHelper.getCellByHexCoord(this.groundCells, { q: 0, r: 0 });
+        cell.setCellRotation(HexRotation.Rotate0);
 
         // const cell2: GroundCell = this.getCellByHexCoord({ q: 1, r: 0 });
         // cell2.setCellRotation(5);

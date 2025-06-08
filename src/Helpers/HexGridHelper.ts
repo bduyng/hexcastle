@@ -22,7 +22,7 @@ export default class HexGridHelper {
     }
 
     public static setRotation(object: THREE.Object3D, rotation: HexRotation): void {
-        object.rotation.set(0, -(Math.PI / 3) * rotation, 0);
+        object.rotation.set(0, (Math.PI / 3) * rotation, 0);
     }
 
     public static getCellByHexCoord(cells: GroundCell[], coord: HexCoord): GroundCell | null {

@@ -17,6 +17,12 @@ const GroundCellConfig: { [key in GroundCellType]: IGroundCellConfig } = {
     [GroundCellType.RoadD]: {
         modelName: 'hex_road_D',
     },
+    [GroundCellType.RoadE]: {
+        modelName: 'hex_road_E',
+    },
+    [GroundCellType.RoadF]: {
+        modelName: 'hex_road_F',
+    },
     [GroundCellType.RoadM]: {
         modelName: 'hex_road_M',
     },

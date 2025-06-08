@@ -8,7 +8,7 @@ const DebugConfig = {
     game: {
         grid: {
             enabled: true,
-            radius: 3,
+            radius: 1,
         },
         groundCellDebug: {
             rotation: true,

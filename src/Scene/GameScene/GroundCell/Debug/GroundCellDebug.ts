@@ -102,7 +102,7 @@ export default class GroundCellDebug extends THREE.Group {
             edgeText.position.set(0, 0.03, 0);
 
             const defaultRotation: number = GridConfig.GridOrientation === GridOrientation.PointyTop ? 0 : -Math.PI / 6;
-            const edgeRotation = defaultRotation - Math.PI / 3 * i;
+            const edgeRotation = defaultRotation + Math.PI / 3 * i;
             const quaternion = new THREE.Quaternion();
             quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), edgeRotation - Math.PI * 0.5);
             edgeText.quaternion.multiplyQuaternions(quaternion, edgeText.quaternion);
