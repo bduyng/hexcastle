@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { HexCoord } from '../Data/Interfaces/ICell';
 import { GridOrientation } from '../Data/Enums/GridOrientation';
+import GroundCell from '../Scene/GameScene/GroundCell/GroundCell';
+import { HexRotation } from '../Data/Enums/HexRotation';
 
 export default class HexGridHelper {
     constructor() {
@@ -19,8 +21,18 @@ export default class HexGridHelper {
         }
     }
 
-    public static setRotation(object: THREE.Object3D, rotation: number): void {
+    public static setRotation(object: THREE.Object3D, rotation: HexRotation): void {
         object.rotation.set(0, -(Math.PI / 3) * rotation, 0);
     }
 
+    public static getCellByHexCoord(cells: GroundCell[], coord: HexCoord): GroundCell | null {
+        for (const cell of cells) {
+            const position: HexCoord = cell.getCellPosition();
+            if (position.q === coord.q && position.r === coord.r) {
+                return cell;
+            }
+        }
+
+        return null;
+    }
 }

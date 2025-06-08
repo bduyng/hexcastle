@@ -5,9 +5,8 @@ import { HexCoord } from '../../Data/Interfaces/ICell';
 import DebugGrid from './DebugGrid';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import { GroundCellType } from '../../Data/Enums/GroundCellType';
-import { baseTileDefinitions } from '../../Data/Configs/CellsRules';
-import { HexWFC, ResolvedCell } from './WaveFunctionCollapse';
-
+import HexGridHelper from '../../Helpers/HexGridHelper';
+import { HexRotation } from '../../Data/Enums/HexRotation';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -19,8 +18,7 @@ export default class GameScene extends THREE.Group {
 
         this.data = data;
 
-        // this.init();
-        this.init3();
+        this.init();
         this.initDebugGrid();
     }
 
@@ -29,7 +27,11 @@ export default class GameScene extends THREE.Group {
     }
 
     private init(): void {
-        const mapRadius = 3;
+        this.initTestCells();
+    }
+
+    private initTestCells(): void {
+        const mapRadius = 0;
         const cellsMap: HexCoord[] = [];
         for (let q = -mapRadius; q <= mapRadius; q++) {
             const r1 = Math.max(-mapRadius, -q - mapRadius);
@@ -40,8 +42,7 @@ export default class GameScene extends THREE.Group {
         }
 
         cellsMap.forEach((coord) => {
-            // const type = Math.random() > 0.5 ? GroundCellType.Grass : GroundCellType.Sand;
-            const cell = new GroundCell(GroundCellType.RoadD);
+            const cell = new GroundCell(GroundCellType.Grass);
             cell.setCellPosition(coord);
             cell.setCellRotation(0);
             this.add(cell);
@@ -49,50 +50,18 @@ export default class GameScene extends THREE.Group {
             this.groundCells.push(cell);
         });
 
-        // const cell: GroundCell = this.getCellByHexCoord({ q: 0, r: 0 });
-        // cell.setCellRotation(1);
+        // const cell: GroundCell = HexGridHelper.getCellByHexCoord(this.groundCells, { q: 0, r: 0 });
+        // cell.setCellRotation(HexRotation.Rotate60);
 
         // const cell2: GroundCell = this.getCellByHexCoord({ q: 1, r: 0 });
         // cell2.setCellRotation(5);
     }
 
     private initDebugGrid(): void {
-        if (DebugConfig.game.grid) {
-            const debugGrid = new DebugGrid();
+        if (DebugConfig.game.grid.enabled) {
+            const debugGrid = new DebugGrid(DebugConfig.game.grid.radius);
             this.add(debugGrid);
         }
-    }
-
-    private getCellByHexCoord(coord: HexCoord): GroundCell | null {
-        for (const cell of this.groundCells) {
-            const position: HexCoord = cell.getCellPosition();
-            if (position.q === coord.q && position.r === coord.r) {
-                return cell;
-            }
-        }
-
-        return null;
-    }
-
-
-    private init3(): void {
-        const wfc = new HexWFC(baseTileDefinitions);
-        wfc.initializeGrid(3);
-        const adjacency = wfc.generateAdjacencyMap();
-        const resolved = wfc.run(adjacency);
-        console.log(resolved);
-
-        this.renderGrid(resolved);
-    }
-
-    private renderGrid(grid: ResolvedCell[]): void {
-        grid.forEach(cell => {
-            const groundCell = new GroundCell(cell.type);
-            groundCell.setCellPosition(cell.coord);
-            groundCell.setCellRotation(cell.rotation);
-            this.add(groundCell);
-            this.groundCells.push(groundCell);
-        });
     }
 
 }

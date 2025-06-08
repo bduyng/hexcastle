@@ -6,8 +6,14 @@ const DebugConfig = {
     showAxisHelper: false,
     gui: true,
     game: {
-        grid: true,
-        groundCellInfo: true,
+        grid: {
+            enabled: true,
+            radius: 3,
+        },
+        groundCellDebug: {
+            rotation: true,
+            edge: true,
+        },
     }
 };
 

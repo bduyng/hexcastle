@@ -4,8 +4,12 @@ import { GridOrientation } from '../../Data/Enums/GridOrientation';
 import HexGridHelper from '../../Helpers/HexGridHelper';
 
 export default class DebugGrid extends THREE.Group {
-    constructor() {
+    private radius: number;
+
+    constructor(radius: number) {
         super();
+
+        this.radius = radius;
 
         this.init();
     }
@@ -16,12 +20,11 @@ export default class DebugGrid extends THREE.Group {
     }
 
     private initGrid(): void {
-        const gridRadius: number = GridConfig.gridRadius;
         const vertices: number[] = [];
 
-        for (let q = -gridRadius; q <= gridRadius; q++) {
-            const r1 = Math.max(-gridRadius, -q - gridRadius);
-            const r2 = Math.min(gridRadius, -q + gridRadius);
+        for (let q = -this.radius; q <= this.radius; q++) {
+            const r1 = Math.max(-this.radius, -q - this.radius);
+            const r2 = Math.min(this.radius, -q + this.radius);
             for (let r = r1; r <= r2; r++) {
                 const center = HexGridHelper.axialToWorld({ q, r }, GridConfig.hexSize, GridConfig.GridOrientation);
                 const corners = this.getHexCorners(center, GridConfig.hexSize, GridConfig.GridOrientation);
@@ -65,11 +68,10 @@ export default class DebugGrid extends THREE.Group {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
-        const gridRadius = GridConfig.gridRadius;
         const resolution = 100;
         const canvasMargin = 2;
 
-        const worldSize = (3 / 2 * gridRadius + canvasMargin) * GridConfig.hexSize;
+        const worldSize = (3 / 2 * this.radius + canvasMargin) * GridConfig.hexSize;
 
         const canvasWidth = Math.ceil(worldSize * resolution * 2);
         const canvasHeight = Math.ceil(worldSize * resolution * 2);
@@ -85,9 +87,9 @@ export default class DebugGrid extends THREE.Group {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        for (let q = -gridRadius; q <= gridRadius; q++) {
-            const r1 = Math.max(-gridRadius, -q - gridRadius);
-            const r2 = Math.min(gridRadius, -q + gridRadius);
+        for (let q = -this.radius; q <= this.radius; q++) {
+            const r1 = Math.max(-this.radius, -q - this.radius);
+            const r2 = Math.min(this.radius, -q + this.radius);
             for (let r = r1; r <= r2; r++) {
                 const center = HexGridHelper.axialToWorld({ q, r }, GridConfig.hexSize, GridConfig.GridOrientation);
 
