@@ -6,5 +6,11 @@ export enum HexTileType {
     RoadD = 'ROAD_D',
     RoadE = 'ROAD_E',
     RoadF = 'ROAD_F',
+    RoadG = 'ROAD_G',
+    RoadH = 'ROAD_H',
+    RoadI = 'ROAD_I',
+    RoadJ = 'ROAD_J',
+    RoadK = 'ROAD_K',
+    RoadL = 'ROAD_L',
     RoadM = 'ROAD_M',
 }

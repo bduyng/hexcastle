@@ -23,6 +23,24 @@ const HexTileModelsConfig: { [key in HexTileType]: IHexTileModelConfig } = {
     [HexTileType.RoadF]: {
         modelName: 'hex_road_F',
     },
+    [HexTileType.RoadG]: {
+        modelName: 'hex_road_G',
+    },
+    [HexTileType.RoadH]: {
+        modelName: 'hex_road_H',
+    },
+    [HexTileType.RoadI]: {
+        modelName: 'hex_road_I',
+    },
+    [HexTileType.RoadJ]: {
+        modelName: 'hex_road_J',
+    },
+    [HexTileType.RoadK]: {
+        modelName: 'hex_road_K',
+    },
+    [HexTileType.RoadL]: {
+        modelName: 'hex_road_L',
+    },
     [HexTileType.RoadM]: {
         modelName: 'hex_road_M',
     },

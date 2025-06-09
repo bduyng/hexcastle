@@ -4,7 +4,7 @@ import { TileEdgeType } from "../../Data/Enums/TileEdgeType";
 import { IHexCoord } from "../../Data/Interfaces/IHexTile";
 import { HexRotation } from "../../Data/Enums/HexRotation";
 import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant } from "../../Data/Interfaces/IWFC";
-import { NeighborDirections } from "../../Data/Configs/WFCConfig";
+import { HexTilesRulesConfig, NeighborDirections } from "../../Data/Configs/WFCConfig";
 
 export class HexWFC {
     private tiles: Map<HexTileType, IHexTilesRule>;
@@ -12,10 +12,11 @@ export class HexWFC {
     private tileVariants: ITileVariant[];
     private grid: Map<string, IWFCHexTilesInfo>;
     private radius: number;
+    private hexTileTypesUsed: HexTileType[];
 
-    constructor(radius: number, tiles: IHexTilesRule[]) {
+    constructor(radius: number, hexTileTypesUsed: HexTileType[]) {
         this.radius = radius;
-        this.tileRules = tiles;
+        this.hexTileTypesUsed = hexTileTypesUsed;
 
         this.init();
     }
@@ -68,6 +69,9 @@ export class HexWFC {
     }
 
     private init(): void {
+        this.tileRules = HexTilesRulesConfig.filter(tile => this.hexTileTypesUsed.includes(tile.type));
+        console.log(this.tileRules);
+
         this.tiles = new Map(this.tileRules.map(tile => [tile.type, tile]));
         this.tileVariants = this.generateTileVariants();
 

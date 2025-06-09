@@ -35,7 +35,24 @@ export default class GameScene extends THREE.Group {
     }
 
     private initHexWFC(): void {
-        const wfc = new HexWFC(3, HexTilesRulesConfig);
+        const usedTiles: HexTileType[] = [
+            // HexTileType.Grass,
+            HexTileType.RoadA,
+            HexTileType.RoadB,
+            HexTileType.RoadC,
+            HexTileType.RoadD,
+            HexTileType.RoadE,
+            HexTileType.RoadF,
+            HexTileType.RoadG,
+            HexTileType.RoadH,
+            HexTileType.RoadI,
+            HexTileType.RoadJ,
+            HexTileType.RoadK,
+            HexTileType.RoadL,
+            HexTileType.RoadM,
+        ];
+
+        const wfc = new HexWFC(3, usedTiles);
         const success = wfc.generate();
 
         if (success) {
@@ -69,7 +86,7 @@ export default class GameScene extends THREE.Group {
         }
 
         hexTilesMap.forEach((coord) => {
-            const hexTile = new HexTile(HexTileType.RoadC);
+            const hexTile = new HexTile(HexTileType.RoadL);
             hexTile.setHexTilePosition(coord);
             hexTile.setHexTileRotation(0);
             this.add(hexTile);
