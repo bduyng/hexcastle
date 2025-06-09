@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { HexCoord } from '../Data/Interfaces/ICell';
+import { IHexCoord } from '../Data/Interfaces/ICell';
 import { GridOrientation } from '../Data/Enums/GridOrientation';
 import GroundCell from '../Scene/GameScene/GroundCell/GroundCell';
 import { HexRotation } from '../Data/Enums/HexRotation';
@@ -9,7 +9,7 @@ export default class HexGridHelper {
 
     }
 
-    public static axialToWorld({ q, r }: HexCoord, size: number, gridOrientation: GridOrientation): THREE.Vector3 {
+    public static axialToWorld({ q, r }: IHexCoord, size: number, gridOrientation: GridOrientation): THREE.Vector3 {
         if (gridOrientation === GridOrientation.PointyTop) {
             const x = size * Math.sqrt(3) * (q + r / 2);
             const z = size * 1.5 * r;
@@ -25,9 +25,9 @@ export default class HexGridHelper {
         object.rotation.set(0, (Math.PI / 3) * rotation, 0);
     }
 
-    public static getCellByHexCoord(cells: GroundCell[], coord: HexCoord): GroundCell | null {
+    public static getCellByHexCoord(cells: GroundCell[], coord: IHexCoord): GroundCell | null {
         for (const cell of cells) {
-            const position: HexCoord = cell.getCellPosition();
+            const position: IHexCoord = cell.getCellPosition();
             if (position.q === coord.q && position.r === coord.r) {
                 return cell;
             }

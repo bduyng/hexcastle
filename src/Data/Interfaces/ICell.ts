@@ -1,4 +1,4 @@
-export interface HexCoord {
+export interface IHexCoord {
     q: number;
     r: number;
 }

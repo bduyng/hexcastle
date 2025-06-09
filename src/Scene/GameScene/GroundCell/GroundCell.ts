@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
-import { HexCoord } from '../../../Data/Interfaces/ICell';
+import { IHexCoord } from '../../../Data/Interfaces/ICell';
 import GridConfig from '../../../Data/Configs/GridConfig';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
 import { GridOrientation } from '../../../Data/Enums/GridOrientation';
@@ -14,7 +14,7 @@ import { HexRotation } from '../../../Data/Enums/HexRotation';
 
 export default class GroundCell extends THREE.Group {
     private cellType: GroundCellType;
-    private cellPosition: HexCoord;
+    private cellPosition: IHexCoord;
     private cellRotation: HexRotation;
     private debugInfo: GroundCellDebug;
     private wrapper: THREE.Group;
@@ -30,11 +30,11 @@ export default class GroundCell extends THREE.Group {
         this.init();
     }
 
-    public getCellPosition(): HexCoord {
+    public getCellPosition(): IHexCoord {
         return this.cellPosition;
     }
 
-    public setCellPosition(position: HexCoord): void {
+    public setCellPosition(position: IHexCoord): void {
         this.cellPosition = position;
         const newPosition = HexGridHelper.axialToWorld(position, GridConfig.hexSize, GridConfig.GridOrientation);
         this.position.set(newPosition.x, 0, newPosition.z);

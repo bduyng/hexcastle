@@ -1,19 +1,19 @@
 import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
 import GroundCell from './GroundCell/GroundCell';
-import { HexCoord } from '../../Data/Interfaces/ICell';
+import { IHexCoord } from '../../Data/Interfaces/ICell';
 import DebugGrid from './DebugGrid';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import { GroundCellType } from '../../Data/Enums/GroundCellType';
 import HexGridHelper from '../../Helpers/HexGridHelper';
 import { HexRotation } from '../../Data/Enums/HexRotation';
 import { CellRulesConfig } from '../../Data/Configs/CellsRules';
-import { HexWFC } from './WaveFunctionCollapse';
+import { HexWFC } from './HexWFC';
 
 interface CellResult {
     type: GroundCellType;
     rotation: HexRotation;
-    position: HexCoord;
+    position: IHexCoord;
 }
 
 export default class GameScene extends THREE.Group {
@@ -36,16 +36,15 @@ export default class GameScene extends THREE.Group {
 
     private init(): void {
         // this.initTestCells();
-        this.initWaveFunctionCollapse();
+        this.initHexWFC();
     }
 
-    private initWaveFunctionCollapse(): void {
+    private initHexWFC(): void {
         const wfc = new HexWFC(3, CellRulesConfig);
         const success = wfc.generate();
 
         if (success) {
             const grid = wfc.getGrid();
-            console.log('Generated grid:', grid);
             this.renderGrid(grid);
         } else {
             console.error('Failed to generate grid');
@@ -65,7 +64,7 @@ export default class GameScene extends THREE.Group {
 
     private initTestCells(): void {
         const mapRadius = 0;
-        const cellsMap: HexCoord[] = [];
+        const cellsMap: IHexCoord[] = [];
         for (let q = -mapRadius; q <= mapRadius; q++) {
             const r1 = Math.max(-mapRadius, -q - mapRadius);
             const r2 = Math.min(mapRadius, -q + mapRadius);
