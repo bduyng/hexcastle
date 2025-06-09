@@ -1,7 +1,7 @@
 import { HexTileType } from "../Enums/HexTileType";
 import { IHexTileModelConfig } from "../Interfaces/IHexTile";
 
-const HexTileModelsConfig: { [key in HexTileType]: IHexTileModelConfig } = {
+const HexTileModelConfig: { [key in HexTileType]: IHexTileModelConfig } = {
     [HexTileType.Grass]: {
         modelName: 'hex_grass',
     },
@@ -46,4 +46,4 @@ const HexTileModelsConfig: { [key in HexTileType]: IHexTileModelConfig } = {
     },
 };
 
-export default HexTileModelsConfig;
+export default HexTileModelConfig;

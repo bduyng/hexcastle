@@ -7,7 +7,7 @@ import { GridOrientation } from '../../../Data/Enums/GridOrientation';
 import HexTileDebug from './Debug/HexTileDebug';
 import DebugConfig from '../../../Data/Configs/Debug/DebugConfig';
 import { HexTileType } from '../../../Data/Enums/HexTileType';
-import HexTileModelsConfig from '../../../Data/Configs/HexTileModelsConfig';
+import HexTileModelConfig from '../../../Data/Configs/HexTileModelConfig';
 import Materials from '../../../Core/Materials/Materials';
 import { MaterialType } from '../../../Data/Enums/MaterialType';
 import { HexRotation } from '../../../Data/Enums/HexRotation';
@@ -61,7 +61,7 @@ export default class HexTile extends THREE.Group {
     private initView(): void {
         const material: THREE.Material = Materials.getInstance().materials[MaterialType.Main];
 
-        const modelName: string = HexTileModelsConfig[this.hexTileType].modelName;
+        const modelName: string = HexTileModelConfig[this.hexTileType].modelName;
         const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel(modelName);
 
         const view: THREE.Mesh = new THREE.Mesh(geometry, material);
