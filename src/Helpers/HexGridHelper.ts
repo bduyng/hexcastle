@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { IHexCoord } from '../Data/Interfaces/ICell';
+import { IHexCoord } from '../Data/Interfaces/IHexTile';
 import { GridOrientation } from '../Data/Enums/GridOrientation';
-import GroundCell from '../Scene/GameScene/GroundCell/GroundCell';
+import HexTile from '../Scene/GameScene/HexTile/HexTile';
 import { HexRotation } from '../Data/Enums/HexRotation';
 
 export default class HexGridHelper {
@@ -25,11 +25,11 @@ export default class HexGridHelper {
         object.rotation.set(0, (Math.PI / 3) * rotation, 0);
     }
 
-    public static getCellByHexCoord(cells: GroundCell[], coord: IHexCoord): GroundCell | null {
-        for (const cell of cells) {
-            const position: IHexCoord = cell.getCellPosition();
+    public static getHexTileByHexCoord(hexTiles: HexTile[], coord: IHexCoord): HexTile | null {
+        for (const hexTile of hexTiles) {
+            const position: IHexCoord = hexTile.getHexTilePosition();
             if (position.q === coord.q && position.r === coord.r) {
-                return cell;
+                return hexTile;
             }
         }
 

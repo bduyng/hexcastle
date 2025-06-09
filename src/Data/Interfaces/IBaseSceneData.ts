@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as PIXI from 'pixi.js';
-import { GroundCellType } from '../Enums/GroundCellType';
-import { EdgeType } from '../Enums/EdgeType';
+import { HexTileType } from '../Enums/HexTileType';
+import { TileEdgeType } from '../Enums/TileEdgeType';
 
 export interface ILibrariesData {
     scene: THREE.Scene;
@@ -16,8 +16,8 @@ export interface IWindowSizes {
     height: number;
 }
 
-export interface ICellRules {
-    type: GroundCellType;
-    edges: EdgeType[];
+export interface IHexTilesRule {
+    type: HexTileType;
+    edges: TileEdgeType[];
     weight: number;
 }

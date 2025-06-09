@@ -1,28 +1,28 @@
-import { EdgeType } from "../Enums/EdgeType";
-import { GroundCellType } from "../Enums/GroundCellType";
+import { TileEdgeType } from "../Enums/TileEdgeType";
+import { HexTileType } from "../Enums/HexTileType";
 import { HexRotation } from "../Enums/HexRotation";
-import { IHexCoord } from "./ICell";
+import { IHexCoord } from "./IHexTile";
 
 export interface ITileVariant {
-    type: GroundCellType;
+    type: HexTileType;
     rotation: HexRotation;
-    edges: EdgeType[];
+    edges: TileEdgeType[];
     weight: number;
 }
 
-export interface IWFCCellInfo {
+export interface IWFCHexTilesInfo {
     coord: IHexCoord;
-    possibleTiles: Set<GroundCellType>;
+    possibleTiles: Set<HexTileType>;
     possibleRotations: Set<HexRotation>;
     possibleVariants: Set<ITileVariant>;
     collapsed: boolean;
     entropy: number;
     rotation?: HexRotation;
-    type?: GroundCellType;
+    type?: HexTileType;
 }
 
-export interface ICellResult {
-    type: GroundCellType;
+export interface IHexTilesResult {
+    type: HexTileType;
     rotation: HexRotation;
     position: IHexCoord;
 }

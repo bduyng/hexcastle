@@ -1,25 +1,20 @@
 import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
-import GroundCell from './GroundCell/GroundCell';
-import { IHexCoord } from '../../Data/Interfaces/ICell';
+import HexTile from './HexTile/HexTile';
+import { IHexCoord } from '../../Data/Interfaces/IHexTile';
 import DebugGrid from './DebugGrid';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
-import { GroundCellType } from '../../Data/Enums/GroundCellType';
+import { HexTileType } from '../../Data/Enums/HexTileType';
 import HexGridHelper from '../../Helpers/HexGridHelper';
 import { HexRotation } from '../../Data/Enums/HexRotation';
-import { CellRulesConfig } from '../../Data/Configs/CellsRules';
 import { HexWFC } from './HexWFC';
-
-interface CellResult {
-    type: GroundCellType;
-    rotation: HexRotation;
-    position: IHexCoord;
-}
+import { HexTilesRulesConfig } from '../../Data/Configs/WFCConfig';
+import { IHexTilesResult } from '../../Data/Interfaces/IWFC';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
 
-    private groundCells: GroundCell[] = [];
+    private hexTiles: HexTile[] = [];
 
     constructor(data: ILibrariesData) {
         super();
@@ -35,12 +30,12 @@ export default class GameScene extends THREE.Group {
     }
 
     private init(): void {
-        // this.initTestCells();
+        // this.initTestHexTiles();
         this.initHexWFC();
     }
 
     private initHexWFC(): void {
-        const wfc = new HexWFC(3, CellRulesConfig);
+        const wfc = new HexWFC(3, HexTilesRulesConfig);
         const success = wfc.generate();
 
         if (success) {
@@ -51,42 +46,39 @@ export default class GameScene extends THREE.Group {
         }
     }
 
-    private renderGrid(grid: CellResult[]): void {
-        grid.forEach((cellResult) => {
-            const cell = new GroundCell(cellResult.type);
-            cell.setCellPosition(cellResult.position);
-            cell.setCellRotation(cellResult.rotation);
+    private renderGrid(grid: IHexTilesResult[]): void {
+        grid.forEach((hexTileResult) => {
+            const hexTile = new HexTile(hexTileResult.type);
+            hexTile.setHexTilePosition(hexTileResult.position);
+            hexTile.setHexTileRotation(hexTileResult.rotation);
 
-            this.add(cell);
-            this.groundCells.push(cell);
+            this.add(hexTile);
+            this.hexTiles.push(hexTile);
         });
     }
 
-    private initTestCells(): void {
+    private initTestHexTiles(): void {
         const mapRadius = 0;
-        const cellsMap: IHexCoord[] = [];
+        const hexTilesMap: IHexCoord[] = [];
         for (let q = -mapRadius; q <= mapRadius; q++) {
             const r1 = Math.max(-mapRadius, -q - mapRadius);
             const r2 = Math.min(mapRadius, -q + mapRadius);
             for (let r = r1; r <= r2; r++) {
-                cellsMap.push({ q, r });
+                hexTilesMap.push({ q, r });
             }
         }
 
-        cellsMap.forEach((coord) => {
-            const cell = new GroundCell(GroundCellType.RoadC);
-            cell.setCellPosition(coord);
-            cell.setCellRotation(0);
-            this.add(cell);
+        hexTilesMap.forEach((coord) => {
+            const hexTile = new HexTile(HexTileType.RoadC);
+            hexTile.setHexTilePosition(coord);
+            hexTile.setHexTileRotation(0);
+            this.add(hexTile);
 
-            this.groundCells.push(cell);
+            this.hexTiles.push(hexTile);
         });
 
-        const cell: GroundCell = HexGridHelper.getCellByHexCoord(this.groundCells, { q: 0, r: 0 });
-        cell.setCellRotation(HexRotation.Rotate0);
-
-        // const cell2: GroundCell = this.getCellByHexCoord({ q: 1, r: 0 });
-        // cell2.setCellRotation(5);
+        const hexTile: HexTile = HexGridHelper.getHexTileByHexCoord(this.hexTiles, { q: 0, r: 0 });
+        hexTile.setHexTileRotation(HexRotation.Rotate0);
     }
 
     private initDebugGrid(): void {

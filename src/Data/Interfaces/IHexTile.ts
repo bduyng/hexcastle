@@ -3,7 +3,7 @@ export interface IHexCoord {
     r: number;
 }
 
-export interface IGroundCellConfig {
+export interface IHexTileModelConfig {
     modelName: string;
     color?: number;
 }

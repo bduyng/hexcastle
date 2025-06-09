@@ -1,4 +1,4 @@
-export enum EdgeType {
+export enum TileEdgeType {
     Grass = 'GRASS',
     Road = 'ROAD',
 }

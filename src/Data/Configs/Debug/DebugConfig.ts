@@ -10,7 +10,7 @@ const DebugConfig = {
             enabled: true,
             radius: 1,
         },
-        groundCellDebug: {
+        hexTileDebug: {
             rotation: true,
             edge: true,
         },

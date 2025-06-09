@@ -5,21 +5,21 @@ import { Text } from 'troika-three-text';
 import { HexRotation } from '../../../../Data/Enums/HexRotation';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import { EdgeColor, RotationAngleName } from '../../../../Data/Configs/DebugInfoConfig';
-import { GroundCellType } from '../../../../Data/Enums/GroundCellType';
-import { EdgeType } from '../../../../Data/Enums/EdgeType';
-import { CellRulesConfig } from '../../../../Data/Configs/CellsRules';
+import { HexTileType } from '../../../../Data/Enums/HexTileType';
+import { TileEdgeType } from '../../../../Data/Enums/TileEdgeType';
 import DebugConfig from '../../../../Data/Configs/Debug/DebugConfig';
+import { HexTilesRulesConfig } from '../../../../Data/Configs/WFCConfig';
 
-export default class GroundCellDebug extends THREE.Group {
-    private cellType: GroundCellType;
+export default class HexTileDebug extends THREE.Group {
+    private hexTileType: HexTileType;
     private rotationText: Text;
     private rotationTextWrapper: THREE.Group;
     private edgesWrapper: THREE.Group;
 
-    constructor(cellType: GroundCellType) {
+    constructor(hexTileType: HexTileType) {
         super();
 
-        this.cellType = cellType;
+        this.hexTileType = hexTileType;
 
         this.init();
     }
@@ -36,11 +36,11 @@ export default class GroundCellDebug extends THREE.Group {
     }
 
     private init(): void {
-        if (DebugConfig.game.groundCellDebug.rotation) {
+        if (DebugConfig.game.hexTileDebug.rotation) {
             this.initRotationDebug();
         }
 
-        if (DebugConfig.game.groundCellDebug.edge) {
+        if (DebugConfig.game.hexTileDebug.edge) {
             this.initEdgesDebug();
         }
     }
@@ -92,7 +92,7 @@ export default class GroundCellDebug extends THREE.Group {
         this.add(this.edgesWrapper);
 
         for (let i = 0; i < 6; i++) {
-            const edgeType: EdgeType = this.getEdgeTypes(this.cellType)[i];
+            const edgeType: TileEdgeType = this.getEdgeTypes(this.hexTileType)[i];
             const edgeColor: number = EdgeColor[edgeType];
 
             const edgeText: Text = this.createText(edgeType as string, 0.15, edgeColor);
@@ -113,9 +113,9 @@ export default class GroundCellDebug extends THREE.Group {
         }
     }
 
-    private getEdgeTypes(cellType: GroundCellType): EdgeType[] {
-        const cellRules = CellRulesConfig.find(rule => rule.type === cellType);
-        return cellRules ? cellRules.edges : [];
+    private getEdgeTypes(hexTileType: HexTileType): TileEdgeType[] {
+        const hexTileRules = HexTilesRulesConfig.find(rule => rule.type === hexTileType);
+        return hexTileRules ? hexTileRules.edges : [];
 
     }
 

@@ -1,28 +1,28 @@
 import * as THREE from 'three';
 import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
-import { IHexCoord } from '../../../Data/Interfaces/ICell';
+import { IHexCoord } from '../../../Data/Interfaces/IHexTile';
 import GridConfig from '../../../Data/Configs/GridConfig';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
 import { GridOrientation } from '../../../Data/Enums/GridOrientation';
-import GroundCellDebug from './Debug/GroundCellDebug';
+import HexTileDebug from './Debug/HexTileDebug';
 import DebugConfig from '../../../Data/Configs/Debug/DebugConfig';
-import { GroundCellType } from '../../../Data/Enums/GroundCellType';
-import GroundCellConfig from '../../../Data/Configs/GroundCellConfig';
+import { HexTileType } from '../../../Data/Enums/HexTileType';
+import HexTileModelsConfig from '../../../Data/Configs/HexTileModelsConfig';
 import Materials from '../../../Core/Materials/Materials';
 import { MaterialType } from '../../../Data/Enums/MaterialType';
 import { HexRotation } from '../../../Data/Enums/HexRotation';
 
-export default class GroundCell extends THREE.Group {
-    private cellType: GroundCellType;
-    private cellPosition: IHexCoord;
-    private cellRotation: HexRotation;
-    private debugInfo: GroundCellDebug;
+export default class HexTile extends THREE.Group {
+    private hexTileType: HexTileType;
+    private hexTilePosition: IHexCoord;
+    private hexTileRotation: HexRotation;
+    private debugInfo: HexTileDebug;
     private wrapper: THREE.Group;
 
-    constructor(cellType: GroundCellType) {
+    constructor(hexTileType: HexTileType) {
         super();
 
-        this.cellType = cellType;
+        this.hexTileType = hexTileType;
 
         this.wrapper = new THREE.Group();
         this.add(this.wrapper);
@@ -30,22 +30,22 @@ export default class GroundCell extends THREE.Group {
         this.init();
     }
 
-    public getCellPosition(): IHexCoord {
-        return this.cellPosition;
+    public getHexTilePosition(): IHexCoord {
+        return this.hexTilePosition;
     }
 
-    public setCellPosition(position: IHexCoord): void {
-        this.cellPosition = position;
+    public setHexTilePosition(position: IHexCoord): void {
+        this.hexTilePosition = position;
         const newPosition = HexGridHelper.axialToWorld(position, GridConfig.hexSize, GridConfig.GridOrientation);
         this.position.set(newPosition.x, 0, newPosition.z);
     }
 
-    public getCellRotation(): HexRotation {
-        return this.cellRotation;
+    public getHexTileRotation(): HexRotation {
+        return this.hexTileRotation;
     }
 
-    public setCellRotation(rotation: HexRotation): void {
-        this.cellRotation = rotation;
+    public setHexTileRotation(rotation: HexRotation): void {
+        this.hexTileRotation = rotation;
         HexGridHelper.setRotation(this.wrapper, rotation);
 
         if (this.debugInfo) {
@@ -61,7 +61,7 @@ export default class GroundCell extends THREE.Group {
     private initView(): void {
         const material: THREE.Material = Materials.getInstance().materials[MaterialType.Main];
 
-        const modelName: string = GroundCellConfig[this.cellType].modelName;
+        const modelName: string = HexTileModelsConfig[this.hexTileType].modelName;
         const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel(modelName);
 
         const view: THREE.Mesh = new THREE.Mesh(geometry, material);
@@ -72,8 +72,8 @@ export default class GroundCell extends THREE.Group {
     }
 
     private initDebugInfo(): void {
-        if (DebugConfig.game.groundCellDebug.edge || DebugConfig.game.groundCellDebug.rotation) {
-            const debugInfo = this.debugInfo = new GroundCellDebug(this.cellType);
+        if (DebugConfig.game.hexTileDebug.edge || DebugConfig.game.hexTileDebug.rotation) {
+            const debugInfo = this.debugInfo = new HexTileDebug(this.hexTileType);
             this.add(debugInfo);
         }
     }

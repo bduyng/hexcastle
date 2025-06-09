@@ -1,4 +1,4 @@
-export enum GroundCellType {
+export enum HexTileType {
     Grass = 'GRASS',
     RoadA = 'ROAD_A',
     RoadB = 'ROAD_B',
