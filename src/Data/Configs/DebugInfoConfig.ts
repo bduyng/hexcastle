@@ -10,9 +10,9 @@ const RotationAngleName: { [key in HexRotation]: string } = {
     5: '300°'
 }
 
-const EdgeColor: { [key in TileEdgeType]: number } = {
-    [TileEdgeType.Grass]: 0x00aa00,
-    [TileEdgeType.Road]: 0xaa00aa,
+const EdgeColor: { [key in TileEdgeType]: string } = {
+    [TileEdgeType.Grass]: '#00aa00',
+    [TileEdgeType.Road]: '#aa00aa',
 }
 
 export { RotationAngleName, EdgeColor };

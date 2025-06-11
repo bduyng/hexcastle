@@ -86,7 +86,7 @@ export default class GameScene extends THREE.Group {
         }
 
         hexTilesMap.forEach((coord) => {
-            const hexTile = new HexTile(HexTileType.RoadL);
+            const hexTile = new HexTile(HexTileType.RoadJ);
             hexTile.setHexTilePosition(coord);
             hexTile.setHexTileRotation(0);
             this.add(hexTile);
@@ -95,7 +95,7 @@ export default class GameScene extends THREE.Group {
         });
 
         const hexTile: HexTile = HexGridHelper.getHexTileByHexCoord(this.hexTiles, { q: 0, r: 0 });
-        hexTile.setHexTileRotation(HexRotation.Rotate0);
+        hexTile.setHexTileRotation(HexRotation.Rotate60);
     }
 
     private initDebugGrid(): void {

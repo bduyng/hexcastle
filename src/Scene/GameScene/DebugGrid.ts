@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import GridConfig from '../../Data/Configs/GridConfig';
 import { GridOrientation } from '../../Data/Enums/GridOrientation';
 import HexGridHelper from '../../Helpers/HexGridHelper';
+import CanvasPlaneMesh from './HexTile/Debug/CanvasPlaneMesh';
 
 export default class DebugGrid extends THREE.Group {
     private radius: number;
@@ -65,19 +66,18 @@ export default class DebugGrid extends THREE.Group {
     }
 
     private initGridCoordinates(): void {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
         const resolution = 100;
         const canvasMargin = 2;
-
         const worldSize = (3 / 2 * this.radius + canvasMargin) * GridConfig.hexSize;
+        const gridCoordinatesPlane = new CanvasPlaneMesh(worldSize * 2, worldSize * 2, resolution);
+        this.add(gridCoordinatesPlane);
 
-        const canvasWidth = Math.ceil(worldSize * resolution * 2);
-        const canvasHeight = Math.ceil(worldSize * resolution * 2);
+        const gridCoordinatesPlaneView = gridCoordinatesPlane.getView();
+        gridCoordinatesPlaneView.rotation.x = -Math.PI / 2;
+        gridCoordinatesPlaneView.position.set(0, 0.03, 0);
 
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
+        const canvas = gridCoordinatesPlane.getCanvas();
+        const ctx = canvas.getContext('2d');
 
         const canvasCenterX = canvas.width / 2;
         const canvasCenterY = canvas.height / 2;
@@ -94,23 +94,10 @@ export default class DebugGrid extends THREE.Group {
                 const center = HexGridHelper.axialToWorld({ q, r }, GridConfig.hexSize, GridConfig.GridOrientation);
 
                 const cx = canvasCenterX + center.x * resolution;
-                const cy = canvasCenterY + center.z * resolution - 0.5 * resolution;
+                const cy = canvasCenterY + center.z * resolution - 0.55 * resolution;
 
                 ctx.fillText(`q: ${q}, r: ${r}`, cx, cy);
             }
         }
-
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.needsUpdate = true;
-
-        const planeSize = Math.max(canvasWidth, canvasHeight) / resolution;
-        const geometry = new THREE.PlaneGeometry(planeSize, planeSize);
-        const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-
-        const gridPlane = new THREE.Mesh(geometry, material);
-        this.add(gridPlane);
-
-        gridPlane.rotation.x = -Math.PI / 2;
-        gridPlane.position.set(0, 0.01, 0);
     }
 }

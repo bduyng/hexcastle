@@ -8,7 +8,7 @@ const DebugConfig = {
     game: {
         grid: {
             enabled: true,
-            radius: 1,
+            radius: 3,
         },
         hexTileDebug: {
             rotation: true,

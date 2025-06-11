@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 import GridConfig from '../../../../Data/Configs/GridConfig';
-import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
-import { Text } from 'troika-three-text';
 import { HexRotation } from '../../../../Data/Enums/HexRotation';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import { EdgeColor, RotationAngleName } from '../../../../Data/Configs/DebugInfoConfig';
@@ -9,12 +7,12 @@ import { HexTileType } from '../../../../Data/Enums/HexTileType';
 import { TileEdgeType } from '../../../../Data/Enums/TileEdgeType';
 import DebugConfig from '../../../../Data/Configs/Debug/DebugConfig';
 import { HexTilesRulesConfig } from '../../../../Data/Configs/WFCConfig';
+import CanvasPlaneMesh from './CanvasPlaneMesh';
+import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 
 export default class HexTileDebug extends THREE.Group {
     private hexTileType: HexTileType;
-    private rotationText: Text;
-    private rotationTextWrapper: THREE.Group;
-    private edgesWrapper: THREE.Group;
+    private debugInfoPlane: CanvasPlaneMesh;
 
     constructor(hexTileType: HexTileType) {
         super();
@@ -25,108 +23,100 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     public setRotationText(rotation: HexRotation): void {
-        if (this.rotationTextWrapper) {
-            HexGridHelper.setRotation(this.rotationTextWrapper, rotation);
-            this.rotationText.text = RotationAngleName[rotation];
-        }
-
-        if (this.edgesWrapper) {
-            HexGridHelper.setRotation(this.edgesWrapper, rotation);
-        }
+        HexGridHelper.setRotation(this.debugInfoPlane, rotation);
+        this.drawInfo(rotation);
     }
 
     private init(): void {
+        const debugInfoPlane = this.debugInfoPlane = new CanvasPlaneMesh(GridConfig.hexSize * 2, GridConfig.hexSize * 2, 200);
+        this.add(debugInfoPlane);
+
+        const debugInfoPlaneView = debugInfoPlane.getView();
+        debugInfoPlaneView.rotation.x = -Math.PI / 2;
+        debugInfoPlaneView.position.set(0, 0.03, 0);
+
+        this.drawInfo(HexRotation.Rotate0);
+    }
+
+    private drawInfo(rotation: HexRotation): void {
+        const resolution = this.debugInfoPlane.getResolution();
+        const canvas = this.debugInfoPlane.getCanvas();
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         if (DebugConfig.game.hexTileDebug.rotation) {
-            this.initRotationDebug();
+            this.drawRotationInfo(canvas, resolution, rotation);
         }
 
         if (DebugConfig.game.hexTileDebug.edge) {
-            this.initEdgesDebug();
+            this.drawEdgesInfo(canvas, resolution);
         }
     }
 
-    private initRotationDebug(): void {
-        this.rotationTextWrapper = new THREE.Group();
-        this.add(this.rotationTextWrapper);
+    private drawRotationInfo(canvas: HTMLCanvasElement, resolution: number, rotation: HexRotation): void {
+        const textPosition: number = GridConfig.hexSize * 0.3;
+        const color: string = '#aa0000';
+        const startAngle = GridConfig.GridOrientation === GridOrientation.PointyTop ? 0 : Math.PI / 6;
 
-        this.initRotationLine();
-        this.initRotationText();
+        const canvasCenterX = canvas.width / 2;
+        const canvasCenterY = canvas.height / 2;
+
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = color;
+        ctx.font = `${0.2 * resolution}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.save();
+        ctx.translate(canvasCenterX, canvasCenterY);
+        ctx.rotate(startAngle + Math.PI / 2);
+        ctx.fillText(`${RotationAngleName[rotation]}`, 0, -GridConfig.hexSize * textPosition * resolution);
+        ctx.restore();
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(canvasCenterX, canvasCenterY);
+        ctx.lineTo(canvasCenterX + Math.cos(startAngle) * GridConfig.hexSize * textPosition * resolution * 0.7,
+                   canvasCenterY + Math.sin(startAngle) * GridConfig.hexSize * textPosition * resolution * 0.7);
+        ctx.stroke();
     }
 
-    private initRotationLine(): void {
-        const size: number = 0.2;
-        const material: THREE.LineBasicMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+    private drawEdgesInfo(canvas: HTMLCanvasElement, resolution: number): void {
+        const ctx = canvas.getContext('2d');
 
-        const points: THREE.Vector3[] = [];
-        points.push(new THREE.Vector3(0, 0, 0));
-        points.push(new THREE.Vector3(size, 0, 0));
+        const edgeTypes: TileEdgeType[] = this.getEdgeTypes(this.hexTileType);
+        const edgeCount: number = edgeTypes.length;
 
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const line = new THREE.Line(geometry, material);
-        this.rotationTextWrapper.add(line);
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
 
-        line.position.set(0, 0.02, 0);
+        const startAngle = GridConfig.GridOrientation === GridOrientation.PointyTop ? 0 : Math.PI / 6;
 
-        const defaultRotation: number = GridConfig.GridOrientation === GridOrientation.PointyTop ? 0 : -Math.PI / 6;
-        line.rotation.set(0, defaultRotation, 0);
-    }
+        for (let i = 0; i < edgeCount; i++) {
+            const angle = startAngle - (Math.PI / 3) * i;
+            const edgeType: TileEdgeType = edgeTypes[i];
+            const edgeColor: string = EdgeColor[edgeType];
 
-    private initRotationText(): void {
-        const rotationText: Text = this.rotationText = this.createText(RotationAngleName[0], 0.20, 0xaa0000);
-        this.rotationTextWrapper.add(rotationText);
+            ctx.fillStyle = edgeColor;
+            ctx.font = `${0.15 * resolution}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
 
-        rotationText.rotation.x = -Math.PI / 2;
-        rotationText.position.set(0, 0.03, 0);
+            const textX = centerX + Math.cos(angle) * GridConfig.hexSize * 0.7 * resolution;
+            const textY = centerY + Math.sin(angle) * GridConfig.hexSize * 0.7 * resolution;
 
-        const defaultRotation: number = GridConfig.GridOrientation === GridOrientation.PointyTop ? 0 : -Math.PI / 6;
-        const quaternion = new THREE.Quaternion();
-        quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), defaultRotation - Math.PI * 0.5);
-        rotationText.quaternion.multiplyQuaternions(quaternion, rotationText.quaternion);
-
-        const direction = new THREE.Vector3(Math.cos(-defaultRotation), 0, Math.sin(-defaultRotation));
-        rotationText.position.addScaledVector(direction, 0.4);
-    }
-
-    private initEdgesDebug(): void {
-        this.edgesWrapper = new THREE.Group();
-        this.add(this.edgesWrapper);
-
-        for (let i = 0; i < 6; i++) {
-            const edgeType: TileEdgeType = this.getEdgeTypes(this.hexTileType)[i];
-            const edgeColor: number = EdgeColor[edgeType];
-
-            const edgeText: Text = this.createText(edgeType as string, 0.15, edgeColor);
-            this.edgesWrapper.add(edgeText);
-
-            edgeText.rotation.x = -Math.PI / 2;
-            edgeText.position.set(0, 0.03, 0);
-
-            const defaultRotation: number = GridConfig.GridOrientation === GridOrientation.PointyTop ? 0 : -Math.PI / 6;
-            const edgeRotation = defaultRotation + Math.PI / 3 * i;
-            const quaternion = new THREE.Quaternion();
-            quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), edgeRotation - Math.PI * 0.5);
-            edgeText.quaternion.multiplyQuaternions(quaternion, edgeText.quaternion);
-
-            const direction = new THREE.Vector3(Math.cos(-edgeRotation), 0, Math.sin(-edgeRotation));
-            edgeText.position.addScaledVector(direction, 0.8);
-
+            ctx.save();
+            ctx.translate(textX, textY);
+            ctx.rotate(angle + Math.PI / 2);
+            ctx.fillText(edgeType as string, 0, 0);
+            ctx.restore();
         }
     }
 
     private getEdgeTypes(hexTileType: HexTileType): TileEdgeType[] {
         const hexTileRules = HexTilesRulesConfig.find(rule => rule.type === hexTileType);
         return hexTileRules ? hexTileRules.edges : [];
-
-    }
-
-    private createText(textString: string, fontSize?: number, color?: number): Text {
-        const text = new Text();
-        text.text = textString;
-        text.fontSize = fontSize || 0.23;
-        text.anchorX = 'center';
-        text.anchorY = 'middle';
-        text.color = color;
-
-        return text;
     }
 }
