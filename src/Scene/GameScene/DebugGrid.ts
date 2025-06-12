@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import GridConfig from '../../Data/Configs/GridConfig';
 import { GridOrientation } from '../../Data/Enums/GridOrientation';
 import HexGridHelper from '../../Helpers/HexGridHelper';
-import CanvasPlaneMesh from './HexTile/Debug/CanvasPlaneMesh';
+import CanvasPlaneMesh from '../../Helpers/CanvasPlaneMesh';
 
 export default class DebugGrid extends THREE.Group {
     private radius: number;

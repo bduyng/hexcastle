@@ -6,9 +6,9 @@ import { EdgeColor, RotationAngleName } from '../../../../Data/Configs/DebugInfo
 import { HexTileType } from '../../../../Data/Enums/HexTileType';
 import { TileEdgeType } from '../../../../Data/Enums/TileEdgeType';
 import DebugConfig from '../../../../Data/Configs/Debug/DebugConfig';
-import { HexTilesRulesConfig } from '../../../../Data/Configs/WFCConfig';
-import CanvasPlaneMesh from './CanvasPlaneMesh';
+import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
 import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
+import { HexTilesRulesConfig } from '../../../../Data/Configs/HexTilesRulesConfig';
 
 export default class HexTileDebug extends THREE.Group {
     private hexTileType: HexTileType;

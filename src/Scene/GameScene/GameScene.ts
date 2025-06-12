@@ -1,20 +1,22 @@
 import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
 import HexTile from './HexTile/HexTile';
-import { IHexCoord } from '../../Data/Interfaces/IHexTile';
+import { IHexTileTransform, IHexCoord, IHexTileInstanceData } from '../../Data/Interfaces/IHexTile';
 import DebugGrid from './DebugGrid';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import { HexTileType } from '../../Data/Enums/HexTileType';
 import HexGridHelper from '../../Helpers/HexGridHelper';
 import { HexRotation } from '../../Data/Enums/HexRotation';
 import { HexWFC } from './HexWFC';
-import { HexTilesRulesConfig } from '../../Data/Configs/WFCConfig';
 import { IHexTilesResult } from '../../Data/Interfaces/IWFC';
+import HexTileInstance from './HexTile/HexTileInstance';
+import { WFCTiles } from '../../Data/Configs/WFCConfig';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
 
     private hexTiles: HexTile[] = [];
+    private hexTileInstances: HexTileInstance[] = [];
 
     constructor(data: ILibrariesData) {
         super();
@@ -35,24 +37,7 @@ export default class GameScene extends THREE.Group {
     }
 
     private initHexWFC(): void {
-        const usedTiles: HexTileType[] = [
-            // HexTileType.Grass,
-            HexTileType.RoadA,
-            HexTileType.RoadB,
-            HexTileType.RoadC,
-            HexTileType.RoadD,
-            HexTileType.RoadE,
-            HexTileType.RoadF,
-            HexTileType.RoadG,
-            HexTileType.RoadH,
-            HexTileType.RoadI,
-            HexTileType.RoadJ,
-            HexTileType.RoadK,
-            HexTileType.RoadL,
-            HexTileType.RoadM,
-        ];
-
-        const wfc = new HexWFC(3, usedTiles);
+        const wfc = new HexWFC(3, WFCTiles);
         const success = wfc.generate();
 
         if (success) {
@@ -64,14 +49,38 @@ export default class GameScene extends THREE.Group {
     }
 
     private renderGrid(grid: IHexTilesResult[]): void {
-        grid.forEach((hexTileResult) => {
-            const hexTile = new HexTile(hexTileResult.type);
-            hexTile.setHexTilePosition(hexTileResult.position);
-            hexTile.setHexTileRotation(hexTileResult.rotation);
+        const hexTileInstancesData: IHexTileInstanceData[] = this.convertToHexTileInstanceData(grid);
 
-            this.add(hexTile);
-            this.hexTiles.push(hexTile);
+        for (let i = 0; i < hexTileInstancesData.length; i++) {
+            const hexTileInstance = new HexTileInstance(hexTileInstancesData[i]);
+            this.add(hexTileInstance);
+
+            this.hexTileInstances.push(hexTileInstance);
+        }
+
+        console.log(hexTileInstancesData);
+    }
+
+    private convertToHexTileInstanceData(grid: IHexTilesResult[]): IHexTileInstanceData[] {
+        const hexTileInstancesData: IHexTileInstanceData[] = [];
+        grid.forEach((hexTileResult) => {
+            const hexTileTransform: IHexTileTransform = {
+                position: hexTileResult.position,
+                rotation: hexTileResult.rotation,
+            };
+
+            const existingType = hexTileInstancesData.find((item) => item.type === hexTileResult.type);
+            if (existingType) {
+                existingType.transforms.push(hexTileTransform);
+            } else {
+                hexTileInstancesData.push({
+                    type: hexTileResult.type,
+                    transforms: [hexTileTransform],
+                });
+            }
         });
+
+        return hexTileInstancesData;
     }
 
     private initTestHexTiles(): void {

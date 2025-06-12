@@ -21,6 +21,10 @@ export default class HexGridHelper {
         }
     }
 
+    public static hexRotationToAngle(rotation: HexRotation): number {
+        return (Math.PI / 3) * rotation;
+    }
+
     public static setRotation(object: THREE.Object3D, rotation: HexRotation): void {
         object.rotation.set(0, (Math.PI / 3) * rotation, 0);
     }
