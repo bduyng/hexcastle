@@ -5,19 +5,22 @@ import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import { EdgeColor, RotationAngleName } from '../../../../Data/Configs/DebugInfoConfig';
 import { HexTileType } from '../../../../Data/Enums/HexTileType';
 import { TileEdgeType } from '../../../../Data/Enums/TileEdgeType';
-import DebugConfig from '../../../../Data/Configs/Debug/DebugConfig';
 import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
 import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 import { HexTilesRulesConfig } from '../../../../Data/Configs/HexTilesRulesConfig';
+import { IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
+import HexTileModelConfig from '../../../../Data/Configs/HexTileModelConfig';
 
 export default class HexTileDebug extends THREE.Group {
     private hexTileType: HexTileType;
     private debugInfoPlane: CanvasPlaneMesh;
+    private hexTileDebugConfig: IHexTileDebugConfig;
 
-    constructor(hexTileType: HexTileType) {
+    constructor(hexTileType: HexTileType, hexTileDebugConfig: IHexTileDebugConfig = null) {
         super();
 
         this.hexTileType = hexTileType;
+        this.hexTileDebugConfig = hexTileDebugConfig;
 
         this.init();
     }
@@ -28,6 +31,11 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     private init(): void {
+        this.initDebugInfoPlane();
+        this.initHexTileModelName();
+    }
+
+    private initDebugInfoPlane(): void {
         const debugInfoPlane = this.debugInfoPlane = new CanvasPlaneMesh(GridConfig.hexSize * 2, GridConfig.hexSize * 2, 200);
         this.add(debugInfoPlane);
 
@@ -44,11 +52,11 @@ export default class HexTileDebug extends THREE.Group {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        if (DebugConfig.game.hexTileDebug.rotation) {
+        if (this.hexTileDebugConfig?.rotation) {
             this.drawRotationInfo(canvas, resolution, rotation);
         }
 
-        if (DebugConfig.game.hexTileDebug.edge) {
+        if (this.hexTileDebugConfig?.edge) {
             this.drawEdgesInfo(canvas, resolution);
         }
     }
@@ -79,7 +87,7 @@ export default class HexTileDebug extends THREE.Group {
         ctx.beginPath();
         ctx.moveTo(canvasCenterX, canvasCenterY);
         ctx.lineTo(canvasCenterX + Math.cos(startAngle) * GridConfig.hexSize * textPosition * resolution * 0.7,
-                   canvasCenterY + Math.sin(startAngle) * GridConfig.hexSize * textPosition * resolution * 0.7);
+            canvasCenterY + Math.sin(startAngle) * GridConfig.hexSize * textPosition * resolution * 0.7);
         ctx.stroke();
     }
 
@@ -118,5 +126,25 @@ export default class HexTileDebug extends THREE.Group {
     private getEdgeTypes(hexTileType: HexTileType): TileEdgeType[] {
         const hexTileRules = HexTilesRulesConfig.find(rule => rule.type === hexTileType);
         return hexTileRules ? hexTileRules.edges : [];
+    }
+
+    private initHexTileModelName(): void {
+        const modelNamePlane = new CanvasPlaneMesh(GridConfig.hexSize * 2, GridConfig.hexSize * 2, 200);
+        this.add(modelNamePlane);
+
+        const debugInfoPlaneView = modelNamePlane.getView();
+        debugInfoPlaneView.rotation.x = -Math.PI / 2;
+        debugInfoPlaneView.position.set(0, 0.03, -1.4);
+
+        const canvas = modelNamePlane.getCanvas();
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const resolution = modelNamePlane.getResolution();
+        const modelName = HexTileModelConfig[this.hexTileType].modelName;
+        ctx.fillStyle = '#000000';
+        ctx.font = `${0.35 * resolution}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(modelName, canvas.width / 2, canvas.height / 2);
     }
 }

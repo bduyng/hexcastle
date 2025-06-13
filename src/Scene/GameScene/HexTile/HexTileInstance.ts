@@ -11,7 +11,6 @@ import { GridOrientation } from '../../../Data/Enums/GridOrientation';
 
 export default class HexTileInstance extends THREE.Group {
     private hexTileInstanceData: IHexTileInstanceData;
-    private instance: THREE.InstancedMesh;
     private hexTileType: HexTileType;
 
     constructor(hexTileInstanceData: IHexTileInstanceData) {
@@ -36,7 +35,7 @@ export default class HexTileInstance extends THREE.Group {
         const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel(modelName);
 
         const instanceCount: number = hexTileTransforms.length;
-        const instanceMesh = this.instance = new THREE.InstancedMesh(geometry, material, instanceCount);
+        const instanceMesh = new THREE.InstancedMesh(geometry, material, instanceCount);
         this.add(instanceMesh);
         // instanceMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 

@@ -1,11 +1,10 @@
 import * as THREE from 'three';
 import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
-import { IHexCoord } from '../../../Data/Interfaces/IHexTile';
+import { IHexCoord, IHexTileDebugConfig } from '../../../Data/Interfaces/IHexTile';
 import GridConfig from '../../../Data/Configs/GridConfig';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
 import { GridOrientation } from '../../../Data/Enums/GridOrientation';
 import HexTileDebug from './Debug/HexTileDebug';
-import DebugConfig from '../../../Data/Configs/Debug/DebugConfig';
 import { HexTileType } from '../../../Data/Enums/HexTileType';
 import HexTileModelConfig from '../../../Data/Configs/HexTileModelConfig';
 import Materials from '../../../Core/Materials/Materials';
@@ -18,11 +17,13 @@ export default class HexTile extends THREE.Group {
     private hexTileRotation: HexRotation;
     private debugInfo: HexTileDebug;
     private wrapper: THREE.Group;
+    private hexTileDebugConfig: IHexTileDebugConfig;
 
-    constructor(hexTileType: HexTileType) {
+    constructor(hexTileType: HexTileType, hexTileDebugConfig: IHexTileDebugConfig = null) {
         super();
 
         this.hexTileType = hexTileType;
+        this.hexTileDebugConfig = hexTileDebugConfig;
 
         this.wrapper = new THREE.Group();
         this.add(this.wrapper);
@@ -72,8 +73,8 @@ export default class HexTile extends THREE.Group {
     }
 
     private initDebugInfo(): void {
-        if (DebugConfig.game.hexTileDebug.edge || DebugConfig.game.hexTileDebug.rotation) {
-            const debugInfo = this.debugInfo = new HexTileDebug(this.hexTileType);
+        if (this.hexTileDebugConfig) {
+            const debugInfo = this.debugInfo = new HexTileDebug(this.hexTileType, this.hexTileDebugConfig);
             this.add(debugInfo);
         }
     }

@@ -1,5 +1,6 @@
 import { TileEdgeType } from "../Enums/TileEdgeType";
 import { HexRotation } from "../Enums/HexRotation";
+import { HexTileType } from "../Enums/HexTileType";
 
 const RotationAngleName: { [key in HexRotation]: string } = {
     0: '0°',
@@ -15,4 +16,23 @@ const EdgeColor: { [key in TileEdgeType]: string } = {
     [TileEdgeType.Road]: '#aa00aa',
 }
 
-export { RotationAngleName, EdgeColor };
+const EdgesDebugHexTiles: HexTileType[] = [
+    // HexTileType.Grass,
+
+    // Roads
+    HexTileType.RoadA,
+    HexTileType.RoadB,
+    HexTileType.RoadC,
+    HexTileType.RoadD,
+    HexTileType.RoadE,
+    HexTileType.RoadF,
+    HexTileType.RoadG,
+    HexTileType.RoadH,
+    HexTileType.RoadI,
+    HexTileType.RoadJ,
+    HexTileType.RoadK,
+    HexTileType.RoadL,
+    HexTileType.RoadM,
+]
+
+export { RotationAngleName, EdgeColor, EdgesDebugHexTiles };

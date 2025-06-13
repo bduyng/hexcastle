@@ -20,3 +20,9 @@ export interface IHexTileInstanceData {
     type: HexTileType;
     transforms: IHexTileTransform[];
 }
+
+export interface IHexTileDebugConfig {
+    rotation?: boolean;
+    edge?: boolean;
+    modelName?: boolean;
+}

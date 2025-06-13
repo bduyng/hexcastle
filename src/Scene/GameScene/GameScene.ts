@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
 import HexTile from './HexTile/HexTile';
 import { IHexTileTransform, IHexCoord, IHexTileInstanceData } from '../../Data/Interfaces/IHexTile';
-import DebugGrid from './DebugGrid';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import { HexTileType } from '../../Data/Enums/HexTileType';
 import HexGridHelper from '../../Helpers/HexGridHelper';
@@ -11,6 +10,9 @@ import { HexWFC } from './HexWFC';
 import { IHexTilesResult } from '../../Data/Interfaces/IWFC';
 import HexTileInstance from './HexTile/HexTileInstance';
 import { WFCTiles } from '../../Data/Configs/WFCConfig';
+import DebugGrid from './Debug/DebugGrid';
+import EdgesDebug from './Debug/EdgesDebug';
+import { EdgesDebugHexTiles } from '../../Data/Configs/DebugInfoConfig';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -24,7 +26,6 @@ export default class GameScene extends THREE.Group {
         this.data = data;
 
         this.init();
-        this.initDebugGrid();
     }
 
     public update(dt: number): void {
@@ -32,8 +33,18 @@ export default class GameScene extends THREE.Group {
     }
 
     private init(): void {
+        if (DebugConfig.game.edgesDebugMode) {
+            const edgesDebug = new EdgesDebug();
+            this.add(edgesDebug);
+
+            return;
+        }
+
         // this.initTestHexTiles();
         this.initHexWFC();
+
+
+        this.initDebugGrid();
     }
 
     private initHexWFC(): void {
