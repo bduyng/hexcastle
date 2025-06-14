@@ -30,6 +30,14 @@ export default class HexTileDebug extends THREE.Group {
         this.drawInfo(rotation);
     }
 
+    public show(): void {
+        this.visible = true;
+    }
+
+    public hide(): void {
+        this.visible = false;
+    }
+
     private init(): void {
         if (this.hexTileDebugConfig?.rotation || this.hexTileDebugConfig?.edge) {
             this.initDebugInfoPlane();

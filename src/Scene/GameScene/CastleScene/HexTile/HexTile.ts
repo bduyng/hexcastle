@@ -1,15 +1,15 @@
 import * as THREE from 'three';
-import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
-import { IHexCoord, IHexTileDebugConfig } from '../../../Data/Interfaces/IHexTile';
-import GridConfig from '../../../Data/Configs/GridConfig';
-import HexGridHelper from '../../../Helpers/HexGridHelper';
-import { GridOrientation } from '../../../Data/Enums/GridOrientation';
-import HexTileDebug from './Debug/HexTileDebug';
-import { HexTileType } from '../../../Data/Enums/HexTileType';
-import HexTileModelConfig from '../../../Data/Configs/HexTileModelConfig';
-import Materials from '../../../Core/Materials/Materials';
-import { MaterialType } from '../../../Data/Enums/MaterialType';
-import { HexRotation } from '../../../Data/Enums/HexRotation';
+import ThreeJSHelper from '../../../../Helpers/ThreeJSHelper';
+import { IHexCoord, IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
+import GridConfig from '../../../../Data/Configs/GridConfig';
+import HexGridHelper from '../../../../Helpers/HexGridHelper';
+import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
+import HexTileDebug from './HexTileDebug';
+import { HexTileType } from '../../../../Data/Enums/HexTileType';
+import HexTileModelConfig from '../../../../Data/Configs/HexTileModelConfig';
+import Materials from '../../../../Core/Materials/Materials';
+import { MaterialType } from '../../../../Data/Enums/MaterialType';
+import { HexRotation } from '../../../../Data/Enums/HexRotation';
 
 export default class HexTile extends THREE.Group {
     private hexTileType: HexTileType;

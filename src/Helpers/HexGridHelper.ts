@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { IHexCoord } from '../Data/Interfaces/IHexTile';
 import { GridOrientation } from '../Data/Enums/GridOrientation';
-import HexTile from '../Scene/GameScene/HexTile/HexTile';
+import HexTile from '../Scene/GameScene/CastleScene/HexTile/HexTile';
 import { HexRotation } from '../Data/Enums/HexRotation';
 
 export default class HexGridHelper {

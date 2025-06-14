@@ -1,23 +1,13 @@
 import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
-import HexTile from './HexTile/HexTile';
-import { IHexTileTransform, IHexCoord, IHexTileInstanceData, IHexTileDebugConfig } from '../../Data/Interfaces/IHexTile';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
-import { HexTileType } from '../../Data/Enums/HexTileType';
-import HexGridHelper from '../../Helpers/HexGridHelper';
-import { HexRotation } from '../../Data/Enums/HexRotation';
-import { HexWFC } from './HexWFC';
-import { IHexTilesResult } from '../../Data/Interfaces/IWFC';
-import HexTileInstance from './HexTile/HexTileInstance';
-import DebugGrid from './Debug/DebugGrid';
-import EdgesDebug from './Debug/EdgesDebug';
-import { DefaultWFCConfig } from '../../Data/Configs/WFCConfig';
+import DebugGrid from './CastleScene/DebugViewHelpers/DebugGrid';
+import EdgesDebug from './CastleScene/DebugViewHelpers/EdgesDebug';
+import CastleScene from './CastleScene/CastleScene';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
-
-    private hexTiles: HexTile[] = [];
-    private hexTileInstances: HexTileInstance[] = [];
+    private castleScene: CastleScene;
 
     constructor(data: ILibrariesData) {
         super();
@@ -27,8 +17,10 @@ export default class GameScene extends THREE.Group {
         this.init();
     }
 
-    public update(dt: number): void {
-
+    public update(dt: number): void { 
+        if (this.castleScene) {
+            this.castleScene.update(dt);
+        }
     }
 
     private init(): void {
@@ -39,82 +31,13 @@ export default class GameScene extends THREE.Group {
             return;
         }
 
-        // this.initTestHexTiles();
-        this.initHexWFC();
-
-
+        this.initCastleScene();
         this.initDebugGrid();
     }
 
-    private initHexWFC(): void {
-        const wfc = new HexWFC(DefaultWFCConfig);
-        const success = wfc.generate();
-
-        if (success) {
-            const grid = wfc.getGrid();
-            this.renderGrid(grid);
-        } else {
-            console.error('Failed to generate grid');
-        }
-    }
-
-    private renderGrid(grid: IHexTilesResult[]): void {
-        const hexTileInstancesData: IHexTileInstanceData[] = this.convertToHexTileInstanceData(grid);
-
-        for (let i = 0; i < hexTileInstancesData.length; i++) {
-            const hexTileInstance = new HexTileInstance(hexTileInstancesData[i], DebugConfig.game.hexTileDebug);
-            this.add(hexTileInstance);
-
-            this.hexTileInstances.push(hexTileInstance);
-        }
-
-        console.log(hexTileInstancesData);
-    }
-
-    private convertToHexTileInstanceData(grid: IHexTilesResult[]): IHexTileInstanceData[] {
-        const hexTileInstancesData: IHexTileInstanceData[] = [];
-        grid.forEach((hexTileResult) => {
-            const hexTileTransform: IHexTileTransform = {
-                position: hexTileResult.position,
-                rotation: hexTileResult.rotation,
-            };
-
-            const existingType = hexTileInstancesData.find((item) => item.type === hexTileResult.type);
-            if (existingType) {
-                existingType.transforms.push(hexTileTransform);
-            } else {
-                hexTileInstancesData.push({
-                    type: hexTileResult.type,
-                    transforms: [hexTileTransform],
-                });
-            }
-        });
-
-        return hexTileInstancesData;
-    }
-
-    private initTestHexTiles(): void {
-        const mapRadius = 0;
-        const hexTilesMap: IHexCoord[] = [];
-        for (let q = -mapRadius; q <= mapRadius; q++) {
-            const r1 = Math.max(-mapRadius, -q - mapRadius);
-            const r2 = Math.min(mapRadius, -q + mapRadius);
-            for (let r = r1; r <= r2; r++) {
-                hexTilesMap.push({ q, r });
-            }
-        }
-
-        hexTilesMap.forEach((coord) => {
-            const hexTile = new HexTile(HexTileType.RoadJ);
-            hexTile.setHexTilePosition(coord);
-            hexTile.setHexTileRotation(0);
-            this.add(hexTile);
-
-            this.hexTiles.push(hexTile);
-        });
-
-        const hexTile: HexTile = HexGridHelper.getHexTileByHexCoord(this.hexTiles, { q: 0, r: 0 });
-        hexTile.setHexTileRotation(HexRotation.Rotate60);
+    private initCastleScene(): void {
+        const castleScene = this.castleScene = new CastleScene();
+        this.add(castleScene);
     }
 
     private initDebugGrid(): void {

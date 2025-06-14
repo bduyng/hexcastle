@@ -1,11 +1,11 @@
-import { IHexTilesRule } from "../../Data/Interfaces/IBaseSceneData";
-import { HexTileType } from "../../Data/Enums/HexTileType";
-import { TileEdgeType } from "../../Data/Enums/TileEdgeType";
-import { IHexCoord } from "../../Data/Interfaces/IHexTile";
-import { HexRotation } from "../../Data/Enums/HexRotation";
-import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig } from "../../Data/Interfaces/IWFC";
-import { NeighborDirections } from "../../Data/Configs/WFCConfig";
-import { HexTilesRulesConfig } from "../../Data/Configs/HexTilesRulesConfig";
+import { IHexTilesRule } from "../../../Data/Interfaces/IBaseSceneData";
+import { HexTileType } from "../../../Data/Enums/HexTileType";
+import { TileEdgeType } from "../../../Data/Enums/TileEdgeType";
+import { IHexCoord } from "../../../Data/Interfaces/IHexTile";
+import { HexRotation } from "../../../Data/Enums/HexRotation";
+import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig, IWFCStep } from "../../../Data/Interfaces/IWFC";
+import { NeighborDirections } from "../../../Data/Configs/WFCConfig";
+import { HexTilesRulesConfig } from "../../../Data/Configs/HexTilesRulesConfig";
 
 export class HexWFC {
     private tiles: Map<HexTileType, IHexTilesRule>;
@@ -13,6 +13,7 @@ export class HexWFC {
     private tileVariants: ITileVariant[];
     private grid: Map<string, IWFCHexTilesInfo>;
     private config: IWFCConfig;
+    private steps: IWFCStep[] = [];
 
     constructor(config: IWFCConfig) {
         this.config = config;
@@ -20,10 +21,18 @@ export class HexWFC {
     }
 
     public generate(): boolean {
+        this.steps = [];
+        
         if (this.config.predefinedTiles && !this.initializePredefinedTiles()) {
             return false;
         }
 
+        const initialStep = {
+            freeCells: this.getFreeCellsInfo()
+        };
+        this.steps.push(initialStep);
+
+        let stepIndex = 1;
         while (true) {
             const hexTile: IWFCHexTilesInfo = this.findLowestEntropyHexTile();
 
@@ -41,6 +50,12 @@ export class HexWFC {
             if (!success) {
                 return false;
             }
+
+            const afterPropagationStep = {
+                freeCells: this.getFreeCellsInfo()
+            };
+            this.steps.push(afterPropagationStep);
+            stepIndex++;
         }
     }
 
@@ -156,6 +171,34 @@ export class HexWFC {
         hexTile.rotation = selectedVariant.rotation;
         hexTile.type = selectedVariant.type;
         hexTile.entropy = 1;
+
+        this.steps.push({
+            newTile: {
+                position: hexTile.coord,
+                type: selectedVariant.type,
+                rotation: selectedVariant.rotation
+            },
+            freeCells: this.getFreeCellsInfo()
+        });
+    }
+
+    private getFreeCellsInfo(): { position: IHexCoord; entropy: number; possibleVariants: ITileVariant[] }[] {
+        const freeCells: { position: IHexCoord; entropy: number; possibleVariants: ITileVariant[] }[] = [];
+        
+        for (const tile of this.grid.values()) {
+            if (!tile.collapsed) {
+                const possibleVariants = Array.from(tile.possibleVariants);
+                const entropy = possibleVariants.length;
+                
+                freeCells.push({
+                    position: { ...tile.coord },
+                    entropy: entropy,
+                    possibleVariants: [...possibleVariants]
+                });
+            }
+        }
+        
+        return freeCells;
     }
 
     private getNeighborCoord(coord: IHexCoord, direction: number): IHexCoord {
@@ -183,8 +226,7 @@ export class HexWFC {
 
             checked.add(currentKey);
 
-            const currentVariant = Array.from(currentHexTile.possibleVariants)[0];
-
+            // Проверяем все соседние ячейки для текущей
             for (let direction = 0; direction < 6; direction++) {
                 const neighborCoord = this.getNeighborCoord(currentHexTile.coord, direction);
                 const neighborKey = this.getCoordKey(neighborCoord);
@@ -193,15 +235,20 @@ export class HexWFC {
                 if (!neighbor || neighbor.collapsed)
                     continue;
 
-                const currentEdge = currentVariant.edges[direction];
+                // Получаем все возможные варианты для текущей ячейки
+                const currentVariants = Array.from(currentHexTile.possibleVariants);
                 const oppositeDirection = this.getOppositeDirection(direction);
-
-                const compatibleVariants = Array.from(neighbor.possibleVariants).filter(variant =>
-                    variant.edges[oppositeDirection] === currentEdge
-                );
+                
+                // Собираем все возможные ребра, которые могут быть у текущей ячейки
+                const possibleEdges = new Set(currentVariants.map(v => v.edges[direction]));
+                
+                // Фильтруем варианты соседа, оставляя только те, которые совместимы хотя бы с одним вариантом текущей ячейки
+                const compatibleVariants = Array.from(neighbor.possibleVariants).filter(variant => {
+                    const neighborEdge = variant.edges[oppositeDirection];
+                    return possibleEdges.has(neighborEdge);
+                });
 
                 if (compatibleVariants.length === 0) {
-                    console.error(`CONTRADICTION: No compatible variants for neighbor at ${neighborKey}`);
                     return false;
                 }
 
@@ -247,7 +294,6 @@ export class HexWFC {
             return true;
         }
 
-        // First, place all predefined tiles
         const placedTiles: IWFCHexTilesInfo[] = [];
         
         for (const predefinedTile of this.config.predefinedTiles) {
@@ -267,7 +313,7 @@ export class HexWFC {
                 return false;
             }
 
-            const selectedVariant = variants[0]; // We know there's exactly one variant
+            const selectedVariant = variants[0];
             
             tile.collapsed = true;
             tile.possibleVariants = new Set<ITileVariant>([selectedVariant]);
@@ -280,7 +326,6 @@ export class HexWFC {
             placedTiles.push(tile);
         }
 
-        // Then propagate constraints from all placed tiles
         for (const tile of placedTiles) {
             const success = this.propagateConstraints(tile);
             if (!success) {
@@ -290,5 +335,9 @@ export class HexWFC {
         }
 
         return true;
+    }
+
+    public getSteps(): IWFCStep[] {
+        return this.steps;
     }
 }

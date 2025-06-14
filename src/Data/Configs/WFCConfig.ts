@@ -1,10 +1,10 @@
 import { HexTileType } from "../Enums/HexTileType";
 import { HexRotation } from "../Enums/HexRotation";
 import { IHexCoord } from "../Interfaces/IHexTile";
-import { IWFCConfig } from "../Interfaces/IWFC";
+import { IShowTilesConfig, IWFCConfig } from "../Interfaces/IWFC";
 
 const WFCTiles: HexTileType[] = [
-    // HexTileType.Grass,
+    HexTileType.Grass,
     HexTileType.RoadA,
     HexTileType.RoadB,
     HexTileType.RoadC,
@@ -29,16 +29,20 @@ const NeighborDirections: IHexCoord[] = [
     { q: 0, r: 1 },   // 300°
 ];
 
+const ShowTilesConfig: IShowTilesConfig = {
+    delay: 50,
+}
+
 const DefaultWFCConfig: IWFCConfig = {
     radius: 3,
     hexTileTypesUsed: WFCTiles,
     predefinedTiles: [
         {
             coord: { q: 0, r: 0 },
-            type: HexTileType.RoadM,
+            type: HexTileType.RoadA,
             rotation: HexRotation.Rotate0
         }
     ]
 };
 
-export { NeighborDirections, WFCTiles, DefaultWFCConfig };
+export { NeighborDirections, WFCTiles, DefaultWFCConfig, ShowTilesConfig };

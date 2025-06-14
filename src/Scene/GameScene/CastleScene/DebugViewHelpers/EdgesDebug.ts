@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { HexTileType } from '../../../Data/Enums/HexTileType';
+import { HexTileType } from '../../../../Data/Enums/HexTileType';
+import { EdgesDebugHexTiles } from '../../../../Data/Configs/DebugInfoConfig';
+import { IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
 import HexTile from '../HexTile/HexTile';
-import { EdgesDebugHexTiles } from '../../../Data/Configs/DebugInfoConfig';
-import { IHexTileDebugConfig } from '../../../Data/Interfaces/IHexTile';
 
 
 export default class EdgesDebug extends THREE.Group {

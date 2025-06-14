@@ -26,3 +26,8 @@ export interface IHexTileDebugConfig {
     edge?: boolean;
     modelName?: boolean;
 }
+
+export interface IHexTileInstanceIndex {
+    index: number;
+    transform: IHexTileTransform;
+}

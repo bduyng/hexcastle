@@ -108,4 +108,33 @@ export default class ThreeJSHelper {
 
         return resultColor;
     }
+
+    public static updateInstanceTransform(instanceMesh: THREE.InstancedMesh, index: number, position?: THREE.Vector3, rotationQuaternion?: THREE.Quaternion, scale?: THREE.Vector3): void {
+        const matrix = new THREE.Matrix4();
+        instanceMesh.getMatrixAt(index, matrix);
+
+        const newMatrix = new THREE.Matrix4();
+        const newPosition = new THREE.Vector3(0, 0, 0);
+        const newRotationQuaternion = new THREE.Quaternion();
+        const newScale = new THREE.Vector3(1, 1, 1);
+
+        matrix.decompose(newPosition, newRotationQuaternion, newScale);
+
+        if (position) {
+            newPosition.copy(position);
+        }
+
+        if (rotationQuaternion) {
+            newRotationQuaternion.copy(rotationQuaternion);
+        }
+
+        if (scale) {
+            newScale.copy(scale);
+        }
+
+        newMatrix.compose(newPosition, newRotationQuaternion, newScale);
+
+        instanceMesh.setMatrixAt(index, newMatrix);
+        instanceMesh.instanceMatrix.needsUpdate = true;
+    }
 }

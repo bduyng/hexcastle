@@ -38,3 +38,20 @@ export interface IWFCConfig {
     hexTileTypesUsed: HexTileType[];
     predefinedTiles?: IPredefinedTile[];
 }
+
+export interface IWFCStep {
+    newTile?: {
+        position: IHexCoord;
+        type: HexTileType;
+        rotation: HexRotation;
+    };
+    freeCells: {
+        position: IHexCoord;
+        entropy: number;
+        possibleVariants: ITileVariant[];
+    }[];
+}
+
+export interface IShowTilesConfig {
+    delay: number;
+}

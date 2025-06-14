@@ -6,6 +6,7 @@ export default class CanvasPlaneMesh extends THREE.Group {
     private width: number;
     private height: number;
     private resolution: number;
+    private texture: THREE.CanvasTexture;
 
     constructor(width: number, height: number, resolution: number) {
         super();
@@ -29,6 +30,10 @@ export default class CanvasPlaneMesh extends THREE.Group {
         return this.view;
     }
 
+    public updateTexture(): void {
+        this.texture.needsUpdate = true;
+    }
+
     private init(): void {
         const canvas = this.canvas = document.createElement('canvas');
 
@@ -38,7 +43,7 @@ export default class CanvasPlaneMesh extends THREE.Group {
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
 
-        const texture = new THREE.CanvasTexture(canvas);
+        const texture = this.texture = new THREE.CanvasTexture(canvas);
         texture.needsUpdate = true;
 
         const planeSize = Math.max(canvasWidth, canvasHeight) / this.resolution;

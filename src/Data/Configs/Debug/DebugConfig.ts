@@ -12,8 +12,9 @@ const DebugConfig = {
         },
         hexTileDebug: {
             rotation: false,
-            edge: true,
+            edge: false,
         },
+        showEntropy: true,
         edgesDebugMode: false,
     }
 };
