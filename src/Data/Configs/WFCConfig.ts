@@ -32,10 +32,13 @@ const NeighborDirections: IHexCoord[] = [
 const DefaultWFCConfig: IWFCConfig = {
     radius: 3,
     hexTileTypesUsed: WFCTiles,
-    startTile: {
-        type: HexTileType.RoadM,
-        rotation: HexRotation.Rotate60
-    }
+    predefinedTiles: [
+        {
+            coord: { q: 0, r: 0 },
+            type: HexTileType.RoadM,
+            rotation: HexRotation.Rotate0
+        }
+    ]
 };
 
 export { NeighborDirections, WFCTiles, DefaultWFCConfig };

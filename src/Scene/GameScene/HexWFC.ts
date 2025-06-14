@@ -20,39 +20,7 @@ export class HexWFC {
     }
 
     public generate(): boolean {
-        const centerTile = this.grid.get(this.getCoordKey({ q: 0, r: 0 }));
-        if (!centerTile) {
-            console.error('Center tile not found');
-            return false;
-        }
-
-        if (this.config.startTile) {
-            let variants = this.tileVariants.filter(v => v.type === this.config.startTile.type);
-            
-            if (this.config.startTile.rotation !== undefined) {
-                variants = variants.filter(v => v.rotation === this.config.startTile.rotation);
-            }
-            
-            if (variants.length === 0) {
-                console.error(`No variants found for start tile type ${this.config.startTile.type}${this.config.startTile.rotation !== undefined ? ` with rotation ${this.config.startTile.rotation}` : ''}`);
-                return false;
-            }
-            
-            const selectedVariant = variants[Math.floor(Math.random() * variants.length)];
-            
-            centerTile.collapsed = true;
-            centerTile.possibleVariants = new Set<ITileVariant>([selectedVariant]);
-            centerTile.possibleTiles = new Set<HexTileType>([selectedVariant.type]);
-            centerTile.possibleRotations = new Set<HexRotation>([selectedVariant.rotation]);
-            centerTile.rotation = selectedVariant.rotation;
-            centerTile.type = selectedVariant.type;
-            centerTile.entropy = 1;
-        } else {
-            this.collapseHexTile(centerTile);
-        }
-
-        const success = this.propagateConstraints(centerTile);
-        if (!success) {
+        if (this.config.predefinedTiles && !this.initializePredefinedTiles()) {
             return false;
         }
 
@@ -272,5 +240,55 @@ export class HexWFC {
 
         const randomIndex = Math.floor(Math.random() * lowestEntropyTile.length);
         return lowestEntropyTile[randomIndex];
+    }
+
+    private initializePredefinedTiles(): boolean {
+        if (!this.config.predefinedTiles) {
+            return true;
+        }
+
+        // First, place all predefined tiles
+        const placedTiles: IWFCHexTilesInfo[] = [];
+        
+        for (const predefinedTile of this.config.predefinedTiles) {
+            const tile = this.grid.get(this.getCoordKey(predefinedTile.coord));
+            if (!tile) {
+                console.error(`Predefined tile position ${predefinedTile.coord.q},${predefinedTile.coord.r} is out of bounds`);
+                return false;
+            }
+
+            const variants = this.tileVariants.filter(v => 
+                v.type === predefinedTile.type && 
+                v.rotation === predefinedTile.rotation
+            );
+
+            if (variants.length === 0) {
+                console.error(`No variants found for predefined tile type ${predefinedTile.type} with rotation ${predefinedTile.rotation}`);
+                return false;
+            }
+
+            const selectedVariant = variants[0]; // We know there's exactly one variant
+            
+            tile.collapsed = true;
+            tile.possibleVariants = new Set<ITileVariant>([selectedVariant]);
+            tile.possibleTiles = new Set<HexTileType>([selectedVariant.type]);
+            tile.possibleRotations = new Set<HexRotation>([selectedVariant.rotation]);
+            tile.rotation = selectedVariant.rotation;
+            tile.type = selectedVariant.type;
+            tile.entropy = 1;
+
+            placedTiles.push(tile);
+        }
+
+        // Then propagate constraints from all placed tiles
+        for (const tile of placedTiles) {
+            const success = this.propagateConstraints(tile);
+            if (!success) {
+                console.error(`Failed to propagate constraints from predefined tile at ${tile.coord.q},${tile.coord.r}`);
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -11,7 +11,7 @@ const DebugConfig = {
             radius: 3,
         },
         hexTileDebug: {
-            rotation: true,
+            rotation: false,
             edge: true,
         },
         edgesDebugMode: false,

@@ -21,6 +21,12 @@ export interface IWFCHexTilesInfo {
     type?: HexTileType;
 }
 
+export interface IPredefinedTile {
+    coord: IHexCoord;
+    type: HexTileType;
+    rotation: HexRotation;
+}
+
 export interface IHexTilesResult {
     type: HexTileType;
     rotation: HexRotation;
@@ -30,8 +36,5 @@ export interface IHexTilesResult {
 export interface IWFCConfig {
     radius: number;
     hexTileTypesUsed: HexTileType[];
-    startTile: {
-        type?: HexTileType;
-        rotation?: HexRotation;
-    }
+    predefinedTiles?: IPredefinedTile[];
 }
