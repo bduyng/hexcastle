@@ -50,7 +50,7 @@ export default class HexTile extends THREE.Group {
         HexGridHelper.setRotation(this.wrapper, rotation);
 
         if (this.debugInfo) {
-            this.debugInfo.setRotationText(rotation);
+            this.debugInfo.setRotation(rotation);
         }
     }
 

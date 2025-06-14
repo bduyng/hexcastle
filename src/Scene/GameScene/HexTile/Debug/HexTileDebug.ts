@@ -25,14 +25,19 @@ export default class HexTileDebug extends THREE.Group {
         this.init();
     }
 
-    public setRotationText(rotation: HexRotation): void {
+    public setRotation(rotation: HexRotation): void {
         HexGridHelper.setRotation(this.debugInfoPlane, rotation);
         this.drawInfo(rotation);
     }
 
     private init(): void {
-        this.initDebugInfoPlane();
-        this.initHexTileModelName();
+        if (this.hexTileDebugConfig?.rotation || this.hexTileDebugConfig?.edge) {
+            this.initDebugInfoPlane();
+        }
+
+        if (this.hexTileDebugConfig?.modelName) {
+            this.initHexTileModelName();
+        }
     }
 
     private initDebugInfoPlane(): void {

@@ -36,10 +36,13 @@ export default class DebugGrid extends THREE.Group {
                     vertices.push(a.x, a.y, a.z, b.x, b.y, b.z);
                 }
 
-                const midX = (corners[0].x + corners[1].x) / 2;
-                const midY = (corners[0].y + corners[1].y) / 2;
-                const midZ = (corners[0].z + corners[1].z) / 2;
-                vertices.push(center.x, center.y, center.z, midX, midY, midZ);
+                // Default rotation
+                if (q === 0 && r === 0) {
+                    const midX = (corners[0].x + corners[1].x) / 2;
+                    const midY = (corners[0].y + corners[1].y) / 2;
+                    const midZ = (corners[0].z + corners[1].z) / 2;
+                    vertices.push(center.x, center.y, center.z, midX, midY, midZ);
+                }
             }
         }
 

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
 import HexTile from './HexTile/HexTile';
-import { IHexTileTransform, IHexCoord, IHexTileInstanceData } from '../../Data/Interfaces/IHexTile';
+import { IHexTileTransform, IHexCoord, IHexTileInstanceData, IHexTileDebugConfig } from '../../Data/Interfaces/IHexTile';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import { HexTileType } from '../../Data/Enums/HexTileType';
 import HexGridHelper from '../../Helpers/HexGridHelper';
@@ -63,7 +63,7 @@ export default class GameScene extends THREE.Group {
         const hexTileInstancesData: IHexTileInstanceData[] = this.convertToHexTileInstanceData(grid);
 
         for (let i = 0; i < hexTileInstancesData.length; i++) {
-            const hexTileInstance = new HexTileInstance(hexTileInstancesData[i]);
+            const hexTileInstance = new HexTileInstance(hexTileInstancesData[i], DebugConfig.game.hexTileDebug);
             this.add(hexTileInstance);
 
             this.hexTileInstances.push(hexTileInstance);

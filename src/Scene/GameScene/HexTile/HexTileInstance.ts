@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
-import { IHexTileTransform, IHexTileInstanceData, IHexCoord } from '../../../Data/Interfaces/IHexTile';
+import { IHexTileTransform, IHexTileInstanceData, IHexCoord, IHexTileDebugConfig } from '../../../Data/Interfaces/IHexTile';
 import { HexTileType } from '../../../Data/Enums/HexTileType';
 import HexTileModelConfig from '../../../Data/Configs/HexTileModelConfig';
 import Materials from '../../../Core/Materials/Materials';
@@ -8,15 +8,19 @@ import { MaterialType } from '../../../Data/Enums/MaterialType';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
 import GridConfig from '../../../Data/Configs/GridConfig';
 import { GridOrientation } from '../../../Data/Enums/GridOrientation';
+import HexTileDebug from './Debug/HexTileDebug';
 
 export default class HexTileInstance extends THREE.Group {
     private hexTileInstanceData: IHexTileInstanceData;
     private hexTileType: HexTileType;
+    private hexTileDebugConfig: IHexTileDebugConfig;
 
-    constructor(hexTileInstanceData: IHexTileInstanceData) {
+    constructor(hexTileInstanceData: IHexTileInstanceData, hexTileDebugConfig: IHexTileDebugConfig = null) {
         super();
 
         this.hexTileInstanceData = hexTileInstanceData;
+        this.hexTileDebugConfig = hexTileDebugConfig;
+        this.hexTileType = this.hexTileInstanceData.type;
 
         this.init();
     }
@@ -26,7 +30,11 @@ export default class HexTileInstance extends THREE.Group {
     }
 
     private init(): void {
-        this.hexTileType = this.hexTileInstanceData.type;
+        this.initView();
+        this.initHexTileDebug();
+    }
+
+    private initView(): void {
         const hexTileTransforms: IHexTileTransform[] = this.hexTileInstanceData.transforms;
 
         const material: THREE.Material = Materials.getInstance().materials[MaterialType.Main];
@@ -51,10 +59,25 @@ export default class HexTileInstance extends THREE.Group {
             const scale = new THREE.Vector3(1, 1, 1);
 
             matrix.compose(position, rotationQuaternion, scale);
-        
+
             instanceMesh.setMatrixAt(i, matrix);
         }
 
         instanceMesh.instanceMatrix.needsUpdate = true;
+    }
+
+    private initHexTileDebug(): void {
+        if (this.hexTileDebugConfig.edge || this.hexTileDebugConfig.rotation) {
+            for (let i = 0; i < this.hexTileInstanceData.transforms.length; i++) {
+                const transform: IHexTileTransform = this.hexTileInstanceData.transforms[i];
+                const position = HexGridHelper.axialToWorld(transform.position, GridConfig.hexSize, GridConfig.GridOrientation);
+
+                const hexTileDebug = new HexTileDebug(this.hexTileType, this.hexTileDebugConfig);
+                this.add(hexTileDebug);
+
+                hexTileDebug.position.copy(position);
+                hexTileDebug.setRotation(transform.rotation);
+            }
+        }
     }
 }

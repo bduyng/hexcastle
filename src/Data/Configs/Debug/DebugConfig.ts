@@ -12,7 +12,7 @@ const DebugConfig = {
         },
         hexTileDebug: {
             rotation: true,
-            edge: false,
+            edge: true,
         },
         edgesDebugMode: false,
     }
