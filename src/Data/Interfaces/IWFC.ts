@@ -26,3 +26,12 @@ export interface IHexTilesResult {
     rotation: HexRotation;
     position: IHexCoord;
 }
+
+export interface IWFCConfig {
+    radius: number;
+    hexTileTypesUsed: HexTileType[];
+    startTile: {
+        type?: HexTileType;
+        rotation?: HexRotation;
+    }
+}

@@ -9,10 +9,9 @@ import { HexRotation } from '../../Data/Enums/HexRotation';
 import { HexWFC } from './HexWFC';
 import { IHexTilesResult } from '../../Data/Interfaces/IWFC';
 import HexTileInstance from './HexTile/HexTileInstance';
-import { WFCTiles } from '../../Data/Configs/WFCConfig';
 import DebugGrid from './Debug/DebugGrid';
 import EdgesDebug from './Debug/EdgesDebug';
-import { EdgesDebugHexTiles } from '../../Data/Configs/DebugInfoConfig';
+import { DefaultWFCConfig } from '../../Data/Configs/WFCConfig';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -48,7 +47,7 @@ export default class GameScene extends THREE.Group {
     }
 
     private initHexWFC(): void {
-        const wfc = new HexWFC(3, WFCTiles);
+        const wfc = new HexWFC(DefaultWFCConfig);
         const success = wfc.generate();
 
         if (success) {

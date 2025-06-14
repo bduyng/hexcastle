@@ -3,7 +3,7 @@ import { HexTileType } from "../../Data/Enums/HexTileType";
 import { TileEdgeType } from "../../Data/Enums/TileEdgeType";
 import { IHexCoord } from "../../Data/Interfaces/IHexTile";
 import { HexRotation } from "../../Data/Enums/HexRotation";
-import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant } from "../../Data/Interfaces/IWFC";
+import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig } from "../../Data/Interfaces/IWFC";
 import { NeighborDirections } from "../../Data/Configs/WFCConfig";
 import { HexTilesRulesConfig } from "../../Data/Configs/HexTilesRulesConfig";
 
@@ -12,17 +12,50 @@ export class HexWFC {
     private tileRules: IHexTilesRule[];
     private tileVariants: ITileVariant[];
     private grid: Map<string, IWFCHexTilesInfo>;
-    private radius: number;
-    private hexTileTypesUsed: HexTileType[];
+    private config: IWFCConfig;
 
-    constructor(radius: number, hexTileTypesUsed: HexTileType[]) {
-        this.radius = radius;
-        this.hexTileTypesUsed = hexTileTypesUsed;
-
+    constructor(config: IWFCConfig) {
+        this.config = config;
         this.init();
     }
 
     public generate(): boolean {
+        const centerTile = this.grid.get(this.getCoordKey({ q: 0, r: 0 }));
+        if (!centerTile) {
+            console.error('Center tile not found');
+            return false;
+        }
+
+        if (this.config.startTile) {
+            let variants = this.tileVariants.filter(v => v.type === this.config.startTile.type);
+            
+            if (this.config.startTile.rotation !== undefined) {
+                variants = variants.filter(v => v.rotation === this.config.startTile.rotation);
+            }
+            
+            if (variants.length === 0) {
+                console.error(`No variants found for start tile type ${this.config.startTile.type}${this.config.startTile.rotation !== undefined ? ` with rotation ${this.config.startTile.rotation}` : ''}`);
+                return false;
+            }
+            
+            const selectedVariant = variants[Math.floor(Math.random() * variants.length)];
+            
+            centerTile.collapsed = true;
+            centerTile.possibleVariants = new Set<ITileVariant>([selectedVariant]);
+            centerTile.possibleTiles = new Set<HexTileType>([selectedVariant.type]);
+            centerTile.possibleRotations = new Set<HexRotation>([selectedVariant.rotation]);
+            centerTile.rotation = selectedVariant.rotation;
+            centerTile.type = selectedVariant.type;
+            centerTile.entropy = 1;
+        } else {
+            this.collapseHexTile(centerTile);
+        }
+
+        const success = this.propagateConstraints(centerTile);
+        if (!success) {
+            return false;
+        }
+
         while (true) {
             const hexTile: IWFCHexTilesInfo = this.findLowestEntropyHexTile();
 
@@ -70,7 +103,7 @@ export class HexWFC {
     }
 
     private init(): void {
-        this.tileRules = HexTilesRulesConfig.filter(tile => this.hexTileTypesUsed.includes(tile.type));
+        this.tileRules = HexTilesRulesConfig.filter(tile => this.config.hexTileTypesUsed.includes(tile.type));
 
         this.tiles = new Map(this.tileRules.map(tile => [tile.type, tile]));
         this.tileVariants = this.generateTileVariants();
@@ -112,9 +145,9 @@ export class HexWFC {
     }
 
     private initializeGrid(): void {
-        for (let q = -this.radius; q <= this.radius; q++) {
-            const r1 = Math.max(-this.radius, -q - this.radius);
-            const r2 = Math.min(this.radius, -q + this.radius);
+        for (let q = -this.config.radius; q <= this.config.radius; q++) {
+            const r1 = Math.max(-this.config.radius, -q - this.config.radius);
+            const r2 = Math.min(this.config.radius, -q + this.config.radius);
             for (let r = r1; r <= r2; r++) {
                 const coord: IHexCoord = { q, r };
                 const key: string = this.getCoordKey(coord);
