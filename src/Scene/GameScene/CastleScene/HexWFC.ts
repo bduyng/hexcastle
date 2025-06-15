@@ -44,17 +44,22 @@ export class HexWFC {
                 return false;
             }
 
-            this.collapseHexTile(hexTile);
+            const selectedVariant = this.collapseHexTile(hexTile);
 
             const success: boolean = this.propagateConstraints(hexTile);
             if (!success) {
                 return false;
             }
 
-            const afterPropagationStep = {
+            this.steps.push({
+                newTile: {
+                    position: hexTile.coord,
+                    type: selectedVariant.type,
+                    rotation: selectedVariant.rotation
+                },
                 freeCells: this.getFreeCellsInfo()
-            };
-            this.steps.push(afterPropagationStep);
+            });
+
             stepIndex++;
         }
     }
@@ -149,7 +154,7 @@ export class HexWFC {
         }
     }
 
-    private collapseHexTile(hexTile: IWFCHexTilesInfo): void {
+    private collapseHexTile(hexTile: IWFCHexTilesInfo): ITileVariant {
         const possibleVariants: ITileVariant[] = Array.from(hexTile.possibleVariants);
         const totalWeight: number = possibleVariants.reduce((sum: number, variant: ITileVariant) => sum + variant.weight, 0);
 
@@ -172,14 +177,7 @@ export class HexWFC {
         hexTile.type = selectedVariant.type;
         hexTile.entropy = 1;
 
-        this.steps.push({
-            newTile: {
-                position: hexTile.coord,
-                type: selectedVariant.type,
-                rotation: selectedVariant.rotation
-            },
-            freeCells: this.getFreeCellsInfo()
-        });
+        return selectedVariant;
     }
 
     private getFreeCellsInfo(): { position: IHexCoord; entropy: number; possibleVariants: ITileVariant[] }[] {

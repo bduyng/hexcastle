@@ -3,6 +3,7 @@ import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
 import { IWFCStep } from '../../../../Data/Interfaces/IWFC';
 import GridConfig from '../../../../Data/Configs/GridConfig';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
+import { IHexCoord } from '../../../../Data/Interfaces/IHexTile';
 
 export default class EntropyView extends THREE.Group {
     private steps: IWFCStep[];
@@ -20,7 +21,7 @@ export default class EntropyView extends THREE.Group {
 
     public drawStep(stepIndex: number): void {
         const freeCells = this.steps[stepIndex].freeCells;
-        // console.log('Step', stepIndex, 'Free cells:', freeCells);
+        const lowestEntropyCells: IHexCoord[] = this.findLowestEntropyCells(stepIndex);
 
         const canvas = this.entropyPlane.getCanvas();
         const ctx = canvas.getContext('2d');
@@ -31,8 +32,8 @@ export default class EntropyView extends THREE.Group {
         const canvasCenterX = canvas.width / 2;
         const canvasCenterY = canvas.height / 2;
 
-        ctx.fillStyle = '#ff0000';
-        ctx.font = `${0.5 * resolution}px Arial`;
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `${0.45 * resolution}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -45,15 +46,38 @@ export default class EntropyView extends THREE.Group {
                 const cx = canvasCenterX + center.x * resolution;
                 const cy = canvasCenterY + center.z * resolution;
 
+                ctx.fillStyle = '#ffffff';
+                if (lowestEntropyCells.some(cell => cell.q === q && cell.r === r)) {
+                    ctx.fillStyle = '#ff0000';
+                }
+
                 const entropy = freeCells.find(cell => cell.position.q === q && cell.position.r === r)?.entropy;
                 if (entropy !== undefined) {
-                    // console.log(`Cell (${q},${r}) entropy:`, entropy, 'possible variants:', freeCells.find(cell => cell.position.q === q && cell.position.r === r)?.possibleVariants.length);
                     ctx.fillText(`${entropy}`, cx, cy);
                 }
             }
         }
 
         this.entropyPlane.updateTexture();
+    }
+
+    private findLowestEntropyCells(stepIndex: number): IHexCoord[] {
+        const freeCells = this.steps[stepIndex].freeCells;
+
+        const lowestEntropyCells: IHexCoord[] = [];
+        let lowestEntropy: number = Infinity;
+
+        for (const cell of freeCells) {
+            if (cell.entropy < lowestEntropy) {
+                lowestEntropy = cell.entropy;
+                lowestEntropyCells.length = 0;
+                lowestEntropyCells.push(cell.position);
+            } else if (cell.entropy === lowestEntropy) {
+                lowestEntropyCells.push(cell.position);
+            }
+        }
+
+        return lowestEntropyCells;
     }
 
     private init(): void {

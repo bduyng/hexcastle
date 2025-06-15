@@ -6,15 +6,12 @@ const DebugConfig = {
     showAxisHelper: false,
     gui: true,
     game: {
-        grid: {
-            enabled: true,
-            radius: 3,
-        },
+        grid: true,
         hexTileDebug: {
             rotation: false,
             edge: false,
         },
-        showEntropy: true,
+        entropy: true,
         edgesDebugMode: false,
     }
 };

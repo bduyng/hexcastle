@@ -30,7 +30,7 @@ const NeighborDirections: IHexCoord[] = [
 ];
 
 const ShowTilesConfig: IShowTilesConfig = {
-    delay: 50,
+    delay: 500,
 }
 
 const DefaultWFCConfig: IWFCConfig = {
@@ -41,7 +41,7 @@ const DefaultWFCConfig: IWFCConfig = {
             coord: { q: 0, r: 0 },
             type: HexTileType.RoadA,
             rotation: HexRotation.Rotate0
-        }
+        },
     ]
 };
 

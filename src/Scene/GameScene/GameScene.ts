@@ -4,6 +4,7 @@ import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import DebugGrid from './CastleScene/DebugViewHelpers/DebugGrid';
 import EdgesDebug from './CastleScene/DebugViewHelpers/EdgesDebug';
 import CastleScene from './CastleScene/CastleScene';
+import { DefaultWFCConfig } from '../../Data/Configs/WFCConfig';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -41,8 +42,8 @@ export default class GameScene extends THREE.Group {
     }
 
     private initDebugGrid(): void {
-        if (DebugConfig.game.grid.enabled) {
-            const debugGrid = new DebugGrid(DebugConfig.game.grid.radius);
+        if (DebugConfig.game.grid) {
+            const debugGrid = new DebugGrid(DefaultWFCConfig.radius);
             this.add(debugGrid);
         }
     }

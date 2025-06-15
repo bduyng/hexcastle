@@ -75,11 +75,9 @@ export default class CastleScene extends THREE.Group {
     }
 
     private initEntropyView(): void {
-        if (DebugConfig.game.showEntropy) {
+        if (DebugConfig.game.entropy) {
             const entropyView = this.entropyView = new EntropyView(this.steps, DefaultWFCConfig.radius);
             this.add(entropyView);
-
-            // console.log(this.steps);
         }
     }
 
@@ -102,7 +100,7 @@ export default class CastleScene extends THREE.Group {
             }
         }
 
-        if (DebugConfig.game.showEntropy) {
+        if (DebugConfig.game.entropy) {
             this.entropyView.drawStep(stepIndex);
         }
     }
