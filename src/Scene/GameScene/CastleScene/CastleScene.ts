@@ -71,7 +71,9 @@ export default class CastleScene extends THREE.Group {
 
         this.showPredefinedTiles();
 
-        this.tilesShowState = TilesShowState.Ready;
+        setTimeout(() => {
+            this.tilesShowState = TilesShowState.Ready;
+        }, 1000);
     }
 
     private initEntropyView(): void {

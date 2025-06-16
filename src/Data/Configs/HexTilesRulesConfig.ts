@@ -3,6 +3,7 @@ import { HexTileType } from "../Enums/HexTileType";
 import { IHexTilesRule } from "../Interfaces/IBaseSceneData";
 
 const HexTilesRulesConfig: IHexTilesRule[] = [
+    // Base tiles
     {
         type: HexTileType.Grass,
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
@@ -15,6 +16,20 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
         ],
         weight: 1,
     },
+    {
+        type: HexTileType.Water,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+        ],
+        weight: 1,
+    },
+
+    // Road tiles
     {
         type: HexTileType.RoadA,
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
@@ -168,6 +183,250 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
             TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+
+    // Coast tiles
+    {
+        type: HexTileType.CoastA,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Grass,
+            TileEdgeType.Coast,
+            TileEdgeType.Water,
+            TileEdgeType.Coast,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.CoastB,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Coast,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Coast,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.CoastC,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Coast,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Coast,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.CoastD,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Coast,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Water,
+            TileEdgeType.Coast,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.CoastE,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Grass,
+            TileEdgeType.Coast,
+            TileEdgeType.Coast,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+
+    // River tiles
+    {
+        type: HexTileType.RiverA,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverACurvy,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverB,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverC,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverCrossingA,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Road,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Road,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverCrossingB,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.Road,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.Road,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverD,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverE,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverF,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverG,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverH,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverI,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.River,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverJ,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverK,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.River,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverL,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
         ],
         weight: 1,
     },

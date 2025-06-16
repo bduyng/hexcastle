@@ -3,7 +3,11 @@ const TextureAssets: string[] = [
 ];
 
 const ModelAssets: string[] = [
+    // base tiles
     'hex_grass.glb',
+    'hex_water.glb',
+
+    // roads
     'hex_road_A.glb',
     'hex_road_B.glb',
     'hex_road_C.glb',
@@ -17,6 +21,30 @@ const ModelAssets: string[] = [
     'hex_road_K.glb',
     'hex_road_L.glb',
     'hex_road_M.glb',
+
+    // coast
+    'hex_coast_A.glb',
+    'hex_coast_B.glb',
+    'hex_coast_C.glb',
+    'hex_coast_D.glb',
+    'hex_coast_E.glb',
+
+    // rivers
+    'hex_river_A.glb',
+    'hex_river_A_curvy.glb',
+    'hex_river_B.glb',
+    'hex_river_C.glb',
+    'hex_river_crossing_A.glb',
+    'hex_river_crossing_B.glb',
+    'hex_river_D.glb',
+    'hex_river_E.glb',
+    'hex_river_F.glb',
+    'hex_river_G.glb',
+    'hex_river_H.glb',
+    'hex_river_I.glb',
+    'hex_river_J.glb',
+    'hex_river_K.glb',
+    'hex_river_L.glb',
 ];
 
 const PixiAssets: string[] = [
