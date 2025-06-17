@@ -5,7 +5,7 @@ import { IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
 import HexTile from '../HexTile/HexTile';
 
 
-export default class EdgesDebug extends THREE.Group {
+export default class TilesDebugDebug extends THREE.Group {
     private hexTileTypes: HexTileType[];
 
     constructor() {

@@ -14,7 +14,7 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 50,
     },
     {
         type: HexTileType.Water,
@@ -26,12 +26,12 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Water,
             TileEdgeType.Water,
         ],
-        weight: 1,
+        weight: 5,
     },
 
     // Road tiles
     {
-        type: HexTileType.RoadA,
+        type: HexTileType.RoadA, // 2 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Grass,
@@ -40,10 +40,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 5,
     },
     {
-        type: HexTileType.RoadB,
+        type: HexTileType.RoadB, // 2 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Grass,
@@ -52,10 +52,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Road,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 5,
     },
     {
-        type: HexTileType.RoadC,
+        type: HexTileType.RoadC, // 2 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Grass,
@@ -64,10 +64,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Road,
         ],
-        weight: 1,
+        weight: 5,
     },
     {
-        type: HexTileType.RoadD,
+        type: HexTileType.RoadD, // 3 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Grass,
@@ -76,10 +76,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Road,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 3,
     },
     {
-        type: HexTileType.RoadE,
+        type: HexTileType.RoadE, // 3 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Grass,
@@ -88,10 +88,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Road,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 3,
     },
     {
-        type: HexTileType.RoadF,
+        type: HexTileType.RoadF, // 3 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Grass,
@@ -100,10 +100,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 3,
     },
     {
-        type: HexTileType.RoadG,
+        type: HexTileType.RoadG, // 3 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Road,
@@ -112,10 +112,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Road,
         ],
-        weight: 1,
+        weight: 3,
     },
     {
-        type: HexTileType.RoadH,
+        type: HexTileType.RoadH, // 4 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Road,
@@ -124,12 +124,36 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Road,
         ],
-        weight: 1,
+        weight: 2,
     },
     {
-        type: HexTileType.RoadI,
+        type: HexTileType.RoadI, // 4 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Grass,
+            TileEdgeType.Road,
+            TileEdgeType.Road,
+            TileEdgeType.Grass,
+            TileEdgeType.Road,
+            TileEdgeType.Road,
+        ],
+        weight: 2,
+    },
+    {
+        type: HexTileType.RoadJ, // 4 road edges
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Road,
+            TileEdgeType.Road,
+            TileEdgeType.Road,
+            TileEdgeType.Road,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 2,
+    },
+    {
+        type: HexTileType.RoadK, // 5 road edges
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Road,
             TileEdgeType.Road,
             TileEdgeType.Road,
             TileEdgeType.Grass,
@@ -139,31 +163,7 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
         weight: 1,
     },
     {
-        type: HexTileType.RoadJ,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.Road,
-            TileEdgeType.Road,
-            TileEdgeType.Road,
-            TileEdgeType.Road,
-            TileEdgeType.Grass,
-            TileEdgeType.Grass,
-        ],
-        weight: 1,
-    },
-    {
-        type: HexTileType.RoadK,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.Road,
-            TileEdgeType.Road,
-            TileEdgeType.Road,
-            TileEdgeType.Grass,
-            TileEdgeType.Road,
-            TileEdgeType.Road,
-        ],
-        weight: 1,
-    },
-    {
-        type: HexTileType.RoadL,
+        type: HexTileType.RoadL, // 6 road edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Road,
@@ -175,7 +175,7 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
         weight: 1,
     },
     {
-        type: HexTileType.RoadM,
+        type: HexTileType.RoadM, // 1 road edge
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Road,
             TileEdgeType.Grass,
@@ -198,7 +198,7 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 3,
     },
     {
         type: HexTileType.CoastB,
@@ -210,7 +210,7 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 3,
     },
     {
         type: HexTileType.CoastC,
@@ -222,7 +222,7 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Coast,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 3,
     },
     {
         type: HexTileType.CoastD,
@@ -234,7 +234,7 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Water,
             TileEdgeType.Coast,
         ],
-        weight: 1,
+        weight: 3,
     },
     {
         type: HexTileType.CoastE,
@@ -246,12 +246,12 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 3,
     },
 
     // River tiles
     {
-        type: HexTileType.RiverA,
+        type: HexTileType.RiverA, // 2 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.Grass,
@@ -260,10 +260,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 5,
     },
     {
-        type: HexTileType.RiverACurvy,
+        type: HexTileType.RiverACurvy, // 2 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.Grass,
@@ -272,10 +272,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 5,
     },
     {
-        type: HexTileType.RiverB,
+        type: HexTileType.RiverB, // 2 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.Grass,
@@ -284,10 +284,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.River,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 5,
     },
     {
-        type: HexTileType.RiverC,
+        type: HexTileType.RiverC, // 3 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.Grass,
@@ -296,10 +296,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.River,
         ],
-        weight: 1,
+        weight: 2,
     },
     {
-        type: HexTileType.RiverCrossingA,
+        type: HexTileType.RiverCrossingA, // 2 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.Grass,
@@ -308,10 +308,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Road,
         ],
-        weight: 1,
+        weight: 2,
     },
     {
-        type: HexTileType.RiverCrossingB,
+        type: HexTileType.RiverCrossingB, // 2 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.Road,
@@ -320,10 +320,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Road,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 2,
     },
     {
-        type: HexTileType.RiverD,
+        type: HexTileType.RiverD, // 3 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.Grass,
@@ -332,10 +332,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.River,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 2,
     },
     {
-        type: HexTileType.RiverE,
+        type: HexTileType.RiverE, // 3 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.Grass,
@@ -344,10 +344,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.River,
             TileEdgeType.Grass,
         ],
-        weight: 1,
+        weight: 2,
     },
     {
-        type: HexTileType.RiverF,
+        type: HexTileType.RiverF, // 3 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.Grass,
@@ -359,7 +359,7 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
         weight: 1,
     },
     {
-        type: HexTileType.RiverG,
+        type: HexTileType.RiverG, // 3 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.River,
@@ -368,10 +368,10 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.River,
         ],
-        weight: 1,
+        weight: 2,
     },
     {
-        type: HexTileType.RiverH,
+        type: HexTileType.RiverH, // 4 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.River,
@@ -383,33 +383,9 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
         weight: 1,
     },
     {
-        type: HexTileType.RiverI,
+        type: HexTileType.RiverI, // 4 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.Grass,
-            TileEdgeType.River,
-            TileEdgeType.River,
-            TileEdgeType.Grass,
-            TileEdgeType.River,
-            TileEdgeType.River,
-        ],
-        weight: 1,
-    },
-    {
-        type: HexTileType.RiverJ,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.River,
-            TileEdgeType.River,
-            TileEdgeType.River,
-            TileEdgeType.River,
-            TileEdgeType.Grass,
-            TileEdgeType.Grass,
-        ],
-        weight: 1,
-    },
-    {
-        type: HexTileType.RiverK,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.River,
             TileEdgeType.River,
             TileEdgeType.River,
             TileEdgeType.Grass,
@@ -419,7 +395,31 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
         weight: 1,
     },
     {
-        type: HexTileType.RiverL,
+        type: HexTileType.RiverJ, // 4 river edges
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverK, // 5 river edges
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.River,
+            TileEdgeType.Grass,
+            TileEdgeType.River,
+            TileEdgeType.River,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.RiverL, // 6 river edges
         edges: [ // 0 - 60 - 120 - 180 - 240 - 300
             TileEdgeType.River,
             TileEdgeType.River,

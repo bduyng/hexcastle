@@ -6,13 +6,13 @@ const DebugConfig = {
     showAxisHelper: false,
     gui: true,
     game: {
-        grid: true,
+        grid: false,
         hexTileDebug: {
             rotation: false,
             edge: false,
         },
         entropy: true,
-        edgesDebugMode: false,
+        tilesDebugMode: false,
     }
 };
 

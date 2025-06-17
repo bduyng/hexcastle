@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import DebugGrid from './CastleScene/DebugViewHelpers/DebugGrid';
-import EdgesDebug from './CastleScene/DebugViewHelpers/EdgesDebug';
+import TilesDebugDebug from './CastleScene/DebugViewHelpers/TilesDebugMode';
 import CastleScene from './CastleScene/CastleScene';
 import { DefaultWFCConfig } from '../../Data/Configs/WFCConfig';
 
@@ -25,9 +25,9 @@ export default class GameScene extends THREE.Group {
     }
 
     private init(): void {
-        if (DebugConfig.game.edgesDebugMode) {
-            const edgesDebug = new EdgesDebug();
-            this.add(edgesDebug);
+        if (DebugConfig.game.tilesDebugMode) {
+            const tilesDebugMode = new TilesDebugDebug();
+            this.add(tilesDebugMode);
 
             return;
         }

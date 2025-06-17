@@ -142,7 +142,7 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     private initHexTileModelName(): void {
-        const modelNamePlane = new CanvasPlaneMesh(GridConfig.hexSize * 2, GridConfig.hexSize * 2, 200);
+        const modelNamePlane = new CanvasPlaneMesh(GridConfig.hexSize * 4, GridConfig.hexSize * 4, 200);
         this.add(modelNamePlane);
 
         const debugInfoPlaneView = modelNamePlane.getView();
@@ -153,11 +153,10 @@ export default class HexTileDebug extends THREE.Group {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const resolution = modelNamePlane.getResolution();
-        const modelName = HexTileModelConfig[this.hexTileType].modelName;
         ctx.fillStyle = '#000000';
         ctx.font = `${0.35 * resolution}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(modelName, canvas.width / 2, canvas.height / 2);
+        ctx.fillText(this.hexTileType, canvas.width / 2, canvas.height / 2);
     }
 }
