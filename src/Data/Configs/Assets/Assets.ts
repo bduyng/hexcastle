@@ -51,6 +51,10 @@ const PixiAssets: string[] = [
     'assets/sound-icon.png',
     'assets/sound-icon-mute.png',
     'assets/button_rectangle_depth_gradient.png',
+    'assets/button_rectangle_depth_flat.png',
+    'assets/button_rectangle_line.png',
+
+    // fonts
     'fonts/kenneyfuture.ttf',
 ];
 

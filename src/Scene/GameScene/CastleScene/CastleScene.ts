@@ -65,20 +65,26 @@ export default class CastleScene extends THREE.Group {
 
         const success: boolean = this.hexWFC.generate();
 
-        if (success) {
-            const grid: IHexTilesResult[] = this.hexWFC.getGrid();
-            this.steps = this.hexWFC.getSteps();
-            console.log('123:', this.steps);
-            this.initGridTiles(grid);
-            this.initEntropyView();
-        } else {
-            // const grid: IHexTilesResult[] = this.hexWFC.getGrid();
-            // this.steps = this.hexWFC.getSteps();
-            // console.log('Failed to generate grid:', this.steps);
-            console.error('Failed to generate grid');
-            // this.initGridTiles(grid);
-            // this.initEntropyView();
-        }
+        const grid: IHexTilesResult[] = this.hexWFC.getGrid();
+        this.steps = this.hexWFC.getSteps();
+        console.log('123:', this.steps);
+        this.initGridTiles(grid);
+        this.initEntropyView();
+
+        // if (success) {
+        //     const grid: IHexTilesResult[] = this.hexWFC.getGrid();
+        //     this.steps = this.hexWFC.getSteps();
+        //     console.log('123:', this.steps);
+        //     this.initGridTiles(grid);
+        //     this.initEntropyView();
+        // } else {
+        //     // const grid: IHexTilesResult[] = this.hexWFC.getGrid();
+        //     // this.steps = this.hexWFC.getSteps();
+        //     // console.log('Failed to generate grid:', this.steps);
+        //     console.error('Failed to generate grid');
+        //     // this.initGridTiles(grid);
+        //     // this.initEntropyView();
+        // }
     }
 
     private initGridTiles(grid: IHexTilesResult[]): void {
