@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { Text } from 'pixi.js';
 import TWEEN from 'three/addons/libs/tween.module.js';
 import mitt, { Emitter } from 'mitt';
 
@@ -8,23 +9,34 @@ type Events = {
 
 export default class Button extends PIXI.Container {
     private isPressed: boolean;
+    private textureName: string;
+    private textString: string;
+    private text: Text;
 
     public emitter: Emitter<Events> = mitt<Events>();
 
-    constructor(textureName: string) {
+    constructor(textureName: string, textString: string = '') {
         super();
+
+        this.textureName = textureName;
+        this.textString = textString;
 
         this.isPressed = false;
 
-        this.init(textureName);
+        this.init();
     }
 
-    private init(textureName: string): void {
-        this.initView(textureName);
+    public getText(): Text {
+        return this.text;
     }
 
-    private initView(textureName: string): void {
-        const texture = PIXI.Assets.get(textureName);
+    private init(): void {
+        this.initView();
+        this.initText();
+    }
+
+    private initView(): void {
+        const texture = PIXI.Assets.get(this.textureName);
         const view = new PIXI.Sprite(texture);
         this.addChild(view);
 
@@ -50,6 +62,22 @@ export default class Button extends PIXI.Container {
                 this.onScaleOut();
             }
         });
+    }
+
+    private initText(): void {
+        if (this.textString) {
+            const text = this.text = new Text({
+                text: this.textString,
+                style: {
+                    fontFamily: 'kenneyfuture',
+                    fontSize: 23,
+                    fill: 0x000000,
+                },
+            });
+
+            text.anchor.set(0.5);
+            this.addChild(text);
+        }
     }
 
     private onScaleIn(): void {

@@ -9,12 +9,12 @@ import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
 import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 import { HexTilesRulesConfig } from '../../../../Data/Configs/HexTilesRulesConfig';
 import { IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
-import HexTileModelConfig from '../../../../Data/Configs/HexTileModelConfig';
 
 export default class HexTileDebug extends THREE.Group {
     private hexTileType: HexTileType;
     private debugInfoPlane: CanvasPlaneMesh;
     private hexTileDebugConfig: IHexTileDebugConfig;
+    private modelNamePlane: CanvasPlaneMesh;
 
     constructor(hexTileType: HexTileType, hexTileDebugConfig: IHexTileDebugConfig = null) {
         super();
@@ -36,6 +36,18 @@ export default class HexTileDebug extends THREE.Group {
 
     public hide(): void {
         this.visible = false;
+    }
+
+    public reset(): void {
+        if (this.debugInfoPlane) {
+            this.debugInfoPlane.reset();
+            this.remove(this.debugInfoPlane);
+        }
+
+        if (this.modelNamePlane) {
+            this.modelNamePlane.reset();
+            this.remove(this.modelNamePlane);
+        }
     }
 
     private init(): void {
@@ -142,7 +154,7 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     private initHexTileModelName(): void {
-        const modelNamePlane = new CanvasPlaneMesh(GridConfig.hexSize * 4, GridConfig.hexSize * 4, 200);
+        const modelNamePlane = this.modelNamePlane = new CanvasPlaneMesh(GridConfig.hexSize * 4, GridConfig.hexSize * 4, 200);
         this.add(modelNamePlane);
 
         const debugInfoPlaneView = modelNamePlane.getView();

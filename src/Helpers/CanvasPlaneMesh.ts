@@ -34,6 +34,13 @@ export default class CanvasPlaneMesh extends THREE.Group {
         this.texture.needsUpdate = true;
     }
 
+    public reset(): void {
+        this.texture.dispose();
+        this.view.geometry.dispose();
+        this.remove(this.view);
+        this.canvas.remove();
+    }
+
     private init(): void {
         const canvas = this.canvas = document.createElement('canvas');
 

@@ -55,11 +55,11 @@ const NeighborDirections: IHexCoord[] = [
 ];
 
 const ShowTilesConfig: IShowTilesConfig = {
-    delay: 50,
+    delay: 10,
 }
 
 const DefaultWFCConfig: IWFCConfig = {
-    radius: 10,
+    radius: 5,
     hexTileTypesUsed: WFCTiles,
     predefinedTiles: [
         // {

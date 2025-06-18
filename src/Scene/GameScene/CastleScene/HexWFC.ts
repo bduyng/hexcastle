@@ -15,14 +15,18 @@ export class HexWFC {
     private config: IWFCConfig;
     private steps: IWFCStep[] = [];
 
-    constructor(config: IWFCConfig) {
+    constructor() {
+
+    }
+
+    public setConfig(config: IWFCConfig): void {
         this.config = config;
         this.init();
     }
 
     public generate(): boolean {
         this.steps = [];
-        
+
         if (this.config.predefinedTiles && !this.initializePredefinedTiles()) {
             return false;
         }
@@ -88,6 +92,14 @@ export class HexWFC {
 
     public getAllHexTiles(): IWFCHexTilesInfo[] {
         return Array.from(this.grid.values());
+    }
+
+    public reset(): void {
+        this.grid.clear();
+        this.steps = [];
+        this.tileRules = [];
+        this.tiles.clear();
+        this.tileVariants = [];
     }
 
     private init(): void {
@@ -182,12 +194,12 @@ export class HexWFC {
 
     private getFreeCellsInfo(): { position: IHexCoord; entropy: number; possibleVariants: ITileVariant[] }[] {
         const freeCells: { position: IHexCoord; entropy: number; possibleVariants: ITileVariant[] }[] = [];
-        
+
         for (const tile of this.grid.values()) {
             if (!tile.collapsed) {
                 const possibleVariants = Array.from(tile.possibleVariants);
                 const entropy = possibleVariants.length;
-                
+
                 freeCells.push({
                     position: { ...tile.coord },
                     entropy: entropy,
@@ -195,7 +207,7 @@ export class HexWFC {
                 });
             }
         }
-        
+
         return freeCells;
     }
 
@@ -236,10 +248,10 @@ export class HexWFC {
                 // Получаем все возможные варианты для текущей ячейки
                 const currentVariants = Array.from(currentHexTile.possibleVariants);
                 const oppositeDirection = this.getOppositeDirection(direction);
-                
+
                 // Собираем все возможные ребра, которые могут быть у текущей ячейки
                 const possibleEdges = new Set(currentVariants.map(v => v.edges[direction]));
-                
+
                 // Фильтруем варианты соседа, оставляя только те, которые совместимы хотя бы с одним вариантом текущей ячейки
                 const compatibleVariants = Array.from(neighbor.possibleVariants).filter(variant => {
                     const neighborEdge = variant.edges[oppositeDirection];
@@ -293,7 +305,7 @@ export class HexWFC {
         }
 
         const placedTiles: IWFCHexTilesInfo[] = [];
-        
+
         for (const predefinedTile of this.config.predefinedTiles) {
             const tile = this.grid.get(this.getCoordKey(predefinedTile.coord));
             if (!tile) {
@@ -301,8 +313,8 @@ export class HexWFC {
                 return false;
             }
 
-            const variants = this.tileVariants.filter(v => 
-                v.type === predefinedTile.type && 
+            const variants = this.tileVariants.filter(v =>
+                v.type === predefinedTile.type &&
                 v.rotation === predefinedTile.rotation
             );
 
@@ -312,7 +324,7 @@ export class HexWFC {
             }
 
             const selectedVariant = variants[0];
-            
+
             tile.collapsed = true;
             tile.possibleVariants = new Set<ITileVariant>([selectedVariant]);
             tile.possibleTiles = new Set<HexTileType>([selectedVariant.type]);

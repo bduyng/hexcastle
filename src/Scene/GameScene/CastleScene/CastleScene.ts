@@ -7,6 +7,8 @@ import { IHexCoord, IHexTileInstanceData, IHexTileTransform } from '../../../Dat
 import DebugConfig from '../../../Data/Configs/Debug/DebugConfig';
 import { TilesShowState } from '../../../Data/Enums/TilesShowState';
 import EntropyView from './DebugViewHelpers/EntropyView';
+import { GlobalEventBus } from '../../../Core/GlobalEvents';
+import DebugGrid from './DebugViewHelpers/DebugGrid';
 
 export default class CastleScene extends THREE.Group {
 
@@ -16,6 +18,7 @@ export default class CastleScene extends THREE.Group {
     private stepIndex: number = 0;
     private tilesShowState: TilesShowState = TilesShowState.NotReady;
     private entropyView: EntropyView;
+    private hexWFC: HexWFC;
 
     constructor() {
         super();
@@ -42,20 +45,39 @@ export default class CastleScene extends THREE.Group {
 
     private init(): void {
         this.initHexWFC();
+        this.initDebugGrid();
+        this.initGlobalListeners();
     }
 
     private initHexWFC(): void {
-        const wfc = new HexWFC(DefaultWFCConfig);
-        const success: boolean = wfc.generate();
+        this.hexWFC = new HexWFC();
+    }
+
+    private initDebugGrid(): void {
+        if (DebugConfig.game.grid) {
+            const debugGrid = new DebugGrid(DefaultWFCConfig.radius);
+            this.add(debugGrid);
+        }
+    }
+
+    private generateTiles(): void {
+        this.hexWFC.setConfig(DefaultWFCConfig);
+
+        const success: boolean = this.hexWFC.generate();
 
         if (success) {
-            const grid: IHexTilesResult[] = wfc.getGrid();
-            this.steps = wfc.getSteps();
-
+            const grid: IHexTilesResult[] = this.hexWFC.getGrid();
+            this.steps = this.hexWFC.getSteps();
+            console.log('123:', this.steps);
             this.initGridTiles(grid);
             this.initEntropyView();
         } else {
+            // const grid: IHexTilesResult[] = this.hexWFC.getGrid();
+            // this.steps = this.hexWFC.getSteps();
+            // console.log('Failed to generate grid:', this.steps);
             console.error('Failed to generate grid');
+            // this.initGridTiles(grid);
+            // this.initEntropyView();
         }
     }
 
@@ -71,9 +93,7 @@ export default class CastleScene extends THREE.Group {
 
         this.showPredefinedTiles();
 
-        setTimeout(() => {
-            this.tilesShowState = TilesShowState.Ready;
-        }, 1000);
+        this.tilesShowState = TilesShowState.Ready;
     }
 
     private initEntropyView(): void {
@@ -131,5 +151,33 @@ export default class CastleScene extends THREE.Group {
 
     private findHexTileInstanceByPosition(position: IHexCoord): HexTileInstance {
         return this.hexTileInstances.find(hexTileInstance => hexTileInstance.hasTileByPosition(position));
+    }
+
+    private resetScene(): void {
+        this.tilesShowState = TilesShowState.NotReady;
+
+        this.steps = [];
+        this.time = 0;
+        this.stepIndex = 0;
+
+        this.hexTileInstances.forEach((hexTileInstance) => {
+            hexTileInstance.reset();
+            this.remove(hexTileInstance);
+        });
+
+        this.hexTileInstances = [];
+
+        if (this.entropyView) {
+            this.entropyView.reset();
+            this.remove(this.entropyView);
+            this.entropyView = null;
+        }
+    }
+
+    private initGlobalListeners(): void {
+        GlobalEventBus.on('game:generate', () => {
+            this.resetScene()
+            this.generateTiles();
+        });
     }
 }

@@ -179,6 +179,7 @@ export default class BaseScene {
     private onResize(): void {
         this.windowSizes.width = window.innerWidth;
         this.windowSizes.height = window.innerHeight;
+
         const pixelRatio: number = Math.min(window.devicePixelRatio, SceneConfig.maxPixelRatio);
 
         this.camera.aspect = this.windowSizes.width / this.windowSizes.height;

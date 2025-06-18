@@ -61,6 +61,14 @@ export default class EntropyView extends THREE.Group {
         this.entropyPlane.updateTexture();
     }
 
+    public reset(): void {
+        if (this.entropyPlane) {
+            this.entropyPlane.reset();
+            this.remove(this.entropyPlane);
+            this.entropyPlane = null;
+        }
+    }
+
     private findLowestEntropyCells(stepIndex: number): IHexCoord[] {
         const freeCells = this.steps[stepIndex].freeCells;
 

@@ -50,6 +50,8 @@ const ModelAssets: string[] = [
 const PixiAssets: string[] = [
     'assets/sound-icon.png',
     'assets/sound-icon-mute.png',
+    'assets/button_rectangle_depth_gradient.png',
+    'fonts/kenneyfuture.ttf',
 ];
 
 const AudioAssets: string[] = [
