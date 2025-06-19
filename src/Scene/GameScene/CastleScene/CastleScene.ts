@@ -185,5 +185,9 @@ export default class CastleScene extends THREE.Group {
             this.resetScene()
             this.generateTiles();
         });
+
+        GlobalEventBus.on('game:fieldRadiusChanged', (radius: number) => {
+            DefaultWFCConfig.radius = radius;
+        });
     }
 }
