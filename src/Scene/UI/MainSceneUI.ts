@@ -3,10 +3,13 @@ import Button from './UIObjects/Button';
 import { GlobalEventBus } from '../../Core/GlobalEvents';
 import Menu from './UIObjects/Menu';
 import TextField from './UIObjects/TextField';
+import Slider from './UIObjects/Slider';
+import { SliderAssets, SliderOptions } from '../../Data/Interfaces/ISlider';
 
 export default class MainSceneUI extends PIXI.Container {
     private generateButton: Button;
     private menu: Menu;
+    private slider: Slider;
 
     constructor() {
         super();
@@ -21,6 +24,9 @@ export default class MainSceneUI extends PIXI.Container {
         this.generateButton.x = width * 0.5;
         this.generateButton.y = height - 100;
 
+        this.slider.x = width * 0.5;
+        this.slider.y = height * 0.5;
+
         // this.menu.x = width * 0.5;
         // this.menu.y = height * 0.5;
     }
@@ -28,6 +34,7 @@ export default class MainSceneUI extends PIXI.Container {
     private init(): void {
         this.initGenerateButton();
         this.initMenu();
+        this.initSlider();
 
         this.initSignals();
     }
@@ -57,6 +64,24 @@ export default class MainSceneUI extends PIXI.Container {
         this.menu.addChild(textField);
 
         textField.y = 30;
+    }
+
+    private initSlider(): void {
+        const sliderAssets: SliderAssets = {
+            background: 'assets/slide_horizontal_grey.png',
+            thumb: 'assets/slide_hangle.png',
+            track: 'assets/slide_horizontal_color.png'
+        }
+
+        const sliderOptions: SliderOptions = {
+            min: 5,
+            max: 20,
+            step: 1,
+            value: 5
+        }
+
+        const slider = this.slider = new Slider(sliderAssets, 300, sliderOptions);
+        this.addChild(slider);
     }
 
     private initSignals(): void {

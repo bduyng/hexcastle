@@ -53,6 +53,9 @@ const PixiAssets: string[] = [
     'assets/button_rectangle_depth_gradient.png',
     'assets/button_rectangle_depth_flat.png',
     'assets/button_rectangle_line.png',
+    'assets/slide_horizontal_grey.png',
+    'assets/slide_horizontal_color.png',
+    'assets/slide_hangle.png',
 
     // fonts
     'fonts/kenneyfuture.ttf',
