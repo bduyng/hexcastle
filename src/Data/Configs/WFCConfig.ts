@@ -1,7 +1,8 @@
 import { HexTileType } from "../Enums/HexTileType";
 import { HexRotation } from "../Enums/HexRotation";
 import { IHexCoord } from "../Interfaces/IHexTile";
-import { IShowTilesConfig, IWFCConfig } from "../Interfaces/IWFC";
+import { IWFCConfig } from "../Interfaces/IWFC";
+import { GameConfig } from "./GameConfig";
 
 const WFCTiles: HexTileType[] = [
     // Base tiles
@@ -54,12 +55,8 @@ const NeighborDirections: IHexCoord[] = [
     { q: 0, r: 1 },   // 300°
 ];
 
-const ShowTilesConfig: IShowTilesConfig = {
-    delay: 10,
-}
-
 const DefaultWFCConfig: IWFCConfig = {
-    radius: 5,
+    radius: GameConfig.gameField.radius.default,
     hexTileTypesUsed: WFCTiles,
     predefinedTiles: [
         // {
@@ -80,4 +77,4 @@ const DefaultWFCConfig: IWFCConfig = {
     ]
 };
 
-export { NeighborDirections, WFCTiles, DefaultWFCConfig, ShowTilesConfig };
+export { NeighborDirections, WFCTiles, DefaultWFCConfig };

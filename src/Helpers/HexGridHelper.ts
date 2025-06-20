@@ -39,4 +39,8 @@ export default class HexGridHelper {
 
         return null;
     }
+
+    public static getCountByRadius(radius: number): number {
+        return (3 * radius * (radius + 1)) + 1;
+    }
 }

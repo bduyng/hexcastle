@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
 import { IWFCStep } from '../../../../Data/Interfaces/IWFC';
-import GridConfig from '../../../../Data/Configs/GridConfig';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import { IHexCoord } from '../../../../Data/Interfaces/IHexTile';
+import { GameConfig } from '../../../../Data/Configs/GameConfig';
 
 export default class EntropyView extends THREE.Group {
     private steps: IWFCStep[];
@@ -41,7 +41,7 @@ export default class EntropyView extends THREE.Group {
             const r1 = Math.max(-this.radius, -q - this.radius);
             const r2 = Math.min(this.radius, -q + this.radius);
             for (let r = r1; r <= r2; r++) {
-                const center = HexGridHelper.axialToWorld({ q, r }, GridConfig.hexSize, GridConfig.GridOrientation);
+                const center = HexGridHelper.axialToWorld({ q, r }, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
 
                 const cx = canvasCenterX + center.x * resolution;
                 const cy = canvasCenterY + center.z * resolution;
@@ -91,7 +91,7 @@ export default class EntropyView extends THREE.Group {
     private init(): void {
         const resolution = 200;
         const canvasMargin = 2;
-        const worldSize = (3 / 2 * this.radius + canvasMargin) * GridConfig.hexSize;
+        const worldSize = (3 / 2 * this.radius + canvasMargin) * GameConfig.gameField.hexSize;
         const entropyPlane = this.entropyPlane = new CanvasPlaneMesh(worldSize * 2, worldSize * 2, resolution);
         this.add(entropyPlane);
 

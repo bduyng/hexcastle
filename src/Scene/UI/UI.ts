@@ -23,7 +23,7 @@ export default class UI extends PIXI.Container {
         // this.muteButton.y = 100;
 
         this.generateButton.x = width * 0.5;
-        this.generateButton.y = height - 100;
+        this.generateButton.y = height - 80;
 
         this.fieldRadius.x = width * 0.5;
         this.fieldRadius.y = 100;

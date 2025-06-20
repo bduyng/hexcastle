@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { IHexTilesResult, IWFCStep } from '../../../Data/Interfaces/IWFC';
-import { DefaultWFCConfig, ShowTilesConfig } from '../../../Data/Configs/WFCConfig';
+import { DefaultWFCConfig } from '../../../Data/Configs/WFCConfig';
 import { HexWFC } from './HexWFC';
 import HexTileInstance from './HexTile/HexTileInstance';
 import { IHexCoord, IHexTileInstanceData, IHexTileTransform } from '../../../Data/Interfaces/IHexTile';
@@ -9,6 +9,8 @@ import { TilesShowState } from '../../../Data/Enums/TilesShowState';
 import EntropyView from './DebugViewHelpers/EntropyView';
 import { GlobalEventBus } from '../../../Core/GlobalEvents';
 import DebugGrid from './DebugViewHelpers/DebugGrid';
+import { GameConfig } from '../../../Data/Configs/GameConfig';
+import Intro from './Intro';
 
 export default class CastleScene extends THREE.Group {
 
@@ -19,6 +21,9 @@ export default class CastleScene extends THREE.Group {
     private tilesShowState: TilesShowState = TilesShowState.NotReady;
     private entropyView: EntropyView;
     private hexWFC: HexWFC;
+    private intro: Intro;
+
+    private isIntroActive: boolean = true;
 
     constructor() {
         super();
@@ -30,7 +35,7 @@ export default class CastleScene extends THREE.Group {
         if (this.tilesShowState === TilesShowState.Ready || this.tilesShowState === TilesShowState.Showing) {
             this.tilesShowState = TilesShowState.Showing;
             this.time += dt;
-            if (this.time >= ShowTilesConfig.delay * 0.001) {
+            if (this.time >= GameConfig.gameField.showTilesDelay * 0.001) {
                 this.time = 0;
                 this.showTile(this.stepIndex);
 
@@ -43,14 +48,24 @@ export default class CastleScene extends THREE.Group {
         }
     }
 
+    public start(): void {
+        this.intro.showByRadius(DefaultWFCConfig.radius);
+    }
+
     private init(): void {
         this.initHexWFC();
+        this.initIntro();
         this.initDebugGrid();
         this.initGlobalListeners();
     }
 
     private initHexWFC(): void {
         this.hexWFC = new HexWFC();
+    }
+
+    private initIntro(): void {
+        const intro = this.intro = new Intro();
+        this.add(intro);
     }
 
     private initDebugGrid(): void {
@@ -67,7 +82,6 @@ export default class CastleScene extends THREE.Group {
 
         const grid: IHexTilesResult[] = this.hexWFC.getGrid();
         this.steps = this.hexWFC.getSteps();
-        console.log('123:', this.steps);
         this.initGridTiles(grid);
         this.initEntropyView();
 
@@ -182,12 +196,21 @@ export default class CastleScene extends THREE.Group {
 
     private initGlobalListeners(): void {
         GlobalEventBus.on('game:generate', () => {
+            if (this.isIntroActive) {
+                this.intro.hide();
+                this.isIntroActive = false;
+            }
+
             this.resetScene()
             this.generateTiles();
         });
 
         GlobalEventBus.on('game:fieldRadiusChanged', (radius: number) => {
-            DefaultWFCConfig.radius = radius;
+            DefaultWFCConfig.radius = radius - 1;
+
+            if (this.isIntroActive) {
+                this.intro.showByRadius(DefaultWFCConfig.radius);
+            }
         });
     }
 }

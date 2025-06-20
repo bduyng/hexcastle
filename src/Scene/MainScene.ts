@@ -18,6 +18,7 @@ export default class MainScene {
 
     public afterAssetsLoad(): void {
         this.scene.add(this.gameScene);
+        this.gameScene.start();
     }
 
     public update(dt: number): void {

@@ -3,10 +3,12 @@ import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import TilesDebugDebug from './CastleScene/DebugViewHelpers/TilesDebugMode';
 import CastleScene from './CastleScene/CastleScene';
+import CameraController from './CameraController';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
     private castleScene: CastleScene;
+    private cameraController: CameraController;
 
     constructor(data: ILibrariesData) {
         super();
@@ -16,21 +18,33 @@ export default class GameScene extends THREE.Group {
         this.init();
     }
 
-    public update(dt: number): void { 
-        if (this.castleScene) {
-            this.castleScene.update(dt);
-        }
+    public update(dt: number): void {
+        this.castleScene.update(dt);
+        this.cameraController.update(dt);
+    }
+
+    public start(): void {
+        this.castleScene.start();
     }
 
     private init(): void {
+        this.initCameraController();
+
         if (DebugConfig.game.tilesDebugMode) {
-            const tilesDebugMode = new TilesDebugDebug();
-            this.add(tilesDebugMode);
-
-            return;
+            this.initTilesDebugMode();
+        } else {
+            this.initCastleScene();
         }
+    }
 
-        this.initCastleScene();
+    private initCameraController(): void {
+        const cameraController = this.cameraController = new CameraController(this.data.camera);
+        this.add(cameraController);
+    }
+
+    private initTilesDebugMode(): void {
+        const tilesDebugMode = new TilesDebugDebug();
+        this.add(tilesDebugMode);
     }
 
     private initCastleScene(): void {

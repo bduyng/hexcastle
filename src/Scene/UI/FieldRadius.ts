@@ -3,7 +3,7 @@ import { Text } from 'pixi.js';
 import Slider from './UIObjects/Slider';
 import { SliderAssets, SliderOptions } from '../../Data/Interfaces/ISlider';
 import { GlobalEventBus } from '../../Core/GlobalEvents';
-import { DefaultWFCConfig } from '../../Data/Configs/WFCConfig';
+import { GameConfig } from '../../Data/Configs/GameConfig';
 
 export default class FieldRadius extends PIXI.Container {
     private slider: Slider;
@@ -38,7 +38,7 @@ export default class FieldRadius extends PIXI.Container {
 
         caption.anchor.set(0.5);
         caption.x = -18;
-        caption.y = -40;
+        caption.y = -42;
     }
 
     private initRadiusValue(): void {
@@ -57,7 +57,7 @@ export default class FieldRadius extends PIXI.Container {
         this.addChild(radiusValue);
 
         radiusValue.anchor.set(0, 0.5);
-        radiusValue.y = -41;
+        radiusValue.y = -43;
         radiusValue.x = 80;
     }
 
@@ -69,10 +69,10 @@ export default class FieldRadius extends PIXI.Container {
         }
 
         const sliderOptions: SliderOptions = {
-            min: 1,
-            max: 11,
+            min: GameConfig.gameField.radius.min,
+            max: GameConfig.gameField.radius.max,
             step: 1,
-            value: DefaultWFCConfig.radius
+            value: GameConfig.gameField.radius.default,
         }
 
         const slider = this.slider = new Slider(sliderAssets, 300, sliderOptions);
@@ -83,6 +83,14 @@ export default class FieldRadius extends PIXI.Container {
         this.slider.emitter.on('change', (value: number) => {
             this.radiusValue.text = `${value}`;
             GlobalEventBus.emit('game:fieldRadiusChanged', value);
+        });
+
+        this.slider.emitter.on('pointerDown', () => {
+            GlobalEventBus.emit('ui:sliderPointerDown');
+        });
+
+        this.slider.emitter.on('pointerUp', () => {
+            GlobalEventBus.emit('ui:sliderPointerUp');
         });
     }
 }

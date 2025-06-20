@@ -20,6 +20,7 @@ export default class Materials {
 
     private initMaterials(): void {
         this.initMainMaterial();
+        this.initTransparentMaterial();
     }
 
     private initMainMaterial(): void {
@@ -27,9 +28,17 @@ export default class Materials {
         texture.flipY = false;
         texture.colorSpace = THREE.SRGBColorSpace;
 
-        this.materials[MaterialType.Main] = new THREE.MeshPhongMaterial({
+        this.materials[MaterialType.Main] = new THREE.MeshLambertMaterial({
             map: texture,
-            // side: THREE.DoubleSide,
+        });
+    }
+
+    private initTransparentMaterial(): void {
+        this.materials[MaterialType.Transparent] = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.1,
+            depthWrite: false,
         });
     }
 }

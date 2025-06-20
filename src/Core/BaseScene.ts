@@ -129,9 +129,6 @@ export default class BaseScene {
         const settings = CameraConfig.settings;
         const camera = this.camera = new THREE.PerspectiveCamera(settings.fov, this.windowSizes.width / this.windowSizes.height, settings.near, settings.far);
         this.scene.add(camera);
-
-        this.camera.position.set(0, 12, 12);
-        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
     }
 
     private initLights(): void {

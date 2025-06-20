@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import GridConfig from '../../../../Data/Configs/GridConfig';
 import { HexRotation } from '../../../../Data/Enums/HexRotation';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import { EdgeColor, RotationAngleName } from '../../../../Data/Configs/DebugInfoConfig';
@@ -9,6 +8,7 @@ import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
 import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 import { HexTilesRulesConfig } from '../../../../Data/Configs/HexTilesRulesConfig';
 import { IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
+import { GameConfig } from '../../../../Data/Configs/GameConfig';
 
 export default class HexTileDebug extends THREE.Group {
     private hexTileType: HexTileType;
@@ -61,7 +61,7 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     private initDebugInfoPlane(): void {
-        const debugInfoPlane = this.debugInfoPlane = new CanvasPlaneMesh(GridConfig.hexSize * 2, GridConfig.hexSize * 2, 200);
+        const debugInfoPlane = this.debugInfoPlane = new CanvasPlaneMesh(GameConfig.gameField.hexSize * 2, GameConfig.gameField.hexSize * 2, 200);
         this.add(debugInfoPlane);
 
         const debugInfoPlaneView = debugInfoPlane.getView();
@@ -87,9 +87,9 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     private drawRotationInfo(canvas: HTMLCanvasElement, resolution: number, rotation: HexRotation): void {
-        const textPosition: number = GridConfig.hexSize * 0.3;
+        const textPosition: number = GameConfig.gameField.hexSize * 0.3;
         const color: string = '#aa0000';
-        const startAngle = GridConfig.GridOrientation === GridOrientation.PointyTop ? 0 : Math.PI / 6;
+        const startAngle = GameConfig.gameField.GridOrientation === GridOrientation.PointyTop ? 0 : Math.PI / 6;
 
         const canvasCenterX = canvas.width / 2;
         const canvasCenterY = canvas.height / 2;
@@ -104,15 +104,15 @@ export default class HexTileDebug extends THREE.Group {
         ctx.save();
         ctx.translate(canvasCenterX, canvasCenterY);
         ctx.rotate(startAngle + Math.PI / 2);
-        ctx.fillText(`${RotationAngleName[rotation]}`, 0, -GridConfig.hexSize * textPosition * resolution);
+        ctx.fillText(`${RotationAngleName[rotation]}`, 0, -GameConfig.gameField.hexSize * textPosition * resolution);
         ctx.restore();
 
         ctx.strokeStyle = color;
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.moveTo(canvasCenterX, canvasCenterY);
-        ctx.lineTo(canvasCenterX + Math.cos(startAngle) * GridConfig.hexSize * textPosition * resolution * 0.7,
-            canvasCenterY + Math.sin(startAngle) * GridConfig.hexSize * textPosition * resolution * 0.7);
+        ctx.lineTo(canvasCenterX + Math.cos(startAngle) * GameConfig.gameField.hexSize * textPosition * resolution * 0.7,
+            canvasCenterY + Math.sin(startAngle) * GameConfig.gameField.hexSize * textPosition * resolution * 0.7);
         ctx.stroke();
     }
 
@@ -125,7 +125,7 @@ export default class HexTileDebug extends THREE.Group {
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
 
-        const startAngle = GridConfig.GridOrientation === GridOrientation.PointyTop ? 0 : Math.PI / 6;
+        const startAngle = GameConfig.gameField.GridOrientation === GridOrientation.PointyTop ? 0 : Math.PI / 6;
 
         for (let i = 0; i < edgeCount; i++) {
             const angle = startAngle - (Math.PI / 3) * i;
@@ -137,8 +137,8 @@ export default class HexTileDebug extends THREE.Group {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            const textX = centerX + Math.cos(angle) * GridConfig.hexSize * 0.7 * resolution;
-            const textY = centerY + Math.sin(angle) * GridConfig.hexSize * 0.7 * resolution;
+            const textX = centerX + Math.cos(angle) * GameConfig.gameField.hexSize * 0.7 * resolution;
+            const textY = centerY + Math.sin(angle) * GameConfig.gameField.hexSize * 0.7 * resolution;
 
             ctx.save();
             ctx.translate(textX, textY);
@@ -154,7 +154,7 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     private initHexTileModelName(): void {
-        const modelNamePlane = this.modelNamePlane = new CanvasPlaneMesh(GridConfig.hexSize * 4, GridConfig.hexSize * 4, 200);
+        const modelNamePlane = this.modelNamePlane = new CanvasPlaneMesh(GameConfig.gameField.hexSize * 4, GameConfig.gameField.hexSize * 4, 200);
         this.add(modelNamePlane);
 
         const debugInfoPlaneView = modelNamePlane.getView();

@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import GridConfig from '../../../../Data/Configs/GridConfig';
 import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
+import { GameConfig } from '../../../../Data/Configs/GameConfig';
 
 export default class DebugGrid extends THREE.Group {
     private radius: number;
@@ -27,8 +27,8 @@ export default class DebugGrid extends THREE.Group {
             const r1 = Math.max(-this.radius, -q - this.radius);
             const r2 = Math.min(this.radius, -q + this.radius);
             for (let r = r1; r <= r2; r++) {
-                const center = HexGridHelper.axialToWorld({ q, r }, GridConfig.hexSize, GridConfig.GridOrientation);
-                const corners = this.getHexCorners(center, GridConfig.hexSize, GridConfig.GridOrientation);
+                const center = HexGridHelper.axialToWorld({ q, r }, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
+                const corners = this.getHexCorners(center, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
 
                 for (let i = 0; i < 6; i++) {
                     const a = corners[i];
@@ -71,7 +71,7 @@ export default class DebugGrid extends THREE.Group {
     private initGridCoordinates(): void {
         const resolution = 100;
         const canvasMargin = 2;
-        const worldSize = (3 / 2 * this.radius + canvasMargin) * GridConfig.hexSize;
+        const worldSize = (3 / 2 * this.radius + canvasMargin) * GameConfig.gameField.hexSize;
         const gridCoordinatesPlane = new CanvasPlaneMesh(worldSize * 2, worldSize * 2, resolution);
         this.add(gridCoordinatesPlane);
 
@@ -94,7 +94,7 @@ export default class DebugGrid extends THREE.Group {
             const r1 = Math.max(-this.radius, -q - this.radius);
             const r2 = Math.min(this.radius, -q + this.radius);
             for (let r = r1; r <= r2; r++) {
-                const center = HexGridHelper.axialToWorld({ q, r }, GridConfig.hexSize, GridConfig.GridOrientation);
+                const center = HexGridHelper.axialToWorld({ q, r }, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
 
                 const cx = canvasCenterX + center.x * resolution;
                 const cy = canvasCenterY + center.z * resolution - 0.55 * resolution;

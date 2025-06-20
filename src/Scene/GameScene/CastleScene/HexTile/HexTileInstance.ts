@@ -6,9 +6,9 @@ import HexTileModelConfig from '../../../../Data/Configs/HexTileModelConfig';
 import Materials from '../../../../Core/Materials/Materials';
 import { MaterialType } from '../../../../Data/Enums/MaterialType';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
-import GridConfig from '../../../../Data/Configs/GridConfig';
 import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 import HexTileDebug from './HexTileDebug';
+import { GameConfig } from '../../../../Data/Configs/GameConfig';
 
 export default class HexTileInstance extends THREE.Group {
     private hexTileInstanceData: IHexTileInstanceData;
@@ -80,12 +80,12 @@ export default class HexTileInstance extends THREE.Group {
         this.add(instanceMesh);
         // instanceMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 
-        const defaultRotation: number = GridConfig.GridOrientation === GridOrientation.PointyTop ? Math.PI : Math.PI / 2 + Math.PI / 3;
+        const defaultRotation: number = GameConfig.gameField.GridOrientation === GridOrientation.PointyTop ? Math.PI : Math.PI / 2 + Math.PI / 3;
         const matrix = new THREE.Matrix4();
 
         for (let i = 0; i < instanceCount; i++) {
             const hexTileTransform: IHexTileTransform = hexTileTransforms[i];
-            const position = HexGridHelper.axialToWorld(hexTileTransform.position, GridConfig.hexSize, GridConfig.GridOrientation);
+            const position = HexGridHelper.axialToWorld(hexTileTransform.position, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
             const rotationYAngle = HexGridHelper.hexRotationToAngle(hexTileTransform.rotation) + defaultRotation;
             const rotationQuaternion = new THREE.Quaternion();
             rotationQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationYAngle);
@@ -108,7 +108,7 @@ export default class HexTileInstance extends THREE.Group {
         if (this.hexTileDebugConfig.edge || this.hexTileDebugConfig.rotation) {
             for (let i = 0; i < this.hexTileInstanceData.transforms.length; i++) {
                 const transform: IHexTileTransform = this.hexTileInstanceData.transforms[i];
-                const position = HexGridHelper.axialToWorld(transform.position, GridConfig.hexSize, GridConfig.GridOrientation);
+                const position = HexGridHelper.axialToWorld(transform.position, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
 
                 const hexTileDebug = new HexTileDebug(this.hexTileType, this.hexTileDebugConfig);
                 this.add(hexTileDebug);

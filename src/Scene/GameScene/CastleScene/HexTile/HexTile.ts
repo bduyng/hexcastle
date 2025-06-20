@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import ThreeJSHelper from '../../../../Helpers/ThreeJSHelper';
 import { IHexCoord, IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
-import GridConfig from '../../../../Data/Configs/GridConfig';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 import HexTileDebug from './HexTileDebug';
@@ -10,6 +9,7 @@ import HexTileModelConfig from '../../../../Data/Configs/HexTileModelConfig';
 import Materials from '../../../../Core/Materials/Materials';
 import { MaterialType } from '../../../../Data/Enums/MaterialType';
 import { HexRotation } from '../../../../Data/Enums/HexRotation';
+import { GameConfig } from '../../../../Data/Configs/GameConfig';
 
 export default class HexTile extends THREE.Group {
     private hexTileType: HexTileType;
@@ -37,7 +37,7 @@ export default class HexTile extends THREE.Group {
 
     public setHexTilePosition(position: IHexCoord): void {
         this.hexTilePosition = position;
-        const newPosition = HexGridHelper.axialToWorld(position, GridConfig.hexSize, GridConfig.GridOrientation);
+        const newPosition = HexGridHelper.axialToWorld(position, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
         this.position.set(newPosition.x, 0, newPosition.z);
     }
 
@@ -68,7 +68,7 @@ export default class HexTile extends THREE.Group {
         const view: THREE.Mesh = new THREE.Mesh(geometry, material);
         this.wrapper.add(view);
 
-        const defaultRotation: number = GridConfig.GridOrientation === GridOrientation.PointyTop ? Math.PI : Math.PI / 2 + Math.PI / 3;
+        const defaultRotation: number = GameConfig.gameField.GridOrientation === GridOrientation.PointyTop ? Math.PI : Math.PI / 2 + Math.PI / 3;
         view.rotation.set(0, defaultRotation, 0);
     }
 

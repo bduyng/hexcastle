@@ -51,7 +51,3 @@ export interface IWFCStep {
         possibleVariants: ITileVariant[];
     }[];
 }
-
-export interface IShowTilesConfig {
-    delay: number;
-}

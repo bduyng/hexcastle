@@ -5,6 +5,8 @@ import mitt, { Emitter } from 'mitt';
 
 type Events = {
     change: number;
+    pointerDown: void;
+    pointerUp: void;
 };
 
 export default class Slider extends PIXI.Container {
@@ -127,6 +129,7 @@ export default class Slider extends PIXI.Container {
             
             this.addGlobalEventListeners();
             event.stopPropagation();
+            this.emitter.emit('pointerDown');
         });
     }
 
@@ -145,7 +148,7 @@ export default class Slider extends PIXI.Container {
                 let normalizedValue = (localPoint.x - this.thumbOffsetX) / (this.sliderWidth - this.extraWidth);
                 normalizedValue = Math.round(normalizedValue / (this.options.step / (this.options.max - this.options.min))) * (this.options.step / (this.options.max - this.options.min));
                 normalizedValue = Math.max(0, Math.min(1, normalizedValue));
-                const value = Math.floor(this.options.min + normalizedValue * (this.options.max - this.options.min));
+                const value = Math.round(this.options.min + normalizedValue * (this.options.max - this.options.min));
 
                 if (value !== this.currentValue) {
                     this.setValue(value);
@@ -157,6 +160,7 @@ export default class Slider extends PIXI.Container {
         const onGlobalPointerUp = () => {
             this.isPressed = false;
             this.removeGlobalEventListeners();
+            this.emitter.emit('pointerUp');
         };
 
         this.globalPointerMove = onGlobalPointerMove;

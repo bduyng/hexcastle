@@ -45,6 +45,9 @@ const ModelAssets: string[] = [
     'hex_river_J.glb',
     'hex_river_K.glb',
     'hex_river_L.glb',
+
+    // buildings
+    'building_castle_blue.glb'
 ];
 
 const PixiAssets: string[] = [
