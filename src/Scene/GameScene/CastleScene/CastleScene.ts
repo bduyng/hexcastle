@@ -23,6 +23,7 @@ export default class CastleScene extends THREE.Group {
     private entropyView: EntropyView;
     private hexWFC: HexWFC;
     private intro: Intro;
+    private fieldRadiusHelper: FieldRadiusHelper;
 
     private isIntroActive: boolean = true;
 
@@ -79,14 +80,8 @@ export default class CastleScene extends THREE.Group {
     }
 
     private initFieldRadiusHelper(): void {
-        const fieldRadiusHelper = new FieldRadiusHelper(2);
+        const fieldRadiusHelper = this.fieldRadiusHelper = new FieldRadiusHelper();
         this.add(fieldRadiusHelper);
-
-        const points = fieldRadiusHelper.createVerticesVisualization(0x0000ff, 5);
-        this.add(points);
-
-        // const outline = fieldRadiusHelper.createOutlineVisualization(0xff0000, 2);
-        // this.add(outline);
     }
 
     private generateTiles(): void {
@@ -220,10 +215,24 @@ export default class CastleScene extends THREE.Group {
         });
 
         GlobalEventBus.on('game:fieldRadiusChanged', (radius: number) => {
-            DefaultWFCConfig.radius = radius - 1;
+            DefaultWFCConfig.radius = radius;
 
             if (this.isIntroActive) {
                 this.intro.showByRadius(DefaultWFCConfig.radius);
+            } else {
+                this.fieldRadiusHelper.show(DefaultWFCConfig.radius);
+            }
+        });
+
+        GlobalEventBus.on('ui:sliderPointerUp', () => {
+            if (!this.isIntroActive) {
+                this.fieldRadiusHelper.hide();
+            }
+        });
+
+        GlobalEventBus.on('ui:sliderPointerDown', () => {
+            if (!this.isIntroActive) {
+                this.fieldRadiusHelper.show(DefaultWFCConfig.radius);
             }
         });
     }

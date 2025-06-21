@@ -5,7 +5,7 @@ const GameConfig = {
         hexSize: 1.15,
         GridOrientation: GridOrientation.PointyTop,
         radius: {
-            min: 2,
+            min: 1,
             max: 13,
             default: 5
         },

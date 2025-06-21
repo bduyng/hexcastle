@@ -89,6 +89,6 @@ export default class Intro extends THREE.Group {
         const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel('building_castle_blue');
         const material: THREE.Material = Materials.getInstance().materials[MaterialType.Transparent];
         const castleMesh = new THREE.Mesh(geometry, material);
-        // this.add(castleMesh);
+        this.add(castleMesh);
     }
 }

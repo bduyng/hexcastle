@@ -3,24 +3,49 @@ import { GameConfig } from '../../../Data/Configs/GameConfig';
 import { IHexCoord } from '../../../Data/Interfaces/IHexTile';
 import { GridOrientation } from '../../../Data/Enums/GridOrientation';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
+import TWEEN from 'three/addons/libs/tween.module.js';
 
 export default class FieldRadiusHelper extends THREE.Group {
     private radius: number;
+    private view: THREE.Mesh;
+    private hideTween: any;
     private epsilon: number = 1e-5;
 
-    constructor(radius: number = 0) {
+    constructor() {
         super();
+    }
 
+    public show(radius: number): void {
         this.radius = radius;
 
-        this.init();
+        if (this.hideTween) {
+            this.hideTween.stop();
+            this.hideTween = null;
+        }
+
+        this.reset();
+        this.createPerimeterPlane();
     }
 
-    private init(): void {
-
+    public hide(): void {
+        this.hideTween = new TWEEN.Tween(this.view.material)
+            .to({ opacity: 0 }, 1000)
+            .easing(TWEEN.Easing.Sinusoidal.In)
+            .start()
+            .onComplete(() => {
+                this.view.visible = false;
+            });
     }
 
-    public getOuterVertices(): THREE.Vector2[] {
+    private reset(): void {
+        if (this.view) {
+            this.remove(this.view);
+            this.view.geometry.dispose();
+            this.view = null;
+        }
+    }
+
+    private getOuterVertices(): THREE.Vector2[] {
         const hexCoords = this.generateHexCoords();
         const outerVertices: THREE.Vector2[] = [];
 
@@ -90,15 +115,6 @@ export default class FieldRadiusHelper extends THREE.Group {
             { q: 1, r: -1 }   // 5: северо-восток
         ];
 
-        const directions2: IHexCoord[] = [
-            { q: 1, r: 0 },   // 0°
-            { q: 1, r: -1 },  // 60°
-            { q: 0, r: -1 },  // 120°
-            { q: -1, r: 0 },  // 180°
-            { q: -1, r: 1 },  // 240°
-            { q: 0, r: 1 },   // 300°
-        ];
-
         const direction = directions[side];
         return {
             q: coord.q + direction.q,
@@ -143,24 +159,68 @@ export default class FieldRadiusHelper extends THREE.Group {
         return center;
     }
 
-    public createVerticesVisualization(color: number = 0x0000ff, size: number = 0.05): THREE.Points {
+    private createPerimeterPlane(): void {
         const vertices = this.getOuterVertices();
-        const points: THREE.Vector3[] = [];
+
+        const lowerVertices: THREE.Vector3[] = [];
+        const upperVertices: THREE.Vector3[] = [];
 
         for (const vertex of vertices) {
-            points.push(new THREE.Vector3(vertex.x, 0.15, vertex.y)); // Y=0.15 чтобы точки были видны над землей
+            lowerVertices.push(new THREE.Vector3(vertex.x, 0.4, vertex.y));
+            upperVertices.push(new THREE.Vector3(vertex.x, -1, vertex.y));
         }
 
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const material = new THREE.PointsMaterial({
-            color: color,
-            size: size,
-            sizeAttenuation: false
+        const positions: number[] = [];
+        const uvs: number[] = [];
+        const indices: number[] = [];
+
+        let vertexIndex = 0;
+
+        for (let i = 0; i < vertices.length; i++) {
+            const nextI = (i + 1) % vertices.length;
+
+            const v1 = lowerVertices[i];
+            const v2 = lowerVertices[nextI];
+            const v3 = upperVertices[nextI];
+            const v4 = upperVertices[i];
+
+            positions.push(v1.x, v1.y, v1.z);
+            positions.push(v2.x, v2.y, v2.z);
+            positions.push(v3.x, v3.y, v3.z);
+
+            uvs.push(0, 0);
+            uvs.push(1, 0);
+            uvs.push(1, 1);
+
+            indices.push(vertexIndex, vertexIndex + 1, vertexIndex + 2);
+
+            positions.push(v1.x, v1.y, v1.z);
+            positions.push(v3.x, v3.y, v3.z);
+            positions.push(v4.x, v4.y, v4.z);
+
+            uvs.push(0, 0);
+            uvs.push(1, 1);
+            uvs.push(0, 1);
+
+            indices.push(vertexIndex + 3, vertexIndex + 4, vertexIndex + 5);
+
+            vertexIndex += 6;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+        geometry.setIndex(indices);
+        geometry.computeVertexNormals();
+
+        const material = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.3,
+            side: THREE.DoubleSide,
         });
 
-        const pointsObject = new THREE.Points(geometry, material);
-        pointsObject.name = 'FieldVertices';
-
-        return pointsObject;
+        const view = this.view = new THREE.Mesh(geometry, material);
+        this.add(view);
     }
 }
