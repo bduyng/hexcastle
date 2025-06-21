@@ -191,7 +191,7 @@ export default class CastleScene extends THREE.Group {
         }
 
         if (DebugConfig.game.entropy) {
-            this.entropyView.drawStep(stepIndex);
+            // this.entropyView.drawStep(stepIndex);
         }
     }
 
