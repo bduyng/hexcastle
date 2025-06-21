@@ -89,7 +89,7 @@ export default class EntropyView extends THREE.Group {
     }
 
     private init(): void {
-        const resolution = 200;
+        const resolution = 25;
         const canvasMargin = 2;
         const worldSize = (3 / 2 * this.radius + canvasMargin) * GameConfig.gameField.hexSize;
         const entropyPlane = this.entropyPlane = new CanvasPlaneMesh(worldSize * 2, worldSize * 2, resolution);
