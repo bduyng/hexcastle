@@ -28,19 +28,19 @@ export default class LoadingOverlay extends THREE.Group {
                 uAlpha: { value: 1 },
             },
             vertexShader: `
-        void main()
-        {
-          gl_Position = vec4(position, 0.5);
-        }
-      `,
+                void main()
+                {
+                gl_Position = vec4(position, 0.5);
+                }
+            `,
             fragmentShader: `
-        uniform float uAlpha;
+                uniform float uAlpha;
 
-        void main()
-        {
-          gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
-        }
-      `,
+                void main()
+                {
+                gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
+                }
+            `,
         });
 
         const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial);

@@ -26,6 +26,7 @@ export default class CastleScene extends THREE.Group {
     private intro: Intro;
     private fieldRadiusHelper: FieldRadiusHelper;
     private previousGeneratePercent: number = 0;
+    private showTileStepTime: number = 0;
 
     private isIntroActive: boolean = true;
 
@@ -39,15 +40,13 @@ export default class CastleScene extends THREE.Group {
         if (this.tilesShowState === TilesShowState.Ready || this.tilesShowState === TilesShowState.Showing) {
             this.tilesShowState = TilesShowState.Showing;
             this.time += dt;
-            if (this.time >= GameConfig.gameField.showTilesDelay * 0.001) {
-                this.time = 0;
-                this.showTile(this.stepIndex);
 
-                this.stepIndex++;
+            if (this.time >= this.showTileStepTime / 1000) {
+                const stepsToShow = Math.floor(this.time * 1000 / this.showTileStepTime);
+                this.time -= (this.showTileStepTime / 1000) * stepsToShow;
 
-                if (this.stepIndex >= this.steps.length) {
-                    this.tilesShowState = TilesShowState.Completed;
-                }
+                this.showTiles(this.stepIndex, stepsToShow);
+                this.stepIndex += stepsToShow;
             }
         }
     }
@@ -132,7 +131,6 @@ export default class CastleScene extends THREE.Group {
             if (radius <= item.radius) {
                 return item.steps;
             }
-
         }
 
         return GameConfig.WFC.stepsPerFrame.minimum;
@@ -161,6 +159,8 @@ export default class CastleScene extends THREE.Group {
 
         this.showPredefinedTiles();
 
+        const delays = GameConfig.gameField.showTilesDelays;
+        this.showTileStepTime = Math.max(delays.min, Math.min(delays.max, 1 / DefaultWFCConfig.radius * delays.coeff));
         this.tilesShowState = TilesShowState.Ready;
     }
 
@@ -181,13 +181,22 @@ export default class CastleScene extends THREE.Group {
         }
     }
 
-    private showTile(stepIndex: number): void {
-        const step: IWFCStep = this.steps[stepIndex];
-        if (step.newTile) {
-            const hexTileInstance = this.findHexTileInstanceByPosition(step.newTile.position);
-            if (hexTileInstance) {
-                hexTileInstance.showTile(step.newTile.position);
+    private showTiles(stepIndex: number, count: number): void {
+        for (let i = stepIndex; i < stepIndex + count; i++) {
+            if (i >= this.steps.length) {
+                this.tilesShowState = TilesShowState.Completed;
+                this.entropyView?.reset();
+                return;
             }
+
+            const step: IWFCStep = this.steps[i];
+            if (step.newTile) {
+                const hexTileInstance = this.findHexTileInstanceByPosition(step.newTile.position);
+                if (hexTileInstance) {
+                    hexTileInstance.showTile(step.newTile.position);
+                }
+            }
+
         }
 
         if (DebugConfig.game.entropy) {

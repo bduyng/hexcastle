@@ -45,7 +45,7 @@ export default class Slider extends PIXI.Container {
         this.trackMask.clear();
         this.trackMask.rect(0, 0, this.thumb.x, this.track.height)
             .fill({ color: 0xffffff });
-        
+
         this.currentValue = value;
     }
 
@@ -79,6 +79,25 @@ export default class Slider extends PIXI.Container {
             width: this.sliderWidth,
         });
         this.wrapper.addChild(background);
+
+        background.eventMode = 'static';
+        background.cursor = 'pointer';
+
+        background.on('pointerdown', (event: PIXI.FederatedPointerEvent) => {
+            const globalPoint = event.global.clone();
+            globalPoint.x += this.wrapper.width * 0.5;
+            const localPoint = this.toLocal(globalPoint);
+            let normalizedValue = (localPoint.x - this.thumbOffsetX) / (this.sliderWidth - this.extraWidth);
+            normalizedValue = Math.round(normalizedValue / (this.options.step / (this.options.max - this.options.min))) * (this.options.step / (this.options.max - this.options.min));
+            normalizedValue = Math.max(0, Math.min(1, normalizedValue));
+            const value = Math.round(this.options.min + normalizedValue * (this.options.max - this.options.min));
+            
+            if (value !== this.currentValue) {
+                this.setValue(value);
+                this.emitter.emit('change', value);
+                this.emitter.emit('pointerUp');
+            }
+        });
     }
 
     private initMinMaxLabels(): void {
@@ -126,7 +145,7 @@ export default class Slider extends PIXI.Container {
 
         thumb.on('pointerdown', (event: PIXI.FederatedPointerEvent) => {
             this.isPressed = true;
-            
+
             this.addGlobalEventListeners();
             event.stopPropagation();
             this.emitter.emit('pointerDown');
@@ -138,7 +157,7 @@ export default class Slider extends PIXI.Container {
             if (this.isPressed) {
                 const canvas = document.querySelector('.pixi-canvas') as HTMLCanvasElement;
                 if (!canvas) return;
-                
+
                 const rect = canvas.getBoundingClientRect();
                 const canvasX = event.clientX - rect.left;
                 const canvasY = event.clientY - rect.top;

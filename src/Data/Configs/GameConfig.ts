@@ -9,7 +9,11 @@ const GameConfig = {
             max: 20,
             default: 5
         },
-        showTilesDelay: 10,
+        showTilesDelays: {
+            min: 8,
+            max: 40,
+            coeff: 200,
+        }
     },
     WFC: {
         syncGenerationRadius: 7,
