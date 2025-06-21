@@ -1,5 +1,4 @@
 import { HexTileType } from "../Enums/HexTileType";
-import { HexRotation } from "../Enums/HexRotation";
 import { IHexCoord } from "../Interfaces/IHexTile";
 import { IWFCConfig } from "../Interfaces/IWFC";
 import { GameConfig } from "./GameConfig";

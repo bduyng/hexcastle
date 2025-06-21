@@ -11,7 +11,7 @@ export default class CameraController extends THREE.Group {
         this.init();
     }
 
-    public update(dt: number): void {
+    public update(): void {
 
     }
 

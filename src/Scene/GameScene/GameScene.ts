@@ -20,7 +20,7 @@ export default class GameScene extends THREE.Group {
 
     public update(dt: number): void {
         this.castleScene.update(dt);
-        this.cameraController.update(dt);
+        this.cameraController.update();
     }
 
     public start(): void {

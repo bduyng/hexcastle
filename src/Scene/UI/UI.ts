@@ -1,12 +1,12 @@
 import * as PIXI from 'pixi.js';
-import MuteButton from './UIObjects/MuteButton';
+// import MuteButton from './UIObjects/MuteButton';
 import Button from './UIObjects/Button';
 import { GlobalEventBus } from '../../Core/GlobalEvents';
 import FieldRadius from './FieldRadius';
 import GenerateProgressBar from './GenerateProgressBar';
 
 export default class UI extends PIXI.Container {
-    private muteButton: MuteButton;
+    // private muteButton: MuteButton;
     private generateButton: Button;
     private stopButton: Button;
     private fieldRadius: FieldRadius;
@@ -49,10 +49,10 @@ export default class UI extends PIXI.Container {
         this.initGlobalEvents();
     }
 
-    private initMuteButton(): void {
-        const muteButton = this.muteButton = new MuteButton();
-        this.addChild(muteButton);
-    }
+    // private initMuteButton(): void {
+    //     const muteButton = this.muteButton = new MuteButton();
+    //     this.addChild(muteButton);
+    // }
 
     private initGenerateButton(): void {
         const texture = 'assets/button_rectangle_depth_gradient_green.png';
