@@ -53,12 +53,14 @@ const ModelAssets: string[] = [
 const PixiAssets: string[] = [
     'assets/sound-icon.png',
     'assets/sound-icon-mute.png',
-    'assets/button_rectangle_depth_gradient.png',
+    'assets/button_rectangle_depth_gradient_green.png',
+    'assets/button_rectangle_depth_gradient_red.png',
     'assets/button_rectangle_depth_flat.png',
     'assets/button_rectangle_line.png',
     'assets/slide_horizontal_grey.png',
     'assets/slide_horizontal_color.png',
     'assets/slide_hangle.png',
+    'assets/progress_bar.png',
 
     // fonts
     'fonts/kenneyfuture.ttf',

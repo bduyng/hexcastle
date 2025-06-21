@@ -30,6 +30,14 @@ export default class Button extends PIXI.Container {
         return this.text;
     }
 
+    public show(): void {
+        this.visible = true;
+    }
+
+    public hide(): void {
+        this.visible = false;
+    }
+
     private init(): void {
         this.initView();
         this.initText();

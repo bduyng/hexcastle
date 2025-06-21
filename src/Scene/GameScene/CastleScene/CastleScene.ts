@@ -12,6 +12,7 @@ import DebugGrid from './DebugViewHelpers/DebugGrid';
 import { GameConfig } from '../../../Data/Configs/GameConfig';
 import Intro from './Intro';
 import FieldRadiusHelper from './FieldRadiusHelper';
+import HexGridHelper from '../../../Helpers/HexGridHelper';
 
 export default class CastleScene extends THREE.Group {
 
@@ -24,6 +25,7 @@ export default class CastleScene extends THREE.Group {
     private hexWFC: HexWFC;
     private intro: Intro;
     private fieldRadiusHelper: FieldRadiusHelper;
+    private previousGeneratePercent: number = 0;
 
     private isIntroActive: boolean = true;
 
@@ -87,27 +89,64 @@ export default class CastleScene extends THREE.Group {
     private generateTiles(): void {
         this.hexWFC.setConfig(DefaultWFCConfig);
 
-        const success: boolean = this.hexWFC.generate();
+        if (DefaultWFCConfig.radius <= GameConfig.WFC.syncGenerationRadius) {
+            this.generateTilesSync();
+        } else {
+            this.generateTilesAsync();
+        }
+    }
+
+    private generateTilesSync(): void {
+        this.hexWFC.generate();
 
         const grid: IHexTilesResult[] = this.hexWFC.getGrid();
         this.steps = this.hexWFC.getSteps();
+
         this.initGridTiles(grid);
         this.initEntropyView();
+    }
 
-        // if (success) {
-        //     const grid: IHexTilesResult[] = this.hexWFC.getGrid();
-        //     this.steps = this.hexWFC.getSteps();
-        //     console.log('123:', this.steps);
-        //     this.initGridTiles(grid);
-        //     this.initEntropyView();
-        // } else {
-        //     // const grid: IHexTilesResult[] = this.hexWFC.getGrid();
-        //     // this.steps = this.hexWFC.getSteps();
-        //     // console.log('Failed to generate grid:', this.steps);
-        //     console.error('Failed to generate grid');
-        //     // this.initGridTiles(grid);
-        //     // this.initEntropyView();
-        // }
+    private async generateTilesAsync(): Promise<void> {
+        GlobalEventBus.emit('game:startGeneratingWorld');
+
+        const stepsPerFrame = this.getStepsPerFrame(DefaultWFCConfig.radius);
+
+        const result = await this.hexWFC.generateAsync(
+            (stepIndex) => this.updateLoadingProgress(stepIndex),
+            stepsPerFrame,
+        );
+
+        if (result.success === true) {
+            this.steps = result.steps;
+            this.initGridTiles(result.grid);
+            this.initEntropyView();
+        }
+
+        GlobalEventBus.emit('game:finishGeneratingWorld');
+        this.previousGeneratePercent = 0;
+    }
+
+    private getStepsPerFrame(radius: number): number {
+        for (let i = 0; i < GameConfig.WFC.stepsPerFrame.values.length; i++) {
+            const item = GameConfig.WFC.stepsPerFrame.values[i];
+            if (radius <= item.radius) {
+                return item.steps;
+            }
+
+        }
+
+        return GameConfig.WFC.stepsPerFrame.minimum;
+    }
+
+    private updateLoadingProgress(stepIndex: number): void {
+        const totalCells = HexGridHelper.getCountByRadius(DefaultWFCConfig.radius);
+        const percentage = Math.round(stepIndex / totalCells * 100) / 100;
+
+        if (this.previousGeneratePercent !== percentage) {
+            GlobalEventBus.emit('game:progressGeneratingWorld', percentage);
+        }
+
+        this.previousGeneratePercent = percentage;
     }
 
     private initGridTiles(grid: IHexTilesResult[]): void {
@@ -210,7 +249,7 @@ export default class CastleScene extends THREE.Group {
                 this.isIntroActive = false;
             }
 
-            this.resetScene()
+            this.resetScene();
             this.generateTiles();
         });
 
@@ -234,6 +273,14 @@ export default class CastleScene extends THREE.Group {
             if (!this.isIntroActive) {
                 this.fieldRadiusHelper.show(DefaultWFCConfig.radius);
             }
+        });
+
+        GlobalEventBus.on('game:stopGenerate', () => {
+            this.hexWFC.stopGeneration();
+
+            this.intro.show();
+            this.intro.showByRadius(DefaultWFCConfig.radius);
+            this.isIntroActive = true;
         });
     }
 }

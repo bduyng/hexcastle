@@ -121,7 +121,7 @@ export default class DebugMenu {
         orbitControls.minPolarAngle = 0;
         orbitControls.maxPolarAngle = Math.PI / 2;
         orbitControls.minDistance = 3;
-        orbitControls.maxDistance = 60;
+        orbitControls.maxDistance = 90;
         orbitControls.enablePan = false;
 
         if (!this.isAssetsLoaded) {

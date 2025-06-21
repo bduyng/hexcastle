@@ -3,7 +3,7 @@ import { HexTileType } from "../../../Data/Enums/HexTileType";
 import { TileEdgeType } from "../../../Data/Enums/TileEdgeType";
 import { IHexCoord } from "../../../Data/Interfaces/IHexTile";
 import { HexRotation } from "../../../Data/Enums/HexRotation";
-import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig, IWFCStep } from "../../../Data/Interfaces/IWFC";
+import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig, IWFCStep, IWFCProgressCallback, IWFCAsyncResult } from "../../../Data/Interfaces/IWFC";
 import { NeighborDirections } from "../../../Data/Configs/WFCConfig";
 import { HexTilesRulesConfig } from "../../../Data/Configs/HexTilesRulesConfig";
 
@@ -14,6 +14,8 @@ export class HexWFC {
     private grid: Map<string, IWFCHexTilesInfo>;
     private config: IWFCConfig;
     private steps: IWFCStep[] = [];
+    private isGenerating: boolean = false;
+    private shouldStop: boolean = false;
 
     constructor() {
 
@@ -26,6 +28,7 @@ export class HexWFC {
 
     public generate(): boolean {
         this.steps = [];
+        this.shouldStop = false;
 
         if (this.config.predefinedTiles && !this.initializePredefinedTiles()) {
             return false;
@@ -45,14 +48,18 @@ export class HexWFC {
             }
 
             if (hexTile.entropy === 0) {
-                return false;
+                hexTile.collapsed = true;
+                hexTile.entropy = 0;
+                continue;
             }
 
             const selectedVariant = this.collapseHexTile(hexTile);
 
             const success: boolean = this.propagateConstraints(hexTile);
             if (!success) {
-                return false;
+                hexTile.collapsed = false;
+                hexTile.entropy = 0;
+                continue;
             }
 
             this.steps.push({
@@ -66,6 +73,106 @@ export class HexWFC {
 
             stepIndex++;
         }
+    }
+
+    public async generateAsync(progressCallback?: IWFCProgressCallback, stepsPerFrame: number = 10): Promise<IWFCAsyncResult> {
+        if (this.isGenerating) {
+            return { success: false, error: "Generation already in progress" };
+        }
+
+        this.isGenerating = true;
+        this.shouldStop = false;
+        this.steps = [];
+
+        try {
+            if (this.config.predefinedTiles && !this.initializePredefinedTiles()) {
+                return { success: false, error: "Failed to initialize predefined tiles" };
+            }
+
+            const initialStep = {
+                freeCells: this.getFreeCellsInfo()
+            };
+            this.steps.push(initialStep);
+
+            if (progressCallback) {
+                progressCallback(0);
+            }
+
+            let stepIndex = 1;
+            let stepsInCurrentFrame = 0;
+
+            while (true) {
+                if (this.shouldStop) {
+                    return { success: false, error: "Generation was stopped" };
+                }
+
+                const hexTile: IWFCHexTilesInfo = this.findLowestEntropyHexTile();
+
+                if (!hexTile) {
+                    const result = this.getGrid();
+                    return { 
+                        success: true, 
+                        grid: result, 
+                        steps: this.steps 
+                    };
+                }
+
+                if (hexTile.entropy === 0) {
+                    hexTile.collapsed = true;
+                    hexTile.entropy = 0;
+                    continue;
+                }
+
+                const selectedVariant = this.collapseHexTile(hexTile);
+
+                const success: boolean = this.propagateConstraints(hexTile);
+                if (!success) {
+                    hexTile.collapsed = false;
+                    hexTile.entropy = 0;
+                    this.steps.pop();
+                    continue;
+                }
+
+                const newStep = {
+                    newTile: {
+                        position: hexTile.coord,
+                        type: selectedVariant.type,
+                        rotation: selectedVariant.rotation
+                    },
+                    freeCells: this.getFreeCellsInfo()
+                };
+
+                this.steps.push(newStep);
+
+                if (progressCallback) {
+                    progressCallback(stepIndex);
+                }
+
+                stepIndex++;
+                stepsInCurrentFrame++;
+
+                if (stepsInCurrentFrame >= stepsPerFrame) {
+                    await this.yieldToMainThread();
+                    stepsInCurrentFrame = 0;
+                }
+            }
+        } finally {
+            this.isGenerating = false;
+        }
+    }
+
+    public stopGeneration(): void {
+        this.shouldStop = true;
+    }
+
+    public isGeneratingInProgress(): boolean {
+        return this.isGenerating;
+    }
+
+    private yieldToMainThread(): Promise<void> {
+        return new Promise(resolve => {
+            setTimeout(resolve, 0);
+        });
     }
 
     public getGrid(): IHexTilesResult[] {

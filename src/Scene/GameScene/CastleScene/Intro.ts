@@ -19,6 +19,10 @@ export default class Intro extends THREE.Group {
         this.init();
     }
 
+    public show(): void {
+        this.visible = true;
+    }
+
     public hide(): void {
         this.visible = false;
     }

@@ -51,3 +51,14 @@ export interface IWFCStep {
         possibleVariants: ITileVariant[];
     }[];
 }
+
+export interface IWFCProgressCallback {
+    (stepIndex: number): void;
+}
+
+export interface IWFCAsyncResult {
+    success: boolean;
+    grid?: IHexTilesResult[];
+    steps?: IWFCStep[];
+    error?: string;
+}
