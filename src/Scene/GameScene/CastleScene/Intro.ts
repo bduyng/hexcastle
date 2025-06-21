@@ -7,6 +7,7 @@ import Materials from '../../../Core/Materials/Materials';
 import { MaterialType } from '../../../Data/Enums/MaterialType';
 import { GameConfig } from '../../../Data/Configs/GameConfig';
 import { IHexCoord } from '../../../Data/Interfaces/IHexTile';
+import { GridOrientation } from '../../../Data/Enums/GridOrientation';
 
 export default class Intro extends THREE.Group {
     private tilesInstanceMesh: THREE.InstancedMesh;
@@ -60,6 +61,7 @@ export default class Intro extends THREE.Group {
 
         const matrix = new THREE.Matrix4();
 
+        const defaultRotation: number = GameConfig.gameField.GridOrientation === GridOrientation.PointyTop ? Math.PI : Math.PI / 2 + Math.PI / 3;
         let instanceId: number = 0;
 
         for (let q = -radius; q <= radius; q++) {
@@ -69,7 +71,8 @@ export default class Intro extends THREE.Group {
                 const position = HexGridHelper.axialToWorld({ q, r }, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
                 const scale = new THREE.Vector3(0.001, 0.001, 0.001);
                 const rotationQuaternion = new THREE.Quaternion();
-                
+                rotationQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), defaultRotation);
+
                 matrix.compose(position, rotationQuaternion, scale);
 
                 tilesInstanceMesh.setMatrixAt(instanceId, matrix);
@@ -86,6 +89,6 @@ export default class Intro extends THREE.Group {
         const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel('building_castle_blue');
         const material: THREE.Material = Materials.getInstance().materials[MaterialType.Transparent];
         const castleMesh = new THREE.Mesh(geometry, material);
-        this.add(castleMesh);
+        // this.add(castleMesh);
     }
 }

@@ -11,6 +11,7 @@ import { GlobalEventBus } from '../../../Core/GlobalEvents';
 import DebugGrid from './DebugViewHelpers/DebugGrid';
 import { GameConfig } from '../../../Data/Configs/GameConfig';
 import Intro from './Intro';
+import FieldRadiusHelper from './FieldRadiusHelper';
 
 export default class CastleScene extends THREE.Group {
 
@@ -56,6 +57,8 @@ export default class CastleScene extends THREE.Group {
         this.initHexWFC();
         this.initIntro();
         this.initDebugGrid();
+        this.initFieldRadiusHelper();
+
         this.initGlobalListeners();
     }
 
@@ -73,6 +76,17 @@ export default class CastleScene extends THREE.Group {
             const debugGrid = new DebugGrid(DefaultWFCConfig.radius);
             this.add(debugGrid);
         }
+    }
+
+    private initFieldRadiusHelper(): void {
+        const fieldRadiusHelper = new FieldRadiusHelper(2);
+        this.add(fieldRadiusHelper);
+
+        const points = fieldRadiusHelper.createVerticesVisualization(0x0000ff, 5);
+        this.add(points);
+
+        // const outline = fieldRadiusHelper.createOutlineVisualization(0xff0000, 2);
+        // this.add(outline);
     }
 
     private generateTiles(): void {
