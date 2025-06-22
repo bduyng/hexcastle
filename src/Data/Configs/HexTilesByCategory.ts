@@ -45,6 +45,15 @@ const HexTilesByCategory: { [key in HexTileCategory]: HexTileType[] } = {
         HexTileType.RiverK,
         HexTileType.RiverL,
     ],
+    [HexTileCategory.Walls]: [
+        HexTileType.WallCornerAGate,
+        HexTileType.WallCornerAInside,
+        HexTileType.WallCornerAOutside,
+        HexTileType.WallCornerBInside,
+        HexTileType.WallCornerBOutside,
+        HexTileType.WallStraight,
+        HexTileType.WallStraightGate,
+    ],
 }
 
 

@@ -1,6 +1,6 @@
 import { TileEdgeType } from "../Enums/TileEdgeType";
 import { HexRotation } from "../Enums/HexRotation";
-import { HexTileType } from "../Enums/HexTileType";
+import { HexTileCategory } from "../Enums/HexTileCategory";
 
 const RotationAngleName: { [key in HexRotation]: string } = {
     0: '0°',
@@ -11,57 +11,33 @@ const RotationAngleName: { [key in HexRotation]: string } = {
     5: '300°'
 }
 
+const TileDebugInfoConfigByCategory = {
+    [HexTileCategory.Base]: {
+        positionY: 0.03,
+    },
+    [HexTileCategory.Roads]: {
+        positionY: 0.03,
+    },
+    [HexTileCategory.Coast]: {
+        positionY: 0.03,
+    },
+    [HexTileCategory.Rivers]: {
+        positionY: 0.03,
+    },
+    [HexTileCategory.Walls]: {
+        positionY: 1.03,
+    },
+}
+
+
 const EdgeColor: { [key in TileEdgeType]: string } = {
     [TileEdgeType.Grass]: '#00aa00',
     [TileEdgeType.Road]: '#aa00aa',
     [TileEdgeType.Coast]: '#aaaa00',
     [TileEdgeType.Water]: '#0000aa',
     [TileEdgeType.River]: '#00aaaa',
+    [TileEdgeType.Wall]: '#ff6600',
+    [TileEdgeType.Empty]: '#aaaaaa',
 }
 
-const EdgesDebugHexTiles: HexTileType[] = [
-    // Base tiles
-    // HexTileType.Grass,
-    // HexTileType.Water,
-
-    // Roads
-    // HexTileType.RoadA,
-    // HexTileType.RoadB,
-    // HexTileType.RoadC,
-    // HexTileType.RoadD,
-    // HexTileType.RoadE,
-    // HexTileType.RoadF,
-    // HexTileType.RoadG,
-    // HexTileType.RoadH,
-    // HexTileType.RoadI,
-    // HexTileType.RoadJ,
-    // HexTileType.RoadK,
-    // HexTileType.RoadL,
-    // HexTileType.RoadM,
-
-    // Coasts
-    // HexTileType.CoastA,
-    // HexTileType.CoastB,
-    // HexTileType.CoastC,
-    // HexTileType.CoastD,
-    // HexTileType.CoastE,
-
-    // Rivers
-    HexTileType.RiverA,
-    HexTileType.RiverACurvy,
-    HexTileType.RiverB,
-    HexTileType.RiverC,
-    HexTileType.RiverCrossingA,
-    HexTileType.RiverCrossingB,
-    HexTileType.RiverD,
-    HexTileType.RiverE,
-    HexTileType.RiverF,
-    HexTileType.RiverG,
-    HexTileType.RiverH,
-    HexTileType.RiverI,
-    HexTileType.RiverJ,
-    HexTileType.RiverK,
-    HexTileType.RiverL,
-]
-
-export { RotationAngleName, EdgeColor, EdgesDebugHexTiles };
+export { RotationAngleName, EdgeColor, TileDebugInfoConfigByCategory };

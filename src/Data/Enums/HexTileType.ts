@@ -41,4 +41,13 @@ export enum HexTileType {
     RiverJ = 'RIVER_J',
     RiverK = 'RIVER_K',
     RiverL = 'RIVER_L',
+
+    // walls
+    WallCornerAGate = 'WALL_CORNER_A_GATE',
+    WallCornerAInside = 'WALL_CORNER_A_INSIDE',
+    WallCornerAOutside = 'WALL_CORNER_A_OUTSIDE',
+    WallCornerBInside = 'WALL_CORNER_B_INSIDE',
+    WallCornerBOutside = 'WALL_CORNER_B_OUTSIDE',
+    WallStraight = 'WALL_STRAIGHT',
+    WallStraightGate = 'WALL_STRAIGHT_GATE',
 }

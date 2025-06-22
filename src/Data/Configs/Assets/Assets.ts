@@ -47,7 +47,17 @@ const ModelAssets: string[] = [
     'hex_river_L.glb',
 
     // buildings
-    'building_castle_blue.glb'
+    'building_castle_blue.glb',
+
+    // wall
+    'wall_corner_A_gate.glb',
+    'wall_corner_A_inside.glb',
+    'wall_corner_A_outside.glb',
+    'wall_corner_B_inside.glb',
+    'wall_corner_B_outside.glb',
+    'wall_straight.glb',
+    'wall_straight_gate.glb',
+
 ];
 
 const PixiAssets: string[] = [

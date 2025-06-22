@@ -1,24 +1,25 @@
 import * as THREE from 'three';
 import { HexTileType } from '../../../../Data/Enums/HexTileType';
-import { EdgesDebugHexTiles } from '../../../../Data/Configs/DebugInfoConfig';
 import { IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
 import HexTile from '../HexTile/HexTile';
+import { HexTileCategory } from '../../../../Data/Enums/HexTileCategory';
+import { HexTilesByCategory } from '../../../../Data/Configs/HexTilesByCategory';
 
 
-export default class TilesDebugDebug extends THREE.Group {
-    private hexTileTypes: HexTileType[];
+export default class TilesDebugMode extends THREE.Group {
+    private hexTileCategory: HexTileCategory;
 
     constructor() {
         super();
 
-        this.hexTileTypes = EdgesDebugHexTiles;
+        this.hexTileCategory = HexTileCategory.Walls;
 
         this.init();
     }
 
     private init(): void {
         const cellSize = 4;
-        const gridSize = Math.ceil(Math.sqrt(this.hexTileTypes.length));
+        const gridSize = Math.ceil(Math.sqrt(this.hexTileCategory.length));
 
         const hexTileDebugConfig: IHexTileDebugConfig = {
             rotation: true,
@@ -26,8 +27,10 @@ export default class TilesDebugDebug extends THREE.Group {
             modelName: true,
         }
 
-        for (let i = 0; i < this.hexTileTypes.length; i++) {
-            const hexTileType = this.hexTileTypes[i];
+        const tiles: HexTileType[] = HexTilesByCategory[this.hexTileCategory];
+
+        for (let i = 0; i < tiles.length; i++) {
+            const hexTileType = tiles[i];
             const hexTile = new HexTile(hexTileType, hexTileDebugConfig);
             this.add(hexTile);
 

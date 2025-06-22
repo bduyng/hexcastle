@@ -114,6 +114,30 @@ const HexTileModelConfig: { [key in HexTileType]: IHexTileModelConfig } = {
     [HexTileType.RiverL]: {
         modelName: 'hex_river_L',
     },
+
+    // walls
+    [HexTileType.WallCornerAGate]: {
+        modelName: 'wall_corner_A_gate',
+    },  
+    [HexTileType.WallCornerAInside]: {
+        modelName: 'wall_corner_A_inside',
+    },
+    [HexTileType.WallCornerAOutside]: {
+        modelName: 'wall_corner_A_outside',
+    },
+    [HexTileType.WallCornerBInside]: {
+        modelName: 'wall_corner_B_inside',
+    },
+    [HexTileType.WallCornerBOutside]: {
+        modelName: 'wall_corner_B_outside',
+    },
+    [HexTileType.WallStraight]: {
+        modelName: 'wall_straight',
+    },
+    [HexTileType.WallStraightGate]: {
+        modelName: 'wall_straight_gate',
+    },
+    
 };
 
 export default HexTileModelConfig;

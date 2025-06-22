@@ -430,6 +430,92 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
         ],
         weight: 1,
     },
+
+    // Wall tiles
+    {
+        type: HexTileType.WallCornerAGate,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.WallCornerAInside,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.WallCornerAOutside,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.WallCornerBInside,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Wall,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.WallCornerBOutside,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Wall,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.WallStraight,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+        ],
+        weight: 1,
+    },
+    {
+        type: HexTileType.WallStraightGate,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+            TileEdgeType.Wall,
+            TileEdgeType.Empty,
+            TileEdgeType.Empty,
+        ],
+        weight: 1,
+    },
 ];
 
 export { HexTilesRulesConfig };

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { HexRotation } from '../../../../Data/Enums/HexRotation';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
-import { EdgeColor, RotationAngleName } from '../../../../Data/Configs/DebugInfoConfig';
+import { EdgeColor, RotationAngleName, TileDebugInfoConfigByCategory } from '../../../../Data/Configs/DebugInfoConfig';
 import { HexTileType } from '../../../../Data/Enums/HexTileType';
 import { TileEdgeType } from '../../../../Data/Enums/TileEdgeType';
 import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
@@ -9,6 +9,7 @@ import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 import { HexTilesRulesConfig } from '../../../../Data/Configs/HexTilesRulesConfig';
 import { IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
 import { GameConfig } from '../../../../Data/Configs/GameConfig';
+import { HexTileCategory } from '../../../../Data/Enums/HexTileCategory';
 
 export default class HexTileDebug extends THREE.Group {
     private hexTileType: HexTileType;
@@ -61,12 +62,16 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     private initDebugInfoPlane(): void {
-        const debugInfoPlane = this.debugInfoPlane = new CanvasPlaneMesh(GameConfig.gameField.hexSize * 2, GameConfig.gameField.hexSize * 2, 200);
+        const resolution: number = 70;
+        const category: HexTileCategory = HexGridHelper.getCategoryByHexType(this.hexTileType);
+        const tileDebugInfoConfigByType = TileDebugInfoConfigByCategory[category];
+
+        const debugInfoPlane = this.debugInfoPlane = new CanvasPlaneMesh(GameConfig.gameField.hexSize * 2, GameConfig.gameField.hexSize * 2, resolution);
         this.add(debugInfoPlane);
 
         const debugInfoPlaneView = debugInfoPlane.getView();
         debugInfoPlaneView.rotation.x = -Math.PI / 2;
-        debugInfoPlaneView.position.set(0, 0.03, 0);
+        debugInfoPlaneView.position.set(0, tileDebugInfoConfigByType.positionY, 0);
 
         this.drawInfo(HexRotation.Rotate0);
     }
@@ -166,7 +171,7 @@ export default class HexTileDebug extends THREE.Group {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const resolution = modelNamePlane.getResolution();
         ctx.fillStyle = '#000000';
-        ctx.font = `${0.35 * resolution}px Arial`;
+        ctx.font = `${0.28 * resolution}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(this.hexTileType, canvas.width / 2, canvas.height / 2);

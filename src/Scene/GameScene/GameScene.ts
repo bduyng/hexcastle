@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
 import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
-import TilesDebugDebug from './CastleScene/DebugViewHelpers/TilesDebugMode';
+import TilesDebugMode from './CastleScene/DebugViewHelpers/TilesDebugMode';
 import CastleScene from './CastleScene/CastleScene';
 import CameraController from './CameraController';
 
@@ -19,12 +19,17 @@ export default class GameScene extends THREE.Group {
     }
 
     public update(dt: number): void {
-        this.castleScene.update(dt);
+        if (this.castleScene) {
+            this.castleScene.update(dt);
+        }
+
         this.cameraController.update();
     }
 
     public start(): void {
-        this.castleScene.start();
+        if (!DebugConfig.game.tilesDebugMode) {
+            this.castleScene.start();
+        }   
     }
 
     private init(): void {
@@ -43,7 +48,7 @@ export default class GameScene extends THREE.Group {
     }
 
     private initTilesDebugMode(): void {
-        const tilesDebugMode = new TilesDebugDebug();
+        const tilesDebugMode = new TilesDebugMode();
         this.add(tilesDebugMode);
     }
 

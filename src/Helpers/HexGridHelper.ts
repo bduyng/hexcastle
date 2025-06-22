@@ -3,6 +3,9 @@ import { IHexCoord } from '../Data/Interfaces/IHexTile';
 import { GridOrientation } from '../Data/Enums/GridOrientation';
 import HexTile from '../Scene/GameScene/CastleScene/HexTile/HexTile';
 import { HexRotation } from '../Data/Enums/HexRotation';
+import { HexTileType } from '../Data/Enums/HexTileType';
+import { HexTileCategory } from '../Data/Enums/HexTileCategory';
+import { HexTilesByCategory } from '../Data/Configs/HexTilesByCategory';
 
 export default class HexGridHelper {
     constructor() {
@@ -42,5 +45,16 @@ export default class HexGridHelper {
 
     public static getCountByRadius(radius: number): number {
         return (3 * radius * (radius + 1)) + 1;
+    }
+
+    public static getCategoryByHexType(hexType: HexTileType): HexTileCategory {
+        for (const category in HexTilesByCategory) {
+            const tiles = HexTilesByCategory[category as HexTileCategory];
+            if (tiles.includes(hexType)) {
+                return category as HexTileCategory;
+            }
+        }
+
+        return null;
     }
 }
