@@ -135,12 +135,20 @@ export default class CastleScene extends THREE.Group {
     private generateWall(): void {
         const wallShape = {
             center: { q: 0, r: 0 },
-            radius: 2,
-            maxOffset: 1,
+            radius: 1,
+            maxOffset: 0,
         };
 
         const wallTiles = WallGenerator.generateRandomClosedWall(wallShape);
-        console.log(wallTiles);
+        // console.log(wallTiles);
+
+
+        // const insideTiles = WallGenerator.findTilesInsideWall(wallTiles, wallShape.center);
+        // console.log(insideTiles);
+
+        // const outsideTiles = WallGenerator.findOutsideAdjacentTiles(wallTiles, insideTiles);
+        // console.log(outsideTiles);
+
         this.renderWall(wallTiles);
     }
 
@@ -182,7 +190,7 @@ export default class CastleScene extends THREE.Group {
 
             setTimeout(() => {
                 wall.show();
-            }, i * 300);
+            }, i * 100);
         }
     }
 

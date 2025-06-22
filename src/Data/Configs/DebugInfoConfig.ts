@@ -37,7 +37,8 @@ const EdgeColor: { [key in TileEdgeType]: string } = {
     [TileEdgeType.Water]: '#0000aa',
     [TileEdgeType.River]: '#00aaaa',
     [TileEdgeType.Wall]: '#ff6600',
-    [TileEdgeType.Empty]: '#aaaaaa',
+    [TileEdgeType.Inside]: '#00ff00',
+    [TileEdgeType.Outside]: '#ff0000',
 }
 
 export { RotationAngleName, EdgeColor, TileDebugInfoConfigByCategory };

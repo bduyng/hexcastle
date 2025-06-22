@@ -24,6 +24,12 @@ export interface IWallShape {
     maxOffset: number;
 }
 
+export interface IWallGenerationResult {
+    wallTiles: IWallTile[];
+    insideTiles: IHexCoord[];
+    outsideAdjacentTiles: IHexCoord[];
+}
+
 export class WallGenerator {
     
     private static wallTileVariants: IWallTileVariant[] = [];
@@ -313,5 +319,180 @@ export class WallGenerator {
         return fallbackVariant || this.wallTileVariants[0];
     }
     
+    /**
+     * Находит все гексагональные тайлы, которые находятся внутри стены
+     * @param wallTiles массив тайлов стены
+     * @param center центр области
+     * @returns массив координат тайлов внутри стены
+     */
+    public static findTilesInsideWall(wallTiles: IWallTile[], center: IHexCoord): IHexCoord[] {
+        // Создаем множество координат стены для быстрого поиска
+        const wallCoordsSet = new Set<string>();
+        for (const wallTile of wallTiles) {
+            wallCoordsSet.add(`${wallTile.coord.q},${wallTile.coord.r}`);
+        }
 
+        // Находим границы области для ограничения поиска
+        const bounds = this.calculateBounds(wallTiles);
+        
+        // Используем flood fill алгоритм для поиска внутренних тайлов
+        const insideTiles: IHexCoord[] = [];
+        const visited = new Set<string>();
+        
+        // Начинаем с центра
+        const queue: IHexCoord[] = [center];
+        
+        while (queue.length > 0) {
+            const current = queue.shift()!;
+            const key = `${current.q},${current.r}`;
+            
+            // Пропускаем уже посещенные тайлы
+            if (visited.has(key)) {
+                continue;
+            }
+            
+            visited.add(key);
+            
+            // Если текущий тайл не является стеной, добавляем его в результат
+            if (!wallCoordsSet.has(key)) {
+                insideTiles.push(current);
+                
+                // Добавляем соседние тайлы в очередь
+                const neighbors = this.getHexNeighbors(current);
+                for (const neighbor of neighbors) {
+                    const neighborKey = `${neighbor.q},${neighbor.r}`;
+                    
+                    // Проверяем, что сосед в пределах границ и еще не посещен
+                    if (this.isWithinBounds(neighbor, bounds) && 
+                        !visited.has(neighborKey) && 
+                        !wallCoordsSet.has(neighborKey)) {
+                        queue.push(neighbor);
+                    }
+                }
+            }
+        }
+        
+        return insideTiles;
+    }
+
+    /**
+     * Вычисляет границы области, ограниченной стеной
+     */
+    private static calculateBounds(wallTiles: IWallTile[]): { minQ: number, maxQ: number, minR: number, maxR: number } {
+        if (wallTiles.length === 0) {
+            return { minQ: 0, maxQ: 0, minR: 0, maxR: 0 };
+        }
+        
+        let minQ = wallTiles[0].coord.q;
+        let maxQ = wallTiles[0].coord.q;
+        let minR = wallTiles[0].coord.r;
+        let maxR = wallTiles[0].coord.r;
+        
+        for (const wallTile of wallTiles) {
+            minQ = Math.min(minQ, wallTile.coord.q);
+            maxQ = Math.max(maxQ, wallTile.coord.q);
+            minR = Math.min(minR, wallTile.coord.r);
+            maxR = Math.max(maxR, wallTile.coord.r);
+        }
+        
+        return { minQ, maxQ, minR, maxR };
+    }
+
+    /**
+     * Проверяет, находится ли координата в пределах границ
+     */
+    private static isWithinBounds(coord: IHexCoord, bounds: { minQ: number, maxQ: number, minR: number, maxR: number }): boolean {
+        return coord.q >= bounds.minQ && coord.q <= bounds.maxQ && 
+               coord.r >= bounds.minR && coord.r <= bounds.maxR;
+    }
+
+    /**
+     * Возвращает всех соседей гексагонального тайла
+     */
+    private static getHexNeighbors(coord: IHexCoord): IHexCoord[] {
+        return [
+            { q: coord.q + 1, r: coord.r },     // 0°
+            { q: coord.q + 1, r: coord.r - 1 }, // 60°
+            { q: coord.q, r: coord.r - 1 },     // 120°
+            { q: coord.q - 1, r: coord.r },     // 180°
+            { q: coord.q - 1, r: coord.r + 1 }, // 240°
+            { q: coord.q, r: coord.r + 1 },     // 300°
+        ];
+    }
+
+    /**
+     * Находит все внешние прилегающие тайлы к стене
+     * @param wallTiles массив тайлов стены
+     * @param insideTiles массив тайлов внутри стены
+     * @returns массив координат внешних прилегающих тайлов
+     */
+    public static findOutsideAdjacentTiles(wallTiles: IWallTile[], insideTiles: IHexCoord[]): IHexCoord[] {
+        // Создаем множества для быстрого поиска
+        const wallCoordsSet = new Set<string>();
+        const insideCoordsSet = new Set<string>();
+        
+        for (const wallTile of wallTiles) {
+            wallCoordsSet.add(`${wallTile.coord.q},${wallTile.coord.r}`);
+        }
+        
+        for (const insideTile of insideTiles) {
+            insideCoordsSet.add(`${insideTile.q},${insideTile.r}`);
+        }
+        
+        // Находим границы области для ограничения поиска
+        const bounds = this.calculateBounds(wallTiles);
+        
+        // Множество для хранения внешних прилегающих тайлов
+        const outsideAdjacentTiles = new Set<string>();
+        
+        // Для каждого тайла стены проверяем всех соседей
+        for (const wallTile of wallTiles) {
+            const neighbors = this.getHexNeighbors(wallTile.coord);
+            
+            for (const neighbor of neighbors) {
+                const neighborKey = `${neighbor.q},${neighbor.r}`;
+                
+                // Если сосед не является стеной и не находится внутри стены
+                if (!wallCoordsSet.has(neighborKey) && !insideCoordsSet.has(neighborKey)) {
+                    // Проверяем, что сосед в пределах расширенных границ
+                    if (this.isWithinExtendedBounds(neighbor, bounds)) {
+                        outsideAdjacentTiles.add(neighborKey);
+                    }
+                }
+            }
+        }
+        
+        // Преобразуем обратно в массив координат
+        return Array.from(outsideAdjacentTiles).map(key => {
+            const [q, r] = key.split(',').map(Number);
+            return { q, r };
+        });
+    }
+
+    /**
+     * Проверяет, находится ли координата в пределах расширенных границ
+     * (с небольшим запасом для внешних тайлов)
+     */
+    private static isWithinExtendedBounds(coord: IHexCoord, bounds: { minQ: number, maxQ: number, minR: number, maxR: number }): boolean {
+        const margin = 2; // Небольшой запас для внешних тайлов
+        return coord.q >= bounds.minQ - margin && coord.q <= bounds.maxQ + margin && 
+               coord.r >= bounds.minR - margin && coord.r <= bounds.maxR + margin;
+    }
+
+    /**
+     * Генерирует стену и находит все тайлы внутри неё
+     * @param shape параметры формы стены
+     * @returns объект с тайлами стены и внутренними тайлами
+     */
+    public static generateWallWithInsideTiles(shape: IWallShape): IWallGenerationResult {
+        const wallTiles = this.generateRandomClosedWall(shape);
+        const insideTiles = this.findTilesInsideWall(wallTiles, shape.center);
+        const outsideAdjacentTiles = this.findOutsideAdjacentTiles(wallTiles, insideTiles);
+        
+        return {
+            wallTiles,
+            insideTiles,
+            outsideAdjacentTiles
+        };
+    }
 } 

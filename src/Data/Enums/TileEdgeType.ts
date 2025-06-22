@@ -5,5 +5,6 @@ export enum TileEdgeType {
     Water = 'WATER',
     River = 'RIVER',
     Wall = 'WALL',
-    Empty = 'EMPTY',
+    Inside = 'INSIDE',
+    Outside = 'OUTSIDE',
 }
