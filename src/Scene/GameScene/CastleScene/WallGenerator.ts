@@ -1,280 +1,563 @@
 import { IHexCoord } from "../../../Data/Interfaces/IHexTile";
-import { HexTileType } from "../../../Data/Enums/HexTileType";
-import { HexRotation } from "../../../Data/Enums/HexRotation";
 
 export interface IWallTile {
     coord: IHexCoord;
-    type: HexTileType;
-    rotation: HexRotation;
 }
 
 export interface IWallShape {
     center: IHexCoord;
-    minRadius: number;
-    maxRadius: number;
-    complexity: number; // 0-1, влияет на "извилистость" стены
+    radius: number;
+    maxOffset: number;
 }
 
 export class WallGenerator {
     
     /**
-     * Генерирует случайную замкнутую стену
+     * Генерирует замкнутую стену в форме гексагонального кольца
+     * @param shape - параметры формы стены
+     * @returns массив позиций тайлов стены
      */
     public static generateRandomClosedWall(shape: IWallShape): IWallTile[] {
-        // Для простых случаев используем правильный шестиугольник
-        if (shape.complexity === 0 && shape.minRadius === shape.maxRadius) {
-            return this.generateRegularHexagonWall(shape.center, shape.minRadius);
-        }
-        
-        // Для сложных случаев используем случайный алгоритм
-        const wallPath = this.generateRandomClosedPath(shape);
-        return this.convertPathToWallTiles(wallPath);
-    }
-    
-    /**
-     * Генерирует правильную шестиугольную стену
-     */
-    private static generateRegularHexagonWall(center: IHexCoord, radius: number): IWallTile[] {
         const wallTiles: IWallTile[] = [];
         
-        if (radius === 0) {
-            // Центральная точка
-            wallTiles.push({
-                coord: center,
-                type: HexTileType.WallStraight,
-                rotation: HexRotation.Rotate0
-            });
-            return wallTiles;
-        }
+        // Генерируем базовое кольцо с радиусом
+        const baseRing = this.generateHexRing(shape.center, shape.radius);
         
-        // Генерируем точки по периметру шестиугольника
-        const perimeterCoords: IHexCoord[] = [];
+        // Применяем смещения к связанной кривой
+        const offsetRing = this.applyOffsetToRing(baseRing, shape.maxOffset);
         
-        // Направления для шестиугольника: 0°, 60°, 120°, 180°, 240°, 300°
-        const directions = [
-            { q: 1, r: 0 },   // 0°
-            { q: 1, r: -1 },  // 60°
-            { q: 0, r: -1 },  // 120°
-            { q: -1, r: 0 },  // 180°
-            { q: -1, r: 1 },  // 240°
-            { q: 0, r: 1 }    // 300°
-        ];
-        
-        // Генерируем точки по периметру
-        for (let i = 0; i < 6; i++) {
-            const direction = directions[i];
-            const coord = {
-                q: center.q + direction.q * radius,
-                r: center.r + direction.r * radius
-            };
-            perimeterCoords.push(coord);
-        }
-        
-        // Преобразуем в тайлы стены
-        for (let i = 0; i < perimeterCoords.length; i++) {
-            const coord = perimeterCoords[i];
-            const nextCoord = perimeterCoords[(i + 1) % perimeterCoords.length];
-            const prevCoord = perimeterCoords[(i - 1 + perimeterCoords.length) % perimeterCoords.length];
-            
-            const wallType = this.selectWallType(coord, prevCoord, nextCoord);
-            const rotation = this.calculateWallRotation(coord, prevCoord, nextCoord);
-            
-            wallTiles.push({
-                coord,
-                type: wallType,
-                rotation
-            });
+        // Преобразуем в массив тайлов
+        for (const coord of offsetRing) {
+            wallTiles.push({ coord });
         }
         
         return wallTiles;
     }
     
     /**
-     * Генерирует случайный замкнутый путь для стены
+     * Применяет смещения к кольцу, сохраняя связность
+     * @param ring - исходное кольцо
+     * @param maxOffset - максимальное смещение
+     * @returns кольцо со смещениями
      */
-    private static generateRandomClosedPath(shape: IWallShape): IHexCoord[] {
-        // Пока используем простой круг как fallback
-        return this.generateSimpleCircle(shape.center, shape.minRadius);
+    private static applyOffsetToRing(ring: IHexCoord[], maxOffset: number): IHexCoord[] {
+        if (maxOffset === 0 || ring.length === 0) {
+            return ring;
+        }
+        
+        const offsetRing: IHexCoord[] = [];
+        const center = this.calculateRingCenter(ring);
+        
+        // Применяем смещения к каждой точке кольца
+        for (let i = 0; i < ring.length; i++) {
+            const coord = ring[i];
+            
+            // Вычисляем направление от центра
+            const directionQ = coord.q - center.q;
+            const directionR = coord.r - center.r;
+            
+            // Нормализуем направление
+            const length = Math.sqrt(directionQ * directionQ + directionR * directionR);
+            const normalizedQ = length > 0 ? directionQ / length : 0;
+            const normalizedR = length > 0 ? directionR / length : 0;
+            
+            // Применяем смещение в направлении от центра
+            const offset = Math.floor(Math.random() * (maxOffset + 1));
+            const offsetCoord = {
+                q: coord.q + Math.round(normalizedQ * offset),
+                r: coord.r + Math.round(normalizedR * offset)
+            };
+            
+            offsetRing.push(offsetCoord);
+        }
+        
+        // Исправляем связность
+        return this.fixRingConnectivity(offsetRing);
     }
     
     /**
-     * Генерирует простой круг как fallback
+     * Вычисляет центр кольца
+     * @param ring - кольцо координат
+     * @returns центр кольца
      */
-    private static generateSimpleCircle(center: IHexCoord, radius: number): IHexCoord[] {
-        const coords: IHexCoord[] = [];
+    private static calculateRingCenter(ring: IHexCoord[]): IHexCoord {
+        if (ring.length === 0) {
+            return { q: 0, r: 0 };
+        }
         
-        for (let q = -radius; q <= radius; q++) {
-            const r1 = Math.max(-radius, -q - radius);
-            const r2 = Math.min(radius, -q + radius);
+        const sumQ = ring.reduce((sum, coord) => sum + coord.q, 0);
+        const sumR = ring.reduce((sum, coord) => sum + coord.r, 0);
+        
+        return {
+            q: Math.round(sumQ / ring.length),
+            r: Math.round(sumR / ring.length)
+        };
+    }
+    
+    /**
+     * Исправляет связность кольца, добавляя промежуточные точки
+     * @param ring - кольцо координат
+     * @returns исправленное кольцо
+     */
+    private static fixRingConnectivity(ring: IHexCoord[]): IHexCoord[] {
+        if (ring.length < 2) {
+            return ring;
+        }
+        
+        const fixedRing: IHexCoord[] = [];
+        
+        for (let i = 0; i < ring.length; i++) {
+            const current = ring[i];
+            const next = ring[(i + 1) % ring.length];
             
-            for (let r = r1; r <= r2; r++) {
-                const coord = { q: center.q + q, r: center.r + r };
-                if (this.hexDistance(coord, center) === radius) {
-                    coords.push(coord);
+            fixedRing.push(current);
+            
+            // Проверяем расстояние до следующей точки
+            const distance = this.getHexDistance(current, next);
+            
+            // Если расстояние больше 1, добавляем промежуточные точки
+            if (distance > 1) {
+                const intermediatePoints = this.getPathBetweenPoints(current, next);
+                fixedRing.push(...intermediatePoints);
+            }
+        }
+        
+        return fixedRing;
+    }
+    
+    /**
+     * Получает путь между двумя точками в гексагональной сетке
+     * @param start - начальная точка
+     * @param end - конечная точка
+     * @returns массив промежуточных точек
+     */
+    private static getPathBetweenPoints(start: IHexCoord, end: IHexCoord): IHexCoord[] {
+        const path: IHexCoord[] = [];
+        const distance = this.getHexDistance(start, end);
+        
+        if (distance <= 1) {
+            return path;
+        }
+        
+        // Используем алгоритм Брезенхэма для гексагонов
+        let current = { ...start };
+        
+        while (this.getHexDistance(current, end) > 1) {
+            // Находим направление к цели
+            const dq = end.q - current.q;
+            const dr = end.r - current.r;
+            
+            // Выбираем направление движения
+            let stepQ = 0;
+            let stepR = 0;
+            
+            if (Math.abs(dq) > Math.abs(dr)) {
+                stepQ = dq > 0 ? 1 : -1;
+            } else {
+                stepR = dr > 0 ? 1 : -1;
+            }
+            
+            current = {
+                q: current.q + stepQ,
+                r: current.r + stepR
+            };
+            
+            path.push({ ...current });
+        }
+        
+        return path;
+    }
+    
+    /**
+     * Генерирует гексагональное кольцо заданного радиуса как замкнутую кривую
+     * @param center - центр кольца
+     * @param radius - радиус кольца
+     * @returns массив координат кольца
+     */
+    private static generateHexRing(center: IHexCoord, radius: number): IHexCoord[] {
+        const ring: IHexCoord[] = [];
+        
+        if (radius === 0) {
+            return [center];
+        }
+        
+        // Для гексагональной сетки с острыми вершинами (pointy-top)
+        // Вычисляем все координаты кольца
+        for (let q = -radius; q <= radius; q++) {
+            for (let r = -radius; r <= radius; r++) {
+                const s = -q - r;
+                
+                // Проверяем, что координата находится на кольце (расстояние = radius)
+                if (Math.max(Math.abs(q), Math.abs(r), Math.abs(s)) === radius) {
+                    ring.push({
+                        q: center.q + q,
+                        r: center.r + r
+                    });
                 }
             }
         }
         
-        return this.orderCoordsClockwise(coords, center);
+        // Сортируем координаты по углу для создания правильного порядка
+        ring.sort((a, b) => {
+            const angleA = Math.atan2(a.r - center.r, a.q - center.q);
+            const angleB = Math.atan2(b.r - center.r, b.q - center.q);
+            return angleA - angleB;
+        });
+        
+        return ring;
     }
     
     /**
-     * Преобразует путь в тайлы стены
+     * Генерирует замкнутую стену с дополнительными параметрами для более сложных форм
+     * @param shape - параметры формы стены
+     * @param irregularity - степень неправильности (0-1)
+     * @returns массив позиций тайлов стены
      */
-    private static convertPathToWallTiles(path: IHexCoord[]): IWallTile[] {
+    public static generateIrregularClosedWall(shape: IWallShape, irregularity: number = 0.3): IWallTile[] {
         const wallTiles: IWallTile[] = [];
         
-        for (let i = 0; i < path.length - 1; i++) {
-            const coord = path[i];
-            const nextCoord = path[i + 1];
-            const prevCoord = path[(i - 1 + path.length) % path.length];
-            
-            const wallType = this.selectWallType(coord, prevCoord, nextCoord);
-            const rotation = this.calculateWallRotation(coord, prevCoord, nextCoord);
-            
-            wallTiles.push({
-                coord,
-                type: wallType,
-                rotation
-            });
+        // Генерируем базовое кольцо
+        const baseRadius = shape.radius;
+        const ring = this.generateHexRing(shape.center, baseRadius);
+        
+        // Применяем переменное смещение для создания неправильности
+        const adjustedMaxOffset = Math.floor(shape.maxOffset * irregularity);
+        const offsetRing = this.applyOffsetToRing(ring, adjustedMaxOffset);
+        
+        // Преобразуем в массив тайлов
+        for (const coord of offsetRing) {
+            wallTiles.push({ coord });
         }
         
         return wallTiles;
     }
     
     /**
-     * Выбирает тип стены на основе соседних тайлов
+     * Применяет фиксированное смещение к координате
+     * @param coord - исходная координата
+     * @param offset - смещение
+     * @returns координата со смещением
      */
-    private static selectWallType(coord: IHexCoord, prevCoord: IHexCoord, nextCoord: IHexCoord): HexTileType {
-        const neighbors = this.getNeighborCoords(coord);
-        let wallNeighbors = 0;
-        let isCorner = false;
+    private static applyOffset(coord: IHexCoord, offset: number): IHexCoord {
+        if (offset === 0) {
+            return coord;
+        }
         
-        // Проверяем, является ли это углом
-        const prevDirection = this.getDirection(coord, prevCoord);
-        const nextDirection = this.getDirection(coord, nextCoord);
-        const directionDiff = Math.abs(prevDirection - nextDirection);
-        isCorner = directionDiff > 1 && directionDiff < 5;
+        // Применяем смещение в случайном направлении
+        const angle = Math.random() * Math.PI * 2;
+        const offsetQ = Math.round(Math.cos(angle) * Math.abs(offset));
+        const offsetR = Math.round(Math.sin(angle) * Math.abs(offset));
         
-        // Подсчитываем соседние стены
-        for (const neighbor of neighbors) {
-            if (this.isWallCoord(neighbor, [prevCoord, nextCoord])) {
-                wallNeighbors++;
+        return {
+            q: coord.q + offsetQ,
+            r: coord.r + offsetR
+        };
+    }
+    
+    /**
+     * Генерирует замкнутую стену с контролируемыми изгибами
+     * @param shape - параметры формы стены
+     * @param bendPoints - количество точек изгиба
+     * @returns массив позиций тайлов стены
+     */
+    public static generateBentClosedWall(shape: IWallShape, bendPoints: number = 4): IWallTile[] {
+        const wallTiles: IWallTile[] = [];
+        
+        // Генерируем базовое кольцо
+        const ring = this.generateHexRing(shape.center, shape.radius);
+        
+        // Создаем точки изгиба
+        const bendIndices: number[] = [];
+        for (let i = 0; i < bendPoints; i++) {
+            const index = Math.floor((i + 1) * ring.length / (bendPoints + 1));
+            bendIndices.push(index);
+        }
+        
+        // Применяем изгибы в точках
+        for (let i = 0; i < ring.length; i++) {
+            const coord = ring[i];
+            
+            // Находим ближайшую точку изгиба
+            let minDistance = Infinity;
+            let bendDirection = 0;
+            
+            for (const bendIndex of bendIndices) {
+                const distance = Math.abs(i - bendIndex);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    bendDirection = (i < bendIndex) ? 1 : -1;
+                }
+            }
+            
+            // Применяем изгиб
+            const bendStrength = Math.max(0, 1 - minDistance / (ring.length / bendPoints));
+            const bendOffset = Math.floor(bendStrength * shape.maxOffset * bendDirection);
+            
+            const offsetCoord = this.applyOffset(coord, bendOffset);
+            wallTiles.push({ coord: offsetCoord });
+        }
+        
+        return wallTiles;
+    }
+    
+    /**
+     * Генерирует связанную замкнутую стену с гарантированной связностью
+     * @param shape - параметры формы стены
+     * @returns массив позиций тайлов стены
+     */
+    public static generateConnectedClosedWall(shape: IWallShape): IWallTile[] {
+        const wallTiles: IWallTile[] = [];
+        
+        // Генерируем базовое кольцо
+        const baseRing = this.generateHexRing(shape.center, shape.radius);
+        
+        // Создаем связанный путь
+        for (let i = 0; i < baseRing.length; i++) {
+            const coord = baseRing[i];
+            
+            // Применяем небольшое смещение, сохраняя связность
+            const offsetCoord = this.applySmallOffset(coord, shape.maxOffset, i, baseRing.length);
+            wallTiles.push({ coord: offsetCoord });
+        }
+        
+        // Проверяем и исправляем связность
+        return this.ensureConnectivity(wallTiles);
+    }
+    
+    /**
+     * Применяет небольшое смещение для сохранения связности
+     * @param coord - исходная координата
+     * @param maxOffset - максимальное смещение
+     * @param index - индекс в массиве
+     * @param totalLength - общая длина массива
+     * @returns координата со смещением
+     */
+    private static applySmallOffset(coord: IHexCoord, maxOffset: number, index: number, totalLength: number): IHexCoord {
+        if (maxOffset === 0) {
+            return coord;
+        }
+        
+        // Используем только небольшое смещение для сохранения связности
+        const smallOffset = Math.max(1, Math.floor(maxOffset * 0.3));
+        
+        // Создаем плавное смещение
+        const angle = (index / totalLength) * Math.PI * 2;
+        const waveOffset = Math.sin(index * 0.5) * smallOffset;
+        
+        const offsetQ = Math.round(Math.cos(angle) * waveOffset);
+        const offsetR = Math.round(Math.sin(angle) * waveOffset);
+        
+        return {
+            q: coord.q + offsetQ,
+            r: coord.r + offsetR
+        };
+    }
+    
+    /**
+     * Обеспечивает связность стены, исправляя разрывы
+     * @param wallTiles - массив тайлов стены
+     * @returns исправленный массив тайлов
+     */
+    private static ensureConnectivity(wallTiles: IWallTile[]): IWallTile[] {
+        const connectedTiles: IWallTile[] = [];
+        
+        for (let i = 0; i < wallTiles.length; i++) {
+            const current = wallTiles[i];
+            const next = wallTiles[(i + 1) % wallTiles.length];
+            
+            connectedTiles.push(current);
+            
+            // Проверяем расстояние до следующего тайла
+            const distance = this.getHexDistance(current.coord, next.coord);
+            
+            // Если расстояние больше 1, добавляем промежуточные тайлы
+            if (distance > 1) {
+                const intermediateTiles = this.getIntermediateTiles(current.coord, next.coord);
+                connectedTiles.push(...intermediateTiles.map(coord => ({ coord })));
             }
         }
         
-        // Выбираем тип стены
-        if (isCorner) {
-            // Угловые тайлы
-            if (wallNeighbors <= 2) {
-                return Math.random() < 0.3 ? HexTileType.WallCornerAGate : HexTileType.WallCornerAOutside;
-            } else {
-                return HexTileType.WallCornerAInside;
-            }
-        } else {
-            // Прямые тайлы
-            if (wallNeighbors <= 2) {
-                return Math.random() < 0.2 ? HexTileType.WallStraightGate : HexTileType.WallStraight;
-            } else {
-                return HexTileType.WallStraight;
-            }
+        return connectedTiles;
+    }
+    
+    /**
+     * Получает промежуточные тайлы между двумя координатами
+     * @param coord1 - первая координата
+     * @param coord2 - вторая координата
+     * @returns массив промежуточных координат
+     */
+    private static getIntermediateTiles(coord1: IHexCoord, coord2: IHexCoord): IHexCoord[] {
+        const intermediate: IHexCoord[] = [];
+        const distance = this.getHexDistance(coord1, coord2);
+        
+        if (distance <= 1) {
+            return intermediate;
         }
-    }
-    
-    /**
-     * Вычисляет поворот стены
-     */
-    private static calculateWallRotation(coord: IHexCoord, prevCoord: IHexCoord, nextCoord: IHexCoord): HexRotation {
-        const direction = this.getWallDirection(coord, prevCoord, nextCoord);
         
-        switch (direction) {
-            case 0: return HexRotation.Rotate0;
-            case 1: return HexRotation.Rotate60;
-            case 2: return HexRotation.Rotate120;
-            case 3: return HexRotation.Rotate180;
-            case 4: return HexRotation.Rotate240;
-            case 5: return HexRotation.Rotate300;
-            default: return HexRotation.Rotate0;
+        // Вычисляем направление
+        const dq = coord2.q - coord1.q;
+        const dr = coord2.r - coord1.r;
+        
+        // Нормализуем направление
+        const stepQ = Math.sign(dq);
+        const stepR = Math.sign(dr);
+        
+        // Добавляем промежуточные точки
+        let currentQ = coord1.q + stepQ;
+        let currentR = coord1.r + stepR;
+        
+        while (this.getHexDistance({ q: currentQ, r: currentR }, coord2) > 1) {
+            intermediate.push({ q: currentQ, r: currentR });
+            currentQ += stepQ;
+            currentR += stepR;
         }
-    }
-    
-    /**
-     * Получает направление между двумя точками
-     */
-    private static getDirection(from: IHexCoord, to: IHexCoord): number {
-        const dq = to.q - from.q;
-        const dr = to.r - from.r;
         
-        if (dq === 1 && dr === 0) return 0;
-        if (dq === 1 && dr === -1) return 1;
-        if (dq === 0 && dr === -1) return 2;
-        if (dq === -1 && dr === 0) return 3;
-        if (dq === -1 && dr === 1) return 4;
-        if (dq === 0 && dr === 1) return 5;
+        return intermediate;
+    }
+    
+    /**
+     * Проверяет, что стена образует замкнутую кривую
+     * @param wallTiles - массив тайлов стены
+     * @returns true, если стена замкнута
+     */
+    public static isWallClosed(wallTiles: IWallTile[]): boolean {
+        if (wallTiles.length < 3) {
+            return false;
+        }
         
-        return 0;
-    }
-    
-    /**
-     * Получает координаты соседей
-     */
-    private static getNeighborCoords(coord: IHexCoord): IHexCoord[] {
-        return [
-            { q: coord.q + 1, r: coord.r },
-            { q: coord.q + 1, r: coord.r - 1 },
-            { q: coord.q, r: coord.r - 1 },
-            { q: coord.q - 1, r: coord.r },
-            { q: coord.q - 1, r: coord.r + 1 },
-            { q: coord.q, r: coord.r + 1 }
-        ];
-    }
-    
-    /**
-     * Проверяет, является ли координата частью стены
-     */
-    private static isWallCoord(coord: IHexCoord, wallCoords: IHexCoord[]): boolean {
-        return wallCoords.some(wallCoord => 
-            wallCoord.q === coord.q && wallCoord.r === coord.r
-        );
-    }
-    
-    /**
-     * Определяет направление стены
-     */
-    private static getWallDirection(coord: IHexCoord, prevCoord: IHexCoord, nextCoord: IHexCoord): number {
-        const neighbors = this.getNeighborCoords(coord);
-        
-        for (let i = 0; i < neighbors.length; i++) {
-            if (this.isWallCoord(neighbors[i], [prevCoord, nextCoord])) {
-                return i;
+        // Проверяем, что каждый тайл соединен с двумя соседними
+        for (let i = 0; i < wallTiles.length; i++) {
+            const current = wallTiles[i];
+            const next = wallTiles[(i + 1) % wallTiles.length];
+            const prev = wallTiles[(i - 1 + wallTiles.length) % wallTiles.length];
+            
+            // Проверяем расстояние до соседей (должно быть 1)
+            const distToNext = this.getHexDistance(current.coord, next.coord);
+            const distToPrev = this.getHexDistance(current.coord, prev.coord);
+            
+            if (distToNext !== 1 || distToPrev !== 1) {
+                return false;
             }
         }
         
-        return 0;
+        return true;
     }
     
     /**
-     * Вычисляет расстояние между двумя гексами
+     * Вычисляет расстояние между двумя гексагональными координатами
+     * @param coord1 - первая координата
+     * @param coord2 - вторая координата
+     * @returns расстояние
      */
-    private static hexDistance(a: IHexCoord, b: IHexCoord): number {
-        return (Math.abs(a.q - b.q) + Math.abs(a.q + a.r - b.q - b.r) + Math.abs(a.r - b.r)) / 2;
+    private static getHexDistance(coord1: IHexCoord, coord2: IHexCoord): number {
+        const dq = coord1.q - coord2.q;
+        const dr = coord1.r - coord2.r;
+        const ds = -dq - dr;
+        
+        return Math.max(Math.abs(dq), Math.abs(dr), Math.abs(ds));
     }
     
     /**
-     * Сортирует координаты по часовой стрелке
+     * Тестовый метод для демонстрации работы алгоритма
+     * @param center - центр стены
+     * @param radius - радиус стены
+     * @param maxOffset - максимальное смещение
+     * @returns результат тестирования
      */
-    private static orderCoordsClockwise(coords: IHexCoord[], center: IHexCoord): IHexCoord[] {
-        return coords.sort((a, b) => {
-            const angleA = Math.atan2(a.r - center.r, a.q - center.q);
-            const angleB = Math.atan2(b.r - center.r, b.q - center.q);
-            return angleA - angleB;
-        });
+    public static testWallGeneration(center: IHexCoord, radius: number, maxOffset: number): {
+        basicWall: IWallTile[];
+        connectedWall: IWallTile[];
+        isBasicConnected: boolean;
+        isConnectedWallConnected: boolean;
+    } {
+        const shape: IWallShape = { center, radius, maxOffset };
+        
+        const basicWall = this.generateRandomClosedWall(shape);
+        const connectedWall = this.generateConnectedClosedWall(shape);
+        
+        return {
+            basicWall,
+            connectedWall,
+            isBasicConnected: this.isWallClosed(basicWall),
+            isConnectedWallConnected: this.isWallClosed(connectedWall)
+        };
     }
     
     /**
-     * Преобразует координату в строку
+     * Генерирует базовое кольцо без смещений для тестирования
+     * @param center - центр кольца
+     * @param radius - радиус кольца
+     * @returns массив координат кольца
      */
-    private static coordToString(coord: IHexCoord): string {
-        return `${coord.q},${coord.r}`;
+    public static generateBaseRing(center: IHexCoord, radius: number): IWallTile[] {
+        const ring = this.generateHexRing(center, radius);
+        return ring.map(coord => ({ coord }));
+    }
+    
+    /**
+     * Генерирует стену с контролируемыми смещениями, сохраняющими связность
+     * @param shape - параметры формы стены
+     * @param smoothness - плавность смещений (0-1)
+     * @returns массив позиций тайлов стены
+     */
+    public static generateSmoothClosedWall(shape: IWallShape, smoothness: number = 0.5): IWallTile[] {
+        const wallTiles: IWallTile[] = [];
+        
+        // Генерируем базовое кольцо
+        const ring = this.generateHexRing(shape.center, shape.radius);
+        
+        // Применяем плавные смещения
+        const smoothRing = this.applySmoothOffset(ring, shape.maxOffset, smoothness);
+        
+        // Преобразуем в массив тайлов
+        for (const coord of smoothRing) {
+            wallTiles.push({ coord });
+        }
+        
+        return wallTiles;
+    }
+    
+    /**
+     * Применяет плавные смещения к кольцу
+     * @param ring - исходное кольцо
+     * @param maxOffset - максимальное смещение
+     * @param smoothness - плавность
+     * @returns кольцо с плавными смещениями
+     */
+    private static applySmoothOffset(ring: IHexCoord[], maxOffset: number, smoothness: number): IHexCoord[] {
+        if (maxOffset === 0 || ring.length === 0) {
+            return ring;
+        }
+        
+        const offsetRing: IHexCoord[] = [];
+        const center = this.calculateRingCenter(ring);
+        
+        // Создаем плавные смещения
+        for (let i = 0; i < ring.length; i++) {
+            const coord = ring[i];
+            
+            // Создаем волнообразное смещение
+            const waveOffset = Math.sin(i * 0.5) * maxOffset * smoothness;
+            const randomOffset = (Math.random() - 0.5) * maxOffset * (1 - smoothness);
+            const totalOffset = Math.floor(waveOffset + randomOffset);
+            
+            // Применяем смещение в направлении от центра
+            const directionQ = coord.q - center.q;
+            const directionR = coord.r - center.r;
+            
+            const length = Math.sqrt(directionQ * directionQ + directionR * directionR);
+            const normalizedQ = length > 0 ? directionQ / length : 0;
+            const normalizedR = length > 0 ? directionR / length : 0;
+            
+            const offsetCoord = {
+                q: coord.q + Math.round(normalizedQ * totalOffset),
+                r: coord.r + Math.round(normalizedR * totalOffset)
+            };
+            
+            offsetRing.push(offsetCoord);
+        }
+        
+        // Исправляем связность
+        return this.fixRingConnectivity(offsetRing);
     }
 } 

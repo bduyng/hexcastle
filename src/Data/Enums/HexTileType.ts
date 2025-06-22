@@ -50,4 +50,7 @@ export enum HexTileType {
     WallCornerBOutside = 'WALL_CORNER_B_OUTSIDE',
     WallStraight = 'WALL_STRAIGHT',
     WallStraightGate = 'WALL_STRAIGHT_GATE',
+
+    // nature
+    MountainA = 'MOUNTAIN_A',
 }

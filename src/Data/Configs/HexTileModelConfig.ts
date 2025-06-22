@@ -137,7 +137,11 @@ const HexTileModelConfig: { [key in HexTileType]: IHexTileModelConfig } = {
     [HexTileType.WallStraightGate]: {
         modelName: 'wall_straight_gate',
     },
-    
+
+    // nature
+    [HexTileType.MountainA]: {
+        modelName: 'mountain_A',
+    },
 };
 
 export default HexTileModelConfig;

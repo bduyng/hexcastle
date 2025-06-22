@@ -14,6 +14,9 @@ import Intro from './Intro';
 import FieldRadiusHelper from './FieldRadiusHelper';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
 import { IWallTile, WallGenerator } from './WallGenerator';
+import { HexRotation } from '../../../Data/Enums/HexRotation';
+import { HexTileType } from '../../../Data/Enums/HexTileType';
+import { WallGeneratorSnakeLoop } from './WallGeneratorSnakeLoop';
 
 export default class CastleScene extends THREE.Group {
 
@@ -131,13 +134,13 @@ export default class CastleScene extends THREE.Group {
 
     private generateWall(): void {
         const wallShape = {
-            center: { q: 1, r: 0 },
-            minRadius: 2,
-            maxRadius: 3,
-            complexity: 0.0
+            center: { q: 0, r: 0 },
+            radius: 2,
+            maxOffset: 1,
         };
 
-        const wallTiles = WallGenerator.generateRandomClosedWall(wallShape);
+        // const wallTiles = WallGenerator.generateRandomClosedWall(wallShape);
+        const wallTiles = WallGeneratorSnakeLoop.generateClosedWall(wallShape);
         console.log(wallTiles);
         this.renderWall(wallTiles);
     }
@@ -149,11 +152,11 @@ export default class CastleScene extends THREE.Group {
             const wallTile = wallTiles[i];
             const transform: IHexTileTransform = {
                 position: wallTile.coord,
-                rotation: wallTile.rotation,
+                rotation: HexRotation.Rotate0,
             }
 
             hexTileInstancesData.push({
-                type: wallTile.type,
+                type: HexTileType.MountainA,
                 transforms: [transform],
             });
         }
@@ -285,6 +288,12 @@ export default class CastleScene extends THREE.Group {
             this.remove(hexTileInstance);
         });
         this.hexTileInstances = [];
+
+        this.wallInstances.forEach((wallInstance) => {
+            wallInstance.reset();
+            this.remove(wallInstance);
+        });
+        this.wallInstances = [];
 
         if (this.entropyView) {
             this.entropyView.reset();
