@@ -101,14 +101,14 @@ export default class CastleScene extends THREE.Group {
     }
 
     private generateTilesSync(): void {
-        this.hexWFC.generate();
+        // this.hexWFC.generate();
 
-        const grid: IHexTilesResult[] = this.hexWFC.getGrid();
-        this.steps = this.hexWFC.getSteps();
+        // const grid: IHexTilesResult[] = this.hexWFC.getGrid();
+        // this.steps = this.hexWFC.getSteps();
 
-        this.initGridTiles(grid);
+        // this.initGridTiles(grid);
         this.generateWall();
-        this.initEntropyView();
+        // this.initEntropyView();
     }
 
     private async generateTilesAsync(): Promise<void> {
@@ -151,11 +151,11 @@ export default class CastleScene extends THREE.Group {
             const wallTile = wallTiles[i];
             const transform: IHexTileTransform = {
                 position: wallTile.coord,
-                rotation: HexRotation.Rotate0,
+                rotation: wallTile.rotation,
             }
 
             hexTileInstancesData.push({
-                type: HexTileType.MountainA,
+                type: wallTile.type,
                 transforms: [transform],
             });
         }
@@ -167,10 +167,11 @@ export default class CastleScene extends THREE.Group {
             // this.add(hexTileInstance);
 
             // this.wallInstances.push(hexTileInstance);
-            const hexTile = new HexTile(HexTileType.MountainA, DebugConfig.game.hexTileDebug);
+            const hexTile = new HexTile(hexTileInstancesData[i].type, DebugConfig.game.hexTileDebug);
             this.add(hexTile);
 
             hexTile.setHexTilePosition(hexTileInstancesData[i].transforms[0].position);
+            hexTile.setHexTileRotation(hexTileInstancesData[i].transforms[0].rotation);
             hexTile.hide();
 
             walls.push(hexTile);

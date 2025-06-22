@@ -1,7 +1,21 @@
 import { IHexCoord } from "../../../Data/Interfaces/IHexTile";
+import { HexTileType } from "../../../Data/Enums/HexTileType";
+import { TileEdgeType } from "../../../Data/Enums/TileEdgeType";
+import { HexTilesRulesConfig } from "../../../Data/Configs/HexTilesRulesConfig";
+import { IHexTilesRule } from "../../../Data/Interfaces/IBaseSceneData";
+import { HexRotation } from "../../../Data/Enums/HexRotation";
+import { ITileVariant } from "../../../Data/Interfaces/IWFC";
 
 export interface IWallTile {
     coord: IHexCoord;
+    type: HexTileType;
+    rotation: HexRotation;
+}
+
+export interface IWallTileVariant {
+    type: HexTileType;
+    rotation: HexRotation;
+    edges: TileEdgeType[];
 }
 
 export interface IWallShape {
@@ -12,17 +26,71 @@ export interface IWallShape {
 
 export class WallGenerator {
     
+    private static wallTileVariants: IWallTileVariant[] = [];
+    
     public static generateRandomClosedWall(shape: IWallShape): IWallTile[] {
+        // Инициализируем варианты тайлов стен при первом вызове
+        if (this.wallTileVariants.length === 0) {
+            this.initializeWallTileVariants();
+        }
+        
         const wallTiles: IWallTile[] = [];
         
         const baseRing = this.generateHexRing(shape.center, shape.radius);
         const offsetRing = this.applyOffsetToRing(baseRing, shape.maxOffset);
         
-        for (const coord of offsetRing) {
-            wallTiles.push({ coord });
+        const wallCoords = offsetRing.map(coord => ({ coord }));
+        
+        for (let i = 0; i < wallCoords.length; i++) {
+            const wallTile = wallCoords[i];
+            const tileVariant = this.determineWallTileType(wallTile.coord, wallCoords, i);
+            wallTiles.push({ 
+                coord: wallTile.coord, 
+                type: tileVariant.type, 
+                rotation: tileVariant.rotation 
+            });
         }
         
         return wallTiles;
+    }
+    
+    private static initializeWallTileVariants(): void {
+        this.wallTileVariants = [];
+        
+        // Получаем все типы тайлов стен
+        const wallTileTypes = [
+            // HexTileType.WallCornerAGate,
+            HexTileType.WallCornerAInside,
+            HexTileType.WallCornerAOutside,
+            HexTileType.WallCornerBInside,
+            HexTileType.WallCornerBOutside,
+            HexTileType.WallStraight,
+            // HexTileType.WallStraightGate,
+        ];
+        
+        // Для каждого типа тайла создаем все варианты поворотов
+        for (const tileType of wallTileTypes) {
+            const tileRule = HexTilesRulesConfig.find(rule => rule.type === tileType);
+            if (!tileRule) continue;
+            
+            for (let rotation = 0; rotation < 6; rotation++) {
+                const rotatedEdges = this.rotateEdges(tileRule.edges, rotation);
+                this.wallTileVariants.push({
+                    type: tileType,
+                    rotation: rotation as HexRotation,
+                    edges: rotatedEdges
+                });
+            }
+        }
+    }
+
+    private static rotateEdges(edges: TileEdgeType[], rotation: number): TileEdgeType[] {
+        const rotated = [...edges];
+        for (let i = 0; i < rotation; i++) {
+            rotated.unshift(rotated.pop()!);
+        }
+
+        return rotated;
     }
     
     private static applyOffsetToRing(ring: IHexCoord[], maxOffset: number): IHexCoord[] {
@@ -164,4 +232,86 @@ export class WallGenerator {
         return Math.max(Math.abs(dq), Math.abs(dr), Math.abs(ds));
     }
     
+    private static determineWallTileType(coord: IHexCoord, wallCoords: { coord: IHexCoord }[], currentIndex: number): IWallTileVariant {
+        // Получаем предыдущий и следующий тайлы в цепочке стены
+        const prevIndex = (currentIndex - 1 + wallCoords.length) % wallCoords.length;
+        const nextIndex = (currentIndex + 1) % wallCoords.length;
+        
+        const prevCoord = wallCoords[prevIndex].coord;
+        const nextCoord = wallCoords[nextIndex].coord;
+        
+        // Направления соседей в гексагональной сетке (0°, 60°, 120°, 180°, 240°, 300°)
+        const neighborDirections = [
+            { q: 1, r: 0 },   // 0°
+            { q: 1, r: -1 },  // 60°
+            { q: 0, r: -1 },  // 120°
+            { q: -1, r: 0 },  // 180°
+            { q: -1, r: 1 },  // 240°
+            { q: 0, r: 1 },   // 300°
+        ];
+
+        // Определяем направления к предыдущему и следующему тайлам
+        let prevDirection = -1;
+        let nextDirection = -1;
+        
+        for (let i = 0; i < neighborDirections.length; i++) {
+            const neighborCoord = {
+                q: coord.q + neighborDirections[i].q,
+                r: coord.r + neighborDirections[i].r
+            };
+            
+            if (neighborCoord.q === prevCoord.q && neighborCoord.r === prevCoord.r) {
+                prevDirection = i;
+            }
+            
+            if (neighborCoord.q === nextCoord.q && neighborCoord.r === nextCoord.r) {
+                nextDirection = i;
+            }
+        }
+
+        // Определяем, какие стороны должны быть стенами
+        const requiredWallEdges: boolean[] = [false, false, false, false, false, false];
+        
+        // Если есть сосед в определенном направлении, то там должна быть стена
+        if (prevDirection !== -1) {
+            requiredWallEdges[prevDirection] = true;
+        }
+        
+        if (nextDirection !== -1) {
+            requiredWallEdges[nextDirection] = true;
+        }
+
+        // Ищем подходящий вариант тайла среди всех поворотов
+        for (const variant of this.wallTileVariants) {
+            let isCompatible = true;
+            
+            // Проверяем каждую сторону
+            for (let i = 0; i < 6; i++) {
+                const requiredWall = requiredWallEdges[i];
+                const tileEdge = variant.edges[i];
+                
+                // Если требуется стена, но у тайла на этой стороне не стена
+                if (requiredWall && tileEdge !== TileEdgeType.Wall) {
+                    isCompatible = false;
+                    break;
+                }
+                
+                // Если не требуется стена, но у тайла на этой стороне стена
+                if (!requiredWall && tileEdge === TileEdgeType.Wall) {
+                    isCompatible = false;
+                    break;
+                }
+            }
+            
+            if (isCompatible) {
+                return variant;
+            }
+        }
+
+        // Если не найден подходящий тайл, возвращаем прямой тайл стены как fallback
+        const fallbackVariant = this.wallTileVariants.find(variant => variant.type === HexTileType.WallStraight && variant.rotation === HexRotation.Rotate0);
+        return fallbackVariant || this.wallTileVariants[0];
+    }
+    
+
 } 

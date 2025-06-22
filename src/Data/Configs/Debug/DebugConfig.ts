@@ -8,8 +8,8 @@ const DebugConfig = {
     game: {
         grid: true,
         hexTileDebug: {
-            rotation: false,
-            edge: false,
+            rotation: true,
+            edge: true,
         },
         entropy: true,
         tilesDebugMode: false,

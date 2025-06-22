@@ -7,7 +7,7 @@ const GameConfig = {
         radius: {
             min: 1,
             max: 20,
-            default: 5
+            default: 1
         },
         showTilesDelays: {
             min: 8,
