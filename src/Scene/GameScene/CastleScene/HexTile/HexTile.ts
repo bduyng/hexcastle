@@ -31,6 +31,14 @@ export default class HexTile extends THREE.Group {
         this.init();
     }
 
+    public show(): void {
+        this.visible = true;
+    }
+
+    public hide(): void {
+        this.visible = false;
+    }
+
     public getHexTilePosition(): IHexCoord {
         return this.hexTilePosition;
     }

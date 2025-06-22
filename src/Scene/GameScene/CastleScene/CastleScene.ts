@@ -16,7 +16,7 @@ import HexGridHelper from '../../../Helpers/HexGridHelper';
 import { IWallTile, WallGenerator } from './WallGenerator';
 import { HexRotation } from '../../../Data/Enums/HexRotation';
 import { HexTileType } from '../../../Data/Enums/HexTileType';
-import { WallGeneratorSnakeLoop } from './WallGeneratorSnakeLoop';
+import HexTile from './HexTile/HexTile';
 
 export default class CastleScene extends THREE.Group {
 
@@ -139,8 +139,7 @@ export default class CastleScene extends THREE.Group {
             maxOffset: 1,
         };
 
-        // const wallTiles = WallGenerator.generateRandomClosedWall(wallShape);
-        const wallTiles = WallGeneratorSnakeLoop.generateClosedWall(wallShape);
+        const wallTiles = WallGenerator.generateRandomClosedWall(wallShape);
         console.log(wallTiles);
         this.renderWall(wallTiles);
     }
@@ -160,14 +159,29 @@ export default class CastleScene extends THREE.Group {
                 transforms: [transform],
             });
         }
+
+        const walls: HexTile[] = [];
         
         for (let i = 0; i < hexTileInstancesData.length; i++) {
-            const hexTileInstance = new HexTileInstance(hexTileInstancesData[i], DebugConfig.game.hexTileDebug);
-            this.add(hexTileInstance);
+            // const hexTileInstance = new HexTileInstance(hexTileInstancesData[i], DebugConfig.game.hexTileDebug);
+            // this.add(hexTileInstance);
 
-            this.wallInstances.push(hexTileInstance);
+            // this.wallInstances.push(hexTileInstance);
+            const hexTile = new HexTile(HexTileType.MountainA, DebugConfig.game.hexTileDebug);
+            this.add(hexTile);
 
-            hexTileInstance.showAllTiles();
+            hexTile.setHexTilePosition(hexTileInstancesData[i].transforms[0].position);
+            hexTile.hide();
+
+            walls.push(hexTile);
+        }
+
+        for (let i = 0; i < walls.length; i++) {
+            const wall = walls[i];
+
+            setTimeout(() => {
+                wall.show();
+            }, i * 300);
         }
     }
 
