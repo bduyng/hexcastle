@@ -45,7 +45,18 @@ export class WallGenerator {
         const baseRing = this.generateHexRing(shape.center, shape.radius);
         const offsetRing = this.applyOffsetToRing(baseRing, shape.maxOffset);
         
-        const wallCoords = offsetRing.map(coord => ({ coord }));
+        // Фильтруем тайлы, которые касаются других тайлов стены только одной стороной
+        const filteredRing = this.filterSingleConnectionTiles(offsetRing);
+        
+        // Удаляем дублирующиеся тайлы с одинаковыми координатами
+        const uniqueRing = this.removeDuplicateTiles(filteredRing);
+        
+        console.log(offsetRing);
+        console.log(filteredRing);
+        console.log(uniqueRing);
+
+        
+        const wallCoords = uniqueRing.map(coord => ({ coord }));
         
         // Создаем временные тайлы стены для определения внутренних и внешних тайлов
         const tempWallTiles: IWallTile[] = wallCoords.map(wc => ({
@@ -539,6 +550,90 @@ export class WallGenerator {
         const margin = 2; // Небольшой запас для внешних тайлов
         return coord.q >= bounds.minQ - margin && coord.q <= bounds.maxQ + margin && 
                coord.r >= bounds.minR - margin && coord.r <= bounds.maxR + margin;
+    }
+
+    /**
+     * Фильтрует тайлы, которые касаются других тайлов стены только одной стороной
+     * @param ring массив координат тайлов стены
+     * @returns отфильтрованный массив координат
+     */
+    private static filterSingleConnectionTiles(ring: IHexCoord[]): IHexCoord[] {
+        if (ring.length <= 2) {
+            return ring; // Для 1-2 тайлов фильтрация не нужна
+        }
+        
+        const filteredRing: IHexCoord[] = [];
+        
+        for (let i = 0; i < ring.length; i++) {
+            const currentCoord = ring[i];
+            const connections = this.countWallConnections(currentCoord, ring);
+            
+            // Оставляем тайл только если он имеет 2 или более соединений
+            if (connections >= 2) {
+                filteredRing.push(currentCoord);
+            }
+        }
+        
+        return filteredRing;
+    }
+
+    /**
+     * Подсчитывает количество соединений тайла с другими тайлами стены
+     * @param coord координата проверяемого тайла
+     * @param ring массив всех координат тайлов стены
+     * @returns количество соединений
+     */
+    private static countWallConnections(coord: IHexCoord, ring: IHexCoord[]): number {
+        // Направления соседей в гексагональной сетке
+        const neighborDirections = [
+            { q: 1, r: 0 },   // 0°
+            { q: 1, r: -1 },  // 60°
+            { q: 0, r: -1 },  // 120°
+            { q: -1, r: 0 },  // 180°
+            { q: -1, r: 1 },  // 240°
+            { q: 0, r: 1 },   // 300°
+        ];
+        
+        let connections = 0;
+        
+        // Проверяем каждого соседа
+        for (const direction of neighborDirections) {
+            const neighborCoord = {
+                q: coord.q + direction.q,
+                r: coord.r + direction.r
+            };
+            
+            // Проверяем, есть ли сосед в кольце стены
+            const hasNeighbor = ring.some(ringCoord => 
+                ringCoord.q === neighborCoord.q && ringCoord.r === neighborCoord.r
+            );
+            
+            if (hasNeighbor) {
+                connections++;
+            }
+        }
+        
+        return connections;
+    }
+
+    /**
+     * Удаляет дублирующиеся тайлы с одинаковыми координатами
+     * @param ring массив координат тайлов стены
+     * @returns отфильтрованный массив координат
+     */
+    private static removeDuplicateTiles(ring: IHexCoord[]): IHexCoord[] {
+        const uniqueRing: IHexCoord[] = [];
+        const seen = new Set<string>();
+        
+        for (const coord of ring) {
+            const key = `${coord.q},${coord.r}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueRing.push(coord);
+            }
+        }
+        
+        return uniqueRing;
     }
 
     /**
