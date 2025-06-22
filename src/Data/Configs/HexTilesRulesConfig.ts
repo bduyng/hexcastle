@@ -14,7 +14,7 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Grass,
             TileEdgeType.Grass,
         ],
-        weight: 50,
+        weight: 200,
     },
     {
         type: HexTileType.Water,

@@ -6,7 +6,7 @@ const DebugConfig = {
     showAxisHelper: false,
     gui: true,
     game: {
-        grid: false,
+        grid: true,
         hexTileDebug: {
             rotation: false,
             edge: false,

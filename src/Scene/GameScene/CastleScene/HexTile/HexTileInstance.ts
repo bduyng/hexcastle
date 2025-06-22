@@ -49,6 +49,13 @@ export default class HexTileInstance extends THREE.Group {
         }
     }
 
+    public showAllTiles(): void {
+        for (let i = 0; i < this.hexTileInstanceIndexes.length; i++) {
+            const index = this.hexTileInstanceIndexes[i];
+            ThreeJSHelper.updateInstanceTransform(this.hexTileInstanceMesh, index.index, undefined, undefined, new THREE.Vector3(1, 1, 1));
+        }
+    }
+
     public reset(): void {
         this.hexTileInstanceMesh.geometry.dispose();
         this.remove(this.hexTileInstanceMesh);
