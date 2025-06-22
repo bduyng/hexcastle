@@ -47,9 +47,20 @@ export class WallGenerator {
         
         const wallCoords = offsetRing.map(coord => ({ coord }));
         
+        // Создаем временные тайлы стены для определения внутренних и внешних тайлов
+        const tempWallTiles: IWallTile[] = wallCoords.map(wc => ({
+            coord: wc.coord,
+            type: HexTileType.WallStraight,
+            rotation: HexRotation.Rotate0
+        }));
+        
+        // Сначала определяем внутренние и внешние тайлы для более точной ориентации
+        const insideTiles = this.findTilesInsideWall(tempWallTiles, shape.center);
+        const outsideAdjacentTiles = this.findOutsideAdjacentTiles(tempWallTiles, insideTiles);
+        
         for (let i = 0; i < wallCoords.length; i++) {
             const wallTile = wallCoords[i];
-            const tileVariant = this.determineWallTileType(wallTile.coord, wallCoords, i);
+            const tileVariant = this.determineWallTileType(wallTile.coord, wallCoords, i, insideTiles, outsideAdjacentTiles);
             wallTiles.push({ 
                 coord: wallTile.coord, 
                 type: tileVariant.type, 
@@ -238,7 +249,7 @@ export class WallGenerator {
         return Math.max(Math.abs(dq), Math.abs(dr), Math.abs(ds));
     }
     
-    private static determineWallTileType(coord: IHexCoord, wallCoords: { coord: IHexCoord }[], currentIndex: number): IWallTileVariant {
+    private static determineWallTileType(coord: IHexCoord, wallCoords: { coord: IHexCoord }[], currentIndex: number, insideTiles: IHexCoord[], outsideAdjacentTiles: IHexCoord[]): IWallTileVariant {
         // Получаем предыдущий и следующий тайлы в цепочке стены
         const prevIndex = (currentIndex - 1 + wallCoords.length) % wallCoords.length;
         const nextIndex = (currentIndex + 1) % wallCoords.length;
@@ -287,6 +298,43 @@ export class WallGenerator {
             requiredWallEdges[nextDirection] = true;
         }
 
+        // Определяем, какие стороны должны быть Inside/Outside
+        const requiredInsideEdges: boolean[] = [false, false, false, false, false, false];
+        const requiredOutsideEdges: boolean[] = [false, false, false, false, false, false];
+        
+        // Для каждой стороны проверяем, что находится за ней
+        for (let i = 0; i < 6; i++) {
+            if (!requiredWallEdges[i]) { // Если это не стена
+                const neighborCoord = {
+                    q: coord.q + neighborDirections[i].q,
+                    r: coord.r + neighborDirections[i].r
+                };
+                
+                // Проверяем, является ли сосед частью стены
+                const isWallNeighbor = wallCoords.some(wallCoord => 
+                    wallCoord.coord.q === neighborCoord.q && wallCoord.coord.r === neighborCoord.r
+                );
+                
+                if (!isWallNeighbor) {
+                    // Проверяем, находится ли сосед среди внутренних тайлов
+                    const isInsideTile = insideTiles.some(insideTile => 
+                        insideTile.q === neighborCoord.q && insideTile.r === neighborCoord.r
+                    );
+                    
+                    // Проверяем, находится ли сосед среди внешних прилегающих тайлов
+                    const isOutsideTile = outsideAdjacentTiles.some(outsideTile => 
+                        outsideTile.q === neighborCoord.q && outsideTile.r === neighborCoord.r
+                    );
+                    
+                    if (isInsideTile) {
+                        requiredInsideEdges[i] = true;
+                    } else if (isOutsideTile) {
+                        requiredOutsideEdges[i] = true;
+                    }
+                }
+            }
+        }
+
         // Ищем подходящий вариант тайла среди всех поворотов
         for (const variant of this.wallTileVariants) {
             let isCompatible = true;
@@ -294,6 +342,8 @@ export class WallGenerator {
             // Проверяем каждую сторону
             for (let i = 0; i < 6; i++) {
                 const requiredWall = requiredWallEdges[i];
+                const requiredInside = requiredInsideEdges[i];
+                const requiredOutside = requiredOutsideEdges[i];
                 const tileEdge = variant.edges[i];
                 
                 // Если требуется стена, но у тайла на этой стороне не стена
@@ -304,6 +354,18 @@ export class WallGenerator {
                 
                 // Если не требуется стена, но у тайла на этой стороне стена
                 if (!requiredWall && tileEdge === TileEdgeType.Wall) {
+                    isCompatible = false;
+                    break;
+                }
+                
+                // Если требуется Inside, но у тайла на этой стороне не Inside
+                if (requiredInside && tileEdge !== TileEdgeType.Inside) {
+                    isCompatible = false;
+                    break;
+                }
+                
+                // Если требуется Outside, но у тайла на этой стороне не Outside
+                if (requiredOutside && tileEdge !== TileEdgeType.Outside) {
                     isCompatible = false;
                     break;
                 }
@@ -318,7 +380,7 @@ export class WallGenerator {
         const fallbackVariant = this.wallTileVariants.find(variant => variant.type === HexTileType.WallStraight && variant.rotation === HexRotation.Rotate0);
         return fallbackVariant || this.wallTileVariants[0];
     }
-    
+
     /**
      * Находит все гексагональные тайлы, которые находятся внутри стены
      * @param wallTiles массив тайлов стены

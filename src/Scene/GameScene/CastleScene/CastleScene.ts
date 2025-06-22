@@ -135,8 +135,8 @@ export default class CastleScene extends THREE.Group {
     private generateWall(): void {
         const wallShape = {
             center: { q: 0, r: 0 },
-            radius: 1,
-            maxOffset: 0,
+            radius: 2,
+            maxOffset: 2,
         };
 
         const wallTiles = WallGenerator.generateRandomClosedWall(wallShape);
