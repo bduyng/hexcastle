@@ -13,10 +13,11 @@ import { GameConfig } from '../../../Data/Configs/GameConfig';
 import Intro from './Intro';
 import FieldRadiusHelper from './FieldRadiusHelper';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
-import { IWallTile, WallGenerator } from './WallGenerator';
+import { WallGenerator } from './WallGenerator';
 import { HexRotation } from '../../../Data/Enums/HexRotation';
 import { HexTileType } from '../../../Data/Enums/HexTileType';
 import HexTile from './HexTile/HexTile';
+import { IWallConfig } from '../../../Data/Interfaces/IWall';
 
 export default class CastleScene extends THREE.Group {
 
@@ -32,6 +33,7 @@ export default class CastleScene extends THREE.Group {
     private previousGeneratePercent: number = 0;
     private showTileStepTime: number = 0;
     private wallInstances: HexTileInstance[] = [];
+    private wallGenerator: WallGenerator;
 
     private isIntroActive: boolean = true;
 
@@ -62,6 +64,7 @@ export default class CastleScene extends THREE.Group {
 
     private init(): void {
         this.initHexWFC();
+        this.initWallGenerator();
         this.initIntro();
         this.initDebugGrid();
         this.initFieldRadiusHelper();
@@ -71,6 +74,10 @@ export default class CastleScene extends THREE.Group {
 
     private initHexWFC(): void {
         this.hexWFC = new HexWFC();
+    }
+
+    private initWallGenerator(): void {
+        this.wallGenerator = new WallGenerator();
     }
 
     private initIntro(): void {
@@ -90,7 +97,7 @@ export default class CastleScene extends THREE.Group {
         this.add(fieldRadiusHelper);
     }
 
-    private generateTiles(): void {
+    private generateLandscapeTiles(): void {
         this.hexWFC.setConfig(DefaultWFCConfig);
 
         if (DefaultWFCConfig.radius <= GameConfig.WFC.syncGenerationRadius) {
@@ -101,14 +108,12 @@ export default class CastleScene extends THREE.Group {
     }
 
     private generateTilesSync(): void {
-        // this.hexWFC.generate();
+        this.hexWFC.generate();
 
-        // const grid: IHexTilesResult[] = this.hexWFC.getGrid();
-        // this.steps = this.hexWFC.getSteps();
-
-        // this.initGridTiles(grid);
-        this.generateWall();
-        // this.initEntropyView();
+        const grid: IHexTilesResult[] = this.hexWFC.getGrid();
+        this.steps = this.hexWFC.getSteps();
+        this.initGridTiles(grid);
+        this.initEntropyView();
     }
 
     private async generateTilesAsync(): Promise<void> {
@@ -121,44 +126,32 @@ export default class CastleScene extends THREE.Group {
             stepsPerFrame,
         );
 
-        if (result.success === true) {
-            this.steps = result.steps;
-            this.initGridTiles(result.grid);
-            this.generateWall();
-            this.initEntropyView();
-        }
+        this.steps = result.steps;
+        this.initGridTiles(result.grid);
+        this.initEntropyView();
 
         GlobalEventBus.emit('game:finishGeneratingWorld');
         this.previousGeneratePercent = 0;
     }
 
     private generateWall(): void {
-        const wallShape = {
+        const wallConfig: IWallConfig = {
             center: { q: 0, r: 0 },
-            radius: 3,
-            maxOffset: 0,
+            radius: 1,
+            maxOffset: 1,
         };
 
-        const wallTiles = WallGenerator.generateRandomClosedWall(wallShape);
-        // console.log(wallTiles);
-
-
-        // const insideTiles = WallGenerator.findTilesInsideWall(wallTiles, wallShape.center);
-        // console.log(insideTiles);
-
-        // const outsideTiles = WallGenerator.findOutsideAdjacentTiles(wallTiles, insideTiles);
-        // console.log(outsideTiles);
-
+        const wallTiles: IHexTilesResult[] = this.wallGenerator.generateRandomClosedWall(wallConfig);
         this.renderWall(wallTiles);
     }
 
-    private renderWall(wallTiles: IWallTile[]): void {
+    private renderWall(wallTiles: IHexTilesResult[]): void {
         const hexTileInstancesData: IHexTileInstanceData[] = [];
 
         for (let i = 0; i < wallTiles.length; i++) {
             const wallTile = wallTiles[i];
             const transform: IHexTileTransform = {
-                position: wallTile.coord,
+                position: wallTile.position,
                 rotation: wallTile.rotation,
             }
 
@@ -169,7 +162,7 @@ export default class CastleScene extends THREE.Group {
         }
 
         const walls: HexTile[] = [];
-        
+
         for (let i = 0; i < hexTileInstancesData.length; i++) {
             // const hexTileInstance = new HexTileInstance(hexTileInstancesData[i], DebugConfig.game.hexTileDebug);
             // this.add(hexTileInstance);
@@ -326,44 +319,51 @@ export default class CastleScene extends THREE.Group {
     }
 
     private initGlobalListeners(): void {
-        GlobalEventBus.on('game:generate', () => {
-            if (this.isIntroActive) {
-                this.intro.hide();
-                this.isIntroActive = false;
-            }
+        GlobalEventBus.on('game:generate', () => this.generateScene());
+        GlobalEventBus.on('game:fieldRadiusChanged', (radius: number) => this.onFieldRadiusChanged(radius));
+        GlobalEventBus.on('ui:sliderPointerUp', () => this.onSliderPointerUp());
+        GlobalEventBus.on('ui:sliderPointerDown', () => this.sliderPointerDown());
+        GlobalEventBus.on('game:stopGenerate', () => this.stopGenerate());
+    }
 
-            this.resetScene();
-            this.generateTiles();
-        });
+    private generateScene(): void {
+        if (this.isIntroActive) {
+            this.intro.hide();
+            this.isIntroActive = false;
+        }
 
-        GlobalEventBus.on('game:fieldRadiusChanged', (radius: number) => {
-            DefaultWFCConfig.radius = radius;
+        this.resetScene();
+        this.generateLandscapeTiles();
+        // this.generateWall();
+    }
 
-            if (this.isIntroActive) {
-                this.intro.showByRadius(DefaultWFCConfig.radius);
-            } else {
-                this.fieldRadiusHelper.show(DefaultWFCConfig.radius);
-            }
-        });
+    private onFieldRadiusChanged(radius: number): void {
+        DefaultWFCConfig.radius = radius;
 
-        GlobalEventBus.on('ui:sliderPointerUp', () => {
-            if (!this.isIntroActive) {
-                this.fieldRadiusHelper.hide();
-            }
-        });
-
-        GlobalEventBus.on('ui:sliderPointerDown', () => {
-            if (!this.isIntroActive) {
-                this.fieldRadiusHelper.show(DefaultWFCConfig.radius);
-            }
-        });
-
-        GlobalEventBus.on('game:stopGenerate', () => {
-            this.hexWFC.stopGeneration();
-
-            this.intro.show();
+        if (this.isIntroActive) {
             this.intro.showByRadius(DefaultWFCConfig.radius);
-            this.isIntroActive = true;
-        });
+        } else {
+            this.fieldRadiusHelper.show(DefaultWFCConfig.radius);
+        }
+    }
+
+    private onSliderPointerUp(): void {
+        if (!this.isIntroActive) {
+            this.fieldRadiusHelper.hide();
+        }
+    }
+
+    private sliderPointerDown(): void {
+        if (!this.isIntroActive) {
+            this.fieldRadiusHelper.show(DefaultWFCConfig.radius);
+        }
+    }
+
+    private stopGenerate(): void {
+        this.hexWFC.stopGeneration();
+
+        this.intro.show();
+        this.intro.showByRadius(DefaultWFCConfig.radius);
+        this.isIntroActive = true;
     }
 }

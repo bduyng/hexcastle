@@ -57,4 +57,15 @@ export default class HexGridHelper {
 
         return null;
     }
+
+    public static getHexNeighbors(coord: IHexCoord): IHexCoord[] {
+        return [
+            { q: coord.q + 1, r: coord.r },     // 0°
+            { q: coord.q + 1, r: coord.r - 1 }, // 60°
+            { q: coord.q, r: coord.r - 1 },     // 120°
+            { q: coord.q - 1, r: coord.r },     // 180°
+            { q: coord.q - 1, r: coord.r + 1 }, // 240°
+            { q: coord.q, r: coord.r + 1 },     // 300°
+        ];
+    }
 }

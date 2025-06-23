@@ -7,7 +7,7 @@ export interface ITileVariant {
     type: HexTileType;
     rotation: HexRotation;
     edges: TileEdgeType[];
-    weight: number;
+    weight?: number;
 }
 
 export interface IWFCHexTilesInfo {

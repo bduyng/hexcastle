@@ -19,5 +19,5 @@ export interface IWindowSizes {
 export interface IHexTilesRule {
     type: HexTileType;
     edges: TileEdgeType[];
-    weight: number;
+    weight?: number;
 }

@@ -442,7 +442,6 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Wall,
             TileEdgeType.Inside,
         ],
-        weight: 1,
     },
     {
         type: HexTileType.WallCornerAInside,
@@ -454,7 +453,6 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Wall,
             TileEdgeType.Outside,
         ],
-        weight: 1,
     },
     {
         type: HexTileType.WallCornerAOutside,
@@ -466,7 +464,6 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Wall,
             TileEdgeType.Inside,
         ],
-        weight: 1,
     },
     {
         type: HexTileType.WallCornerBInside,
@@ -478,7 +475,6 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Inside,
             TileEdgeType.Wall,
         ],
-        weight: 1,
     },
     {
         type: HexTileType.WallCornerBOutside,
@@ -490,7 +486,6 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Outside,
             TileEdgeType.Wall,
         ],
-        weight: 1,
     },
     {
         type: HexTileType.WallStraight,
@@ -502,7 +497,6 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Inside,
             TileEdgeType.Inside,
         ],
-        weight: 1,
     },
     {
         type: HexTileType.WallStraightGate,
@@ -514,7 +508,6 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
             TileEdgeType.Inside,
             TileEdgeType.Inside,
         ],
-        weight: 1,
     },
 ];
 
