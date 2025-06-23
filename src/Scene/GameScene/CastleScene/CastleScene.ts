@@ -13,11 +13,7 @@ import { GameConfig } from '../../../Data/Configs/GameConfig';
 import Intro from './Intro';
 import FieldRadiusHelper from './FieldRadiusHelper';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
-import { WallGenerator } from './WallGenerator';
-import { HexRotation } from '../../../Data/Enums/HexRotation';
-import { HexTileType } from '../../../Data/Enums/HexTileType';
-import HexTile from './HexTile/HexTile';
-import { IWallConfig } from '../../../Data/Interfaces/IWall';
+// import { WallGenerator } from './WallGenerator';
 
 export default class CastleScene extends THREE.Group {
 
@@ -33,7 +29,7 @@ export default class CastleScene extends THREE.Group {
     private previousGeneratePercent: number = 0;
     private showTileStepTime: number = 0;
     private wallInstances: HexTileInstance[] = [];
-    private wallGenerator: WallGenerator;
+    // private wallGenerator: WallGenerator;
 
     private isIntroActive: boolean = true;
 
@@ -77,7 +73,7 @@ export default class CastleScene extends THREE.Group {
     }
 
     private initWallGenerator(): void {
-        this.wallGenerator = new WallGenerator();
+        // this.wallGenerator = new WallGenerator();
     }
 
     private initIntro(): void {
@@ -134,58 +130,58 @@ export default class CastleScene extends THREE.Group {
         this.previousGeneratePercent = 0;
     }
 
-    private generateWall(): void {
-        const wallConfig: IWallConfig = {
-            center: { q: 0, r: 0 },
-            radius: 1,
-            maxOffset: 1,
-        };
+    // private generateWall(): void {
+    //     const wallConfig: IWallConfig = {
+    //         center: { q: 0, r: 0 },
+    //         radius: 1,
+    //         maxOffset: 1,
+    //     };
 
-        const wallTiles: IHexTilesResult[] = this.wallGenerator.generateRandomClosedWall(wallConfig);
-        this.renderWall(wallTiles);
-    }
+    //     const wallTiles: IHexTilesResult[] = this.wallGenerator.generateRandomClosedWall(wallConfig);
+    //     this.renderWall(wallTiles);
+    // }
 
-    private renderWall(wallTiles: IHexTilesResult[]): void {
-        const hexTileInstancesData: IHexTileInstanceData[] = [];
+    // private renderWall(wallTiles: IHexTilesResult[]): void {
+    //     const hexTileInstancesData: IHexTileInstanceData[] = [];
 
-        for (let i = 0; i < wallTiles.length; i++) {
-            const wallTile = wallTiles[i];
-            const transform: IHexTileTransform = {
-                position: wallTile.position,
-                rotation: wallTile.rotation,
-            }
+    //     for (let i = 0; i < wallTiles.length; i++) {
+    //         const wallTile = wallTiles[i];
+    //         const transform: IHexTileTransform = {
+    //             position: wallTile.position,
+    //             rotation: wallTile.rotation,
+    //         }
 
-            hexTileInstancesData.push({
-                type: wallTile.type,
-                transforms: [transform],
-            });
-        }
+    //         hexTileInstancesData.push({
+    //             type: wallTile.type,
+    //             transforms: [transform],
+    //         });
+    //     }
 
-        const walls: HexTile[] = [];
+    //     const walls: HexTile[] = [];
 
-        for (let i = 0; i < hexTileInstancesData.length; i++) {
-            // const hexTileInstance = new HexTileInstance(hexTileInstancesData[i], DebugConfig.game.hexTileDebug);
-            // this.add(hexTileInstance);
+    //     for (let i = 0; i < hexTileInstancesData.length; i++) {
+    //         // const hexTileInstance = new HexTileInstance(hexTileInstancesData[i], DebugConfig.game.hexTileDebug);
+    //         // this.add(hexTileInstance);
 
-            // this.wallInstances.push(hexTileInstance);
-            const hexTile = new HexTile(hexTileInstancesData[i].type, DebugConfig.game.hexTileDebug);
-            this.add(hexTile);
+    //         // this.wallInstances.push(hexTileInstance);
+    //         const hexTile = new HexTile(hexTileInstancesData[i].type, DebugConfig.game.hexTileDebug);
+    //         this.add(hexTile);
 
-            hexTile.setHexTilePosition(hexTileInstancesData[i].transforms[0].position);
-            hexTile.setHexTileRotation(hexTileInstancesData[i].transforms[0].rotation);
-            hexTile.hide();
+    //         hexTile.setHexTilePosition(hexTileInstancesData[i].transforms[0].position);
+    //         hexTile.setHexTileRotation(hexTileInstancesData[i].transforms[0].rotation);
+    //         hexTile.hide();
 
-            walls.push(hexTile);
-        }
+    //         walls.push(hexTile);
+    //     }
 
-        for (let i = 0; i < walls.length; i++) {
-            const wall = walls[i];
+    //     for (let i = 0; i < walls.length; i++) {
+    //         const wall = walls[i];
 
-            setTimeout(() => {
-                wall.show();
-            }, i * 30);
-        }
-    }
+    //         setTimeout(() => {
+    //             wall.show();
+    //         }, i * 30);
+    //     }
+    // }
 
     private getStepsPerFrame(radius: number): number {
         for (let i = 0; i < GameConfig.WFC.stepsPerFrame.values.length; i++) {
