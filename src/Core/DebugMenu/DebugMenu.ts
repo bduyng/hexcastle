@@ -4,8 +4,8 @@ import RendererStats from 'three-webgl-stats';
 import Stats from 'three/addons/libs/stats.module.js';
 import GUIHelper from "./GUIHelper";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
-import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import { GlobalEventBus } from '../GlobalEvents';
+import { DebugConfig } from '../../Data/Configs/Debug/DebugConfig';
 
 export default class DebugMenu {
     private camera: THREE.PerspectiveCamera;

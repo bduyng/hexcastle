@@ -3,9 +3,10 @@ import { HexTileType } from "../../../Data/Enums/HexTileType";
 import { TileEdgeType } from "../../../Data/Enums/TileEdgeType";
 import { IHexCoord } from "../../../Data/Interfaces/IHexTile";
 import { HexRotation } from "../../../Data/Enums/HexRotation";
-import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig, IWFCStep, IWFCProgressCallback, IWFCAsyncResult } from "../../../Data/Interfaces/IWFC";
+import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig, INewTileStep, IWFCProgressCallback, IWFCAsyncResult } from "../../../Data/Interfaces/IWFC";
 import { NeighborDirections } from "../../../Data/Configs/WFCConfig";
 import { HexTilesRulesConfig } from "../../../Data/Configs/HexTilesRulesConfig";
+import { GenerateEntityType } from "../../../Data/Enums/GenerateEntityType";
 
 export class HexWFC {
     private tiles: Map<HexTileType, IHexTilesRule>;
@@ -13,9 +14,10 @@ export class HexWFC {
     private tileVariants: ITileVariant[];
     private grid: Map<string, IWFCHexTilesInfo>;
     private config: IWFCConfig;
-    private steps: IWFCStep[] = [];
+    private steps: INewTileStep[] = [];
     private isGenerating: boolean = false;
     private shouldStop: boolean = false;
+    private generateEntityType = GenerateEntityType.Landscape;
 
     constructor() {
 
@@ -35,7 +37,8 @@ export class HexWFC {
         }
 
         const initialStep = {
-            freeCells: this.getFreeCellsInfo()
+            generateEntityType: this.generateEntityType,
+            landscapeFreeCells: this.getFreeCellsInfo()
         };
         this.steps.push(initialStep);
 
@@ -63,12 +66,13 @@ export class HexWFC {
             }
 
             this.steps.push({
-                newTile: {
+                generateEntityType: this.generateEntityType,
+                tile: {
                     position: hexTile.coord,
                     type: selectedVariant.type,
                     rotation: selectedVariant.rotation
                 },
-                freeCells: this.getFreeCellsInfo()
+                landscapeFreeCells: this.getFreeCellsInfo()
             });
 
             stepIndex++;
@@ -90,7 +94,8 @@ export class HexWFC {
             }
 
             const initialStep = {
-                freeCells: this.getFreeCellsInfo()
+                generateEntityType: this.generateEntityType,
+                landscapeFreeCells: this.getFreeCellsInfo()
             };
             this.steps.push(initialStep);
 
@@ -110,10 +115,10 @@ export class HexWFC {
 
                 if (!hexTile) {
                     const result = this.getGrid();
-                    return { 
-                        success: true, 
-                        grid: result, 
-                        steps: this.steps 
+                    return {
+                        success: true,
+                        grid: result,
+                        steps: this.steps
                     };
                 }
 
@@ -134,12 +139,13 @@ export class HexWFC {
                 }
 
                 const newStep = {
+                    generateEntityType: this.generateEntityType,
                     newTile: {
                         position: hexTile.coord,
                         type: selectedVariant.type,
                         rotation: selectedVariant.rotation
                     },
-                    freeCells: this.getFreeCellsInfo()
+                    landscapeFreeCells: this.getFreeCellsInfo()
                 };
 
                 this.steps.push(newStep);
@@ -169,10 +175,8 @@ export class HexWFC {
         return this.isGenerating;
     }
 
-    private yieldToMainThread(): Promise<void> {
-        return new Promise(resolve => {
-            setTimeout(resolve, 0);
-        });
+    public getSteps(): INewTileStep[] {
+        return this.steps;
     }
 
     public getGrid(): IHexTilesResult[] {
@@ -208,6 +212,13 @@ export class HexWFC {
         this.tiles.clear();
         this.tileVariants = [];
     }
+
+    private yieldToMainThread(): Promise<void> {
+        return new Promise(resolve => {
+            setTimeout(resolve, 0);
+        });
+    }
+
 
     private init(): void {
         this.tileRules = HexTilesRulesConfig.filter(tile => this.config.hexTileTypesUsed.includes(tile.type));
@@ -452,9 +463,5 @@ export class HexWFC {
         }
 
         return true;
-    }
-
-    public getSteps(): IWFCStep[] {
-        return this.steps;
     }
 }

@@ -4,7 +4,7 @@ import Button from './UIObjects/Button';
 import { GlobalEventBus } from '../../Core/GlobalEvents';
 import FieldRadius from './FieldRadius';
 import GenerateProgressBar from './GenerateProgressBar';
-import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
+import { DebugGameConfig } from '../../Data/Configs/Debug/DebugConfig';
 
 export default class UI extends PIXI.Container {
     // private muteButton: MuteButton;
@@ -20,7 +20,7 @@ export default class UI extends PIXI.Container {
     }
 
     public onResize(): void {
-        if (DebugConfig.game.tilesDebugMode) {
+        if (DebugGameConfig.tilesDebugMode) {
             return;
         }
         
@@ -44,9 +44,10 @@ export default class UI extends PIXI.Container {
     }
 
     private init(): void {
-        if (DebugConfig.game.tilesDebugMode) {
+        if (DebugGameConfig.tilesDebugMode) {
             return;
         }
+
         // this.initMuteButton();
         this.initGenerateButton();
         this.initStopButton();

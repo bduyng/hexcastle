@@ -4,7 +4,7 @@ import { IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
 import HexTile from '../HexTile/HexTile';
 import { HexTileCategory } from '../../../../Data/Enums/HexTileCategory';
 import { HexTilesByCategory } from '../../../../Data/Configs/HexTilesByCategory';
-
+import { DebugGameConfig } from '../../../../Data/Configs/Debug/DebugConfig';
 
 export default class TilesDebugMode extends THREE.Group {
     private hexTileCategory: HexTileCategory;
@@ -12,7 +12,7 @@ export default class TilesDebugMode extends THREE.Group {
     constructor() {
         super();
 
-        this.hexTileCategory = HexTileCategory.Walls;
+        this.hexTileCategory = DebugGameConfig.tilesDebugMode;
 
         this.init();
     }

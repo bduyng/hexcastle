@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { ILibrariesData } from '../../Data/Interfaces/IBaseSceneData';
-import DebugConfig from '../../Data/Configs/Debug/DebugConfig';
 import TilesDebugMode from './CastleScene/DebugViewHelpers/TilesDebugMode';
 import CastleScene from './CastleScene/CastleScene';
 import CameraController from './CameraController';
+import { DebugGameConfig } from '../../Data/Configs/Debug/DebugConfig';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -27,7 +27,7 @@ export default class GameScene extends THREE.Group {
     }
 
     public start(): void {
-        if (!DebugConfig.game.tilesDebugMode) {
+        if (!DebugGameConfig.tilesDebugMode) {
             this.castleScene.start();
         }   
     }
@@ -35,7 +35,7 @@ export default class GameScene extends THREE.Group {
     private init(): void {
         this.initCameraController();
 
-        if (DebugConfig.game.tilesDebugMode) {
+        if (DebugGameConfig.tilesDebugMode) {
             this.initTilesDebugMode();
         } else {
             this.initCastleScene();

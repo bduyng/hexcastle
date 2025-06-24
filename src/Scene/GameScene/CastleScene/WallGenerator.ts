@@ -3,20 +3,24 @@ import { HexTileType } from "../../../Data/Enums/HexTileType";
 import { TileEdgeType } from "../../../Data/Enums/TileEdgeType";
 import { HexTilesRulesConfig } from "../../../Data/Configs/HexTilesRulesConfig";
 import { HexRotation } from "../../../Data/Enums/HexRotation";
-import { IHexTilesResult, ITileVariant } from "../../../Data/Interfaces/IWFC";
+import { IHexTilesResult, INewTileStep, ITileVariant } from "../../../Data/Interfaces/IWFC";
 import { IWallConfig, IWallGateConfig } from "../../../Data/Interfaces/IWall";
 import { WallGateTiles, WallTileTypes } from "../../../Data/Configs/WallGeneratorConfig";
 import { NeighborDirections } from "../../../Data/Configs/WFCConfig";
 import HexGridHelper from "../../../Helpers/HexGridHelper";
+import { GenerateEntityType } from "../../../Data/Enums/GenerateEntityType";
 
 export class WallGenerator {
     private wallTileVariants: ITileVariant[] = [];
+    private steps: INewTileStep[] = [];
 
     constructor() {
 
     }
 
     public generateRandomClosedWall(shape: IWallConfig): IHexTilesResult[] {
+        this.reset();
+        
         if (this.wallTileVariants.length === 0) {
             this.initializeWallTileVariants();
         }
@@ -51,7 +55,34 @@ export class WallGenerator {
 
         const wallTilesWithGates: IHexTilesResult[] = this.addGatesToWall(wallTiles);
 
+        this.generateSteps(wallTilesWithGates);
+
         return wallTilesWithGates;
+    }
+
+    public getSteps(): INewTileStep[] {
+        return this.steps;
+    }
+
+    public reset(): void {
+        this.steps = [];
+        this.wallTileVariants = [];
+    }
+
+    private generateSteps(tiles: IHexTilesResult[]): void {
+        for (let i = 0; i < tiles.length; i++) {
+            const wallTile = tiles[i];
+            const step: INewTileStep = {
+                generateEntityType: GenerateEntityType.Walls,
+                tile: {
+                    position: wallTile.position,
+                    type: wallTile.type,
+                    rotation: wallTile.rotation
+                }
+            };
+
+            this.steps.push(step);
+        }
     }
 
     private initializeWallTileVariants(): void {

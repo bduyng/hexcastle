@@ -1,16 +1,16 @@
 import * as THREE from 'three';
 import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
-import { IWFCStep } from '../../../../Data/Interfaces/IWFC';
+import { INewTileStep } from '../../../../Data/Interfaces/IWFC';
 import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import { IHexCoord } from '../../../../Data/Interfaces/IHexTile';
 import { GameConfig } from '../../../../Data/Configs/GameConfig';
 
 export default class EntropyView extends THREE.Group {
-    private steps: IWFCStep[];
+    private steps: INewTileStep[];
     private radius: number;
     private entropyPlane: CanvasPlaneMesh;
 
-    constructor(steps: IWFCStep[], radius: number) {
+    constructor(steps: INewTileStep[], radius: number) {
         super();
 
         this.steps = steps;
@@ -20,7 +20,7 @@ export default class EntropyView extends THREE.Group {
     }
 
     public drawStep(stepIndex: number): void {
-        const freeCells = this.steps[stepIndex].freeCells;
+        const freeCells = this.steps[stepIndex].landscapeFreeCells;
         const lowestEntropyCells: IHexCoord[] = this.findLowestEntropyCells(stepIndex);
 
         const canvas = this.entropyPlane.getCanvas();
@@ -70,7 +70,7 @@ export default class EntropyView extends THREE.Group {
     }
 
     private findLowestEntropyCells(stepIndex: number): IHexCoord[] {
-        const freeCells = this.steps[stepIndex].freeCells;
+        const freeCells = this.steps[stepIndex].landscapeFreeCells;
 
         const lowestEntropyCells: IHexCoord[] = [];
         let lowestEntropy: number = Infinity;

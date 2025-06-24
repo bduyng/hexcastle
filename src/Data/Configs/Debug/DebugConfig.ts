@@ -1,3 +1,4 @@
+import { GenerateEntityType } from "../../Enums/GenerateEntityType";
 
 const DebugConfig = {
     fpsMeter: true,
@@ -5,15 +6,29 @@ const DebugConfig = {
     orbitControls: true,
     showAxisHelper: false,
     gui: true,
-    game: {
-        grid: false,
-        hexTileDebug: {
-            rotation: false,
-            edge: false,
-        },
-        entropy: true,
-        tilesDebugMode: false,
-    }
 };
 
-export default DebugConfig;
+const DebugGameConfig = {
+    tilesDebugMode: null, // HexTileCategory.Walls,
+    grid: false,
+    generateType: {
+        [GenerateEntityType.Landscape]: {
+            hexTileDebug: {
+                rotation: false,
+                edge: false,
+            },
+            showInstantly: false,
+            entropy: false,
+        },
+        [GenerateEntityType.Walls]: {
+            hexTileDebug: {
+                rotation: false,
+                edge: false,
+            },
+            showInstantly: false,
+        }
+    },
+}
+
+
+export { DebugConfig, DebugGameConfig };

@@ -12,7 +12,7 @@ import FogConfig from '../Data/Configs/Scene/FogConfig';
 import { ILibrariesData, IWindowSizes } from '../Data/Interfaces/IBaseSceneData';
 import DebugMenu from './DebugMenu/DebugMenu';
 import CameraConfig from '../Data/Configs/Scene/CameraConfig';
-import DebugConfig from '../Data/Configs/Debug/DebugConfig';
+import { DebugConfig } from '../Data/Configs/Debug/DebugConfig';
 
 export default class BaseScene {
     private scene: THREE.Scene;

@@ -11,38 +11,38 @@ const WFCTiles: HexTileType[] = [
     HexTileType.RoadA, // 2 road edges
     HexTileType.RoadB, // 2 road edges
     HexTileType.RoadC, // 2 road edges
-    // HexTileType.RoadD, // 3 road edges
-    // HexTileType.RoadE, // 3 road edges
-    // HexTileType.RoadF, // 3 road edges
-    // HexTileType.RoadG, // 3 road edges
-    // HexTileType.RoadH, // 4 road edges
-    // HexTileType.RoadI, // 4 road edges
-    // HexTileType.RoadJ, // 4 road edges
-    // HexTileType.RoadK, // 5 road edges
-    // HexTileType.RoadL, // 6 road edges
-    // HexTileType.RoadM, // 1 road edges
+        // HexTileType.RoadD, // 3 road edges
+        // HexTileType.RoadE, // 3 road edges
+        // HexTileType.RoadF, // 3 road edges
+        // HexTileType.RoadG, // 3 road edges
+        // HexTileType.RoadH, // 4 road edges
+        // HexTileType.RoadI, // 4 road edges
+        // HexTileType.RoadJ, // 4 road edges
+        // HexTileType.RoadK, // 5 road edges
+        // HexTileType.RoadL, // 6 road edges
+        // HexTileType.RoadM, // 1 road edges
 
     HexTileType.CoastA,
     HexTileType.CoastB,
     HexTileType.CoastC,
     HexTileType.CoastD,
-    // HexTileType.CoastE, - dont use
+        // HexTileType.CoastE, - dont use
 
     HexTileType.RiverA, // 2 river edges
     HexTileType.RiverACurvy, // 2 river edges
     HexTileType.RiverB, // 2 river edges
     HexTileType.RiverC, // 3 river edges
-    // HexTileType.RiverCrossingA, // 2 river edges
-    // HexTileType.RiverCrossingB, // 2 river edges
-    // HexTileType.RiverD, // 3 river edges
-    // HexTileType.RiverE, // 3 river edges
-    // HexTileType.RiverF, // 3 river edges
-    // HexTileType.RiverG, // 3 river edges
-    // HexTileType.RiverH, // 4 river edges
-    // HexTileType.RiverI, // 4 river edges
-    // HexTileType.RiverJ, // 4 river edges
-    // HexTileType.RiverK, // 5 river edges
-    // HexTileType.RiverL, // 6 river edges
+        // HexTileType.RiverCrossingA, // 2 river edges
+        // HexTileType.RiverCrossingB, // 2 river edges
+        // HexTileType.RiverD, // 3 river edges
+        // HexTileType.RiverE, // 3 river edges
+        // HexTileType.RiverF, // 3 river edges
+        // HexTileType.RiverG, // 3 river edges
+        // HexTileType.RiverH, // 4 river edges
+        // HexTileType.RiverI, // 4 river edges
+        // HexTileType.RiverJ, // 4 river edges
+        // HexTileType.RiverK, // 5 river edges
+        // HexTileType.RiverL, // 6 river edges
 ];
 
 const NeighborDirections: IHexCoord[] = [
