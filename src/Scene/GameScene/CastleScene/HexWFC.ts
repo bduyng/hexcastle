@@ -6,7 +6,6 @@ import { HexRotation } from "../../../Data/Enums/HexRotation";
 import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig, INewTileStep, IWFCProgressCallback, IWFCAsyncResult } from "../../../Data/Interfaces/IWFC";
 import { NeighborDirections } from "../../../Data/Configs/WFCConfig";
 import { HexTilesRulesConfig } from "../../../Data/Configs/HexTilesRulesConfig";
-import { GenerateEntityType } from "../../../Data/Enums/GenerateEntityType";
 
 export class HexWFC {
     private tiles: Map<HexTileType, IHexTilesRule>;
@@ -17,7 +16,6 @@ export class HexWFC {
     private steps: INewTileStep[] = [];
     private isGenerating: boolean = false;
     private shouldStop: boolean = false;
-    private generateEntityType = GenerateEntityType.Landscape;
 
     constructor() {
 
@@ -37,7 +35,6 @@ export class HexWFC {
         }
 
         const initialStep = {
-            generateEntityType: this.generateEntityType,
             landscapeFreeCells: this.getFreeCellsInfo()
         };
         this.steps.push(initialStep);
@@ -66,7 +63,6 @@ export class HexWFC {
             }
 
             this.steps.push({
-                generateEntityType: this.generateEntityType,
                 tile: {
                     position: hexTile.coord,
                     type: selectedVariant.type,
@@ -94,7 +90,6 @@ export class HexWFC {
             }
 
             const initialStep = {
-                generateEntityType: this.generateEntityType,
                 landscapeFreeCells: this.getFreeCellsInfo()
             };
             this.steps.push(initialStep);
@@ -114,7 +109,7 @@ export class HexWFC {
                 const hexTile: IWFCHexTilesInfo = this.findLowestEntropyHexTile();
 
                 if (!hexTile) {
-                    const result = this.getGrid();
+                    const result = this.getTiles();
                     return {
                         success: true,
                         grid: result,
@@ -139,8 +134,7 @@ export class HexWFC {
                 }
 
                 const newStep = {
-                    generateEntityType: this.generateEntityType,
-                    newTile: {
+                    tile: {
                         position: hexTile.coord,
                         type: selectedVariant.type,
                         rotation: selectedVariant.rotation
@@ -179,7 +173,7 @@ export class HexWFC {
         return this.steps;
     }
 
-    public getGrid(): IHexTilesResult[] {
+    public getTiles(): IHexTilesResult[] {
         const results: IHexTilesResult[] = [];
 
         for (const hexTile of this.grid.values()) {

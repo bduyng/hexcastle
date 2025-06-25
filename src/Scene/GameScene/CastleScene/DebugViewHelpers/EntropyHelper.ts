@@ -5,14 +5,16 @@ import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import { IHexCoord } from '../../../../Data/Interfaces/IHexTile';
 import { GameConfig } from '../../../../Data/Configs/GameConfig';
 
-export default class EntropyView extends THREE.Group {
+export default class EntropyHelper extends THREE.Group {
     private steps: INewTileStep[];
     private radius: number;
     private entropyPlane: CanvasPlaneMesh;
 
-    constructor(steps: INewTileStep[], radius: number) {
+    constructor() {
         super();
+    }
 
+    public setData(steps: INewTileStep[], radius: number): void {
         this.steps = steps;
         this.radius = radius;
 

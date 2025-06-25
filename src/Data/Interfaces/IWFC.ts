@@ -2,7 +2,6 @@ import { TileEdgeType } from "../Enums/TileEdgeType";
 import { HexTileType } from "../Enums/HexTileType";
 import { HexRotation } from "../Enums/HexRotation";
 import { IHexCoord } from "./IHexTile";
-import { GenerateEntityType } from "../Enums/GenerateEntityType";
 
 export interface ITileVariant {
     type: HexTileType;
@@ -41,7 +40,6 @@ export interface IWFCConfig {
 }
 
 export interface INewTileStep {
-    generateEntityType: GenerateEntityType;
     tile?: {
         position: IHexCoord;
         type: HexTileType;

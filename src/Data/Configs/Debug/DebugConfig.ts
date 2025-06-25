@@ -18,7 +18,7 @@ const DebugGameConfig = {
                 edge: false,
             },
             showInstantly: false,
-            entropy: false,
+            entropy: true,
         },
         [GenerateEntityType.Walls]: {
             hexTileDebug: {

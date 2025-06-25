@@ -8,17 +8,17 @@ import { IWallConfig, IWallGateConfig } from "../../../Data/Interfaces/IWall";
 import { WallGateTiles, WallTileTypes } from "../../../Data/Configs/WallGeneratorConfig";
 import { NeighborDirections } from "../../../Data/Configs/WFCConfig";
 import HexGridHelper from "../../../Helpers/HexGridHelper";
-import { GenerateEntityType } from "../../../Data/Enums/GenerateEntityType";
 
 export class WallGenerator {
     private wallTileVariants: ITileVariant[] = [];
     private steps: INewTileStep[] = [];
+    private resultTiles: IHexTilesResult[] = [];
 
     constructor() {
 
     }
 
-    public generateRandomClosedWall(shape: IWallConfig): IHexTilesResult[] {
+    public generate(shape: IWallConfig): void {
         this.reset();
         
         if (this.wallTileVariants.length === 0) {
@@ -53,11 +53,13 @@ export class WallGenerator {
             });
         }
 
-        const wallTilesWithGates: IHexTilesResult[] = this.addGatesToWall(wallTiles);
+        this.resultTiles = this.addGatesToWall(wallTiles);
 
-        this.generateSteps(wallTilesWithGates);
+        this.generateSteps(this.resultTiles);
+    }
 
-        return wallTilesWithGates;
+    public getTiles(): IHexTilesResult[] {
+        return this.resultTiles;
     }
 
     public getSteps(): INewTileStep[] {
@@ -73,7 +75,6 @@ export class WallGenerator {
         for (let i = 0; i < tiles.length; i++) {
             const wallTile = tiles[i];
             const step: INewTileStep = {
-                generateEntityType: GenerateEntityType.Walls,
                 tile: {
                     position: wallTile.position,
                     type: wallTile.type,
