@@ -1,8 +1,8 @@
 import BaseScene from './Core/BaseScene';
 import './style.css';
-// import { inject } from '@vercel/analytics';
+import { inject } from '@vercel/analytics';
 
-// inject();
+inject();
 
 const baseScene = new BaseScene();
 
