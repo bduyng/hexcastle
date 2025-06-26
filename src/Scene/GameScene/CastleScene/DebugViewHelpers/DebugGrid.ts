@@ -6,18 +6,33 @@ import { GameConfig } from '../../../../Data/Configs/GameConfig';
 
 export default class DebugGrid extends THREE.Group {
     private radius: number;
+    private grid: THREE.LineSegments;
+    private gridCoordinatesPlane: CanvasPlaneMesh;
 
-    constructor(radius: number) {
+    constructor() {
         super();
 
-        this.radius = radius;
-
-        this.init();
     }
 
-    private init(): void {
+    public create(radius: number): void {
+        this.radius = radius;
+
+        this.reset();
+
         this.initGrid();
         this.initGridCoordinates();
+    }
+
+    private reset(): void {
+        if (this.grid) {
+            this.remove(this.grid);
+            this.grid.geometry.dispose();
+        }
+
+        if (this.gridCoordinatesPlane) {
+            this.remove(this.gridCoordinatesPlane);
+            this.gridCoordinatesPlane.getCanvas().remove();
+        }
     }
 
     private initGrid(): void {
@@ -36,7 +51,6 @@ export default class DebugGrid extends THREE.Group {
                     vertices.push(a.x, a.y, a.z, b.x, b.y, b.z);
                 }
 
-                // Default rotation
                 if (q === 0 && r === 0) {
                     const midX = (corners[0].x + corners[1].x) / 2;
                     const midY = (corners[0].y + corners[1].y) / 2;
@@ -49,7 +63,7 @@ export default class DebugGrid extends THREE.Group {
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
         const material = new THREE.LineBasicMaterial({ color: 0x00ffff });
-        const grid = new THREE.LineSegments(geometry, material);
+        const grid = this.grid = new THREE.LineSegments(geometry, material);
         this.add(grid);
     }
 
@@ -69,10 +83,10 @@ export default class DebugGrid extends THREE.Group {
     }
 
     private initGridCoordinates(): void {
-        const resolution = 100;
+        const resolution = 50;
         const canvasMargin = 2;
         const worldSize = (3 / 2 * this.radius + canvasMargin) * GameConfig.gameField.hexSize;
-        const gridCoordinatesPlane = new CanvasPlaneMesh(worldSize * 2, worldSize * 2, resolution);
+        const gridCoordinatesPlane = this.gridCoordinatesPlane = new CanvasPlaneMesh(worldSize * 2, worldSize * 2, resolution);
         this.add(gridCoordinatesPlane);
 
         const gridCoordinatesPlaneView = gridCoordinatesPlane.getView();
@@ -86,7 +100,7 @@ export default class DebugGrid extends THREE.Group {
         const canvasCenterY = canvas.height / 2;
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = `${0.2 * resolution}px Arial`;
+        ctx.font = `${0.25 * resolution}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 

@@ -37,6 +37,7 @@ export default class CastleScene extends THREE.Group {
     private needAsyncGenerate: boolean = false;
     private generatingStopped: boolean = false;
     private newRadius: number = GameConfig.gameField.radius.default;
+    private debugGrid: DebugGrid;
 
     private isIntroActive: boolean = true;
 
@@ -96,8 +97,10 @@ export default class CastleScene extends THREE.Group {
 
     private initDebugGrid(): void {
         if (DebugGameConfig.grid) {
-            const debugGrid = new DebugGrid(DefaultWFCConfig.radius);
+            const debugGrid = this.debugGrid = new DebugGrid();
             this.add(debugGrid);
+
+            debugGrid.create(DefaultWFCConfig.radius);
         }
     }
 
@@ -401,6 +404,8 @@ export default class CastleScene extends THREE.Group {
         } else {
             this.fieldRadiusHelper.show(this.newRadius);
         }
+
+        this.debugGrid?.create(this.newRadius);
     }
 
     private onSliderPointerUp(): void {
