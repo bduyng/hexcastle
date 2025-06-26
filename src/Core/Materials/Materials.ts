@@ -21,6 +21,7 @@ export default class Materials {
     private initMaterials(): void {
         this.initMainMaterial();
         this.initTransparentMaterial();
+        this.initTileDebugMaterials();
     }
 
     private initMainMaterial(): void {
@@ -38,6 +39,22 @@ export default class Materials {
             color: 0xffffff,
             transparent: true,
             opacity: 0.1,
+            depthWrite: false,
+        });
+    }
+
+    private initTileDebugMaterials(): void {
+        this.materials[MaterialType.TileDebugGreen] = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+            transparent: true,
+            opacity: 0.5,
+            depthWrite: false,
+        });
+
+        this.materials[MaterialType.TileDebugRed] = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            transparent: true,
+            opacity: 0.5,
             depthWrite: false,
         });
     }

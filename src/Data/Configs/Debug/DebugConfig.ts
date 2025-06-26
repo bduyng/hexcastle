@@ -17,7 +17,7 @@ const DebugGameConfig = {
                 rotation: false,
                 edge: false,
             },
-            showInstantly: false,
+            showInstantly: true,
             entropy: true,
         },
         [GenerateEntityType.Walls]: {
@@ -26,6 +26,7 @@ const DebugGameConfig = {
                 edge: false,
             },
             showInstantly: false,
+            innerOuterTiles: false,
         }
     },
 }

@@ -12,11 +12,12 @@ import { GameConfig } from '../../../Data/Configs/GameConfig';
 import Intro from './Intro';
 import FieldRadiusHelper from './FieldRadiusHelper';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
-import { WallGenerator } from './WallGenerator';
 import { IWallConfig } from '../../../Data/Interfaces/IWall';
 import { GenerateEntityType } from '../../../Data/Enums/GenerateEntityType';
 import { DebugGameConfig } from '../../../Data/Configs/Debug/DebugConfig';
 import { GenerateEntityOrder } from '../../../Data/Configs/GenerateEntityConfig';
+import { WallGenerator } from './Walls/WallGenerator';
+import WallDebug from './Walls/WallDebug';
 
 export default class CastleScene extends THREE.Group {
 
@@ -38,6 +39,7 @@ export default class CastleScene extends THREE.Group {
     private generatingStopped: boolean = false;
     private newRadius: number = GameConfig.gameField.radius.default;
     private debugGrid: DebugGrid;
+    private wallDebug: WallDebug;
 
     private isIntroActive: boolean = true;
 
@@ -78,6 +80,7 @@ export default class CastleScene extends THREE.Group {
         this.initFieldRadiusHelper();
         this.initStartData();
         this.initEntropyHelper();
+        this.initWallDebug();
 
         this.initGlobalListeners();
     }
@@ -164,8 +167,8 @@ export default class CastleScene extends THREE.Group {
 
         const wallConfig: IWallConfig = {
             center: { q: 0, r: 0 },
-            radius: 3,
-            maxOffset: 2,
+            radius: 2,
+            maxOffset: 1,
         };
 
         this.wallGenerator.generate(wallConfig);
@@ -173,6 +176,11 @@ export default class CastleScene extends THREE.Group {
 
         const wallTiles: IHexTilesResult[] = this.wallGenerator.getTiles();
         this.createTiles(wallTiles, GenerateEntityType.Walls);
+
+        const insideTiles: IHexCoord[] = this.wallGenerator.getInsideTiles();
+        const outsideTiles: IHexCoord[] = this.wallGenerator.getOutsideTiles();
+
+        this.wallDebug?.show(insideTiles, outsideTiles);
     }
 
     private getStepsPerFrame(radius: number): number {
@@ -214,6 +222,13 @@ export default class CastleScene extends THREE.Group {
         if (DebugGameConfig.generateType[GenerateEntityType.Landscape].entropy) {
             const entropyHelper = this.entropyHelper = new EntropyHelper();
             this.add(entropyHelper);
+        }
+    }
+
+    private initWallDebug(): void {
+        if (DebugGameConfig.generateType[GenerateEntityType.Walls].innerOuterTiles) {
+            const wallDebug = this.wallDebug = new WallDebug();
+            this.add(wallDebug);
         }
     }
 
