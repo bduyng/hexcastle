@@ -2,7 +2,7 @@ import { TileEdgeType } from "../Enums/TileEdgeType";
 import { HexTileType } from "../Enums/HexTileType";
 import { IHexTilesRule } from "../Interfaces/IBaseSceneData";
 
-const HexTilesRulesConfig: IHexTilesRule[] = [
+const LandscapeTilesRulesConfig: IHexTilesRule[] = [
     // Base tiles
     {
         type: HexTileType.Grass,
@@ -430,85 +430,51 @@ const HexTilesRulesConfig: IHexTilesRule[] = [
         ],
         weight: 1,
     },
-
-    // Wall tiles
-    {
-        type: HexTileType.WallCornerAGate,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.Wall,
-            TileEdgeType.Outside,
-            TileEdgeType.Outside,
-            TileEdgeType.Outside,
-            TileEdgeType.Wall,
-            TileEdgeType.Inside,
-        ],
-    },
-    {
-        type: HexTileType.WallCornerAInside,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.Wall,
-            TileEdgeType.Inside,
-            TileEdgeType.Inside,
-            TileEdgeType.Inside,
-            TileEdgeType.Wall,
-            TileEdgeType.Outside,
-        ],
-    },
-    {
-        type: HexTileType.WallCornerAOutside,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.Wall,
-            TileEdgeType.Outside,
-            TileEdgeType.Outside,
-            TileEdgeType.Outside,
-            TileEdgeType.Wall,
-            TileEdgeType.Inside,
-        ],
-    },
-    {
-        type: HexTileType.WallCornerBInside,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.Wall,
-            TileEdgeType.Inside,
-            TileEdgeType.Inside,
-            TileEdgeType.Inside,
-            TileEdgeType.Inside,
-            TileEdgeType.Wall,
-        ],
-    },
-    {
-        type: HexTileType.WallCornerBOutside,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.Wall,
-            TileEdgeType.Outside,
-            TileEdgeType.Outside,
-            TileEdgeType.Outside,
-            TileEdgeType.Outside,
-            TileEdgeType.Wall,
-        ],
-    },
-    {
-        type: HexTileType.WallStraight,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.Wall,
-            TileEdgeType.Outside,
-            TileEdgeType.Outside,
-            TileEdgeType.Wall,
-            TileEdgeType.Inside,
-            TileEdgeType.Inside,
-        ],
-    },
-    {
-        type: HexTileType.WallStraightGate,
-        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
-            TileEdgeType.Wall,
-            TileEdgeType.Outside,
-            TileEdgeType.Outside,
-            TileEdgeType.Wall,
-            TileEdgeType.Inside,
-            TileEdgeType.Inside,
-        ],
-    },
 ];
 
-export { HexTilesRulesConfig };
+const TopLevelAvailabilityConfig: { [key in HexTileType]?: boolean } = {
+    // Base tiles
+    [HexTileType.Grass]: true,
+    [HexTileType.Water]: false,
+
+    // Road tiles
+    [HexTileType.RoadA]: true,
+    [HexTileType.RoadB]: true,
+    [HexTileType.RoadC]: true,
+    [HexTileType.RoadD]: true,
+    [HexTileType.RoadE]: true,
+    [HexTileType.RoadF]: true,
+    [HexTileType.RoadG]: true,
+    [HexTileType.RoadH]: true,
+    [HexTileType.RoadI]: true,
+    [HexTileType.RoadJ]: true,
+    [HexTileType.RoadK]: true,
+    [HexTileType.RoadL]: true,
+    [HexTileType.RoadM]: true,
+
+    // Coast tiles
+    [HexTileType.CoastA]: true,
+    [HexTileType.CoastB]: false,
+    [HexTileType.CoastC]: false,
+    [HexTileType.CoastD]: false,
+    [HexTileType.CoastE]: true,
+
+    // River tiles
+    [HexTileType.RiverA]: false,
+    [HexTileType.RiverACurvy]: false,
+    [HexTileType.RiverB]: false,
+    [HexTileType.RiverC]: false,
+    [HexTileType.RiverCrossingA]: false,
+    [HexTileType.RiverCrossingB]: false,
+    [HexTileType.RiverD]: false,
+    [HexTileType.RiverE]: false,
+    [HexTileType.RiverF]: false,
+    [HexTileType.RiverG]: false,
+    [HexTileType.RiverH]: false,
+    [HexTileType.RiverI]: false,
+    [HexTileType.RiverJ]: false,
+    [HexTileType.RiverK]: false,
+    [HexTileType.RiverL]: false,
+}
+
+export { LandscapeTilesRulesConfig, TopLevelAvailabilityConfig };

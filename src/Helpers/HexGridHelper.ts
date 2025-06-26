@@ -68,4 +68,8 @@ export default class HexGridHelper {
             { q: coord.q, r: coord.r + 1 },     // 300°
         ];
     }
+
+    public static isPositionsEqual(coord1: IHexCoord, coord2: IHexCoord): boolean {
+        return coord1.q === coord2.q && coord1.r === coord2.r;
+    }
 }

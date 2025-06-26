@@ -17,13 +17,15 @@ export default class HexTileInstance extends THREE.Group {
     private hexTileInstanceMesh: THREE.InstancedMesh;
     private hexTileInstanceIndexes: IHexTileInstanceIndex[] = [];
     private hexTilesDebug: { tile: HexTileDebug, position: IHexCoord }[] = [];
+    private materialType: MaterialType;
 
-    constructor(hexTileInstanceData: IHexTileInstanceData, hexTileDebugConfig: IHexTileDebugConfig = null) {
+    constructor(hexTileInstanceData: IHexTileInstanceData, hexTileDebugConfig: IHexTileDebugConfig = null, materialType: MaterialType = MaterialType.Main) {
         super();
 
         this.hexTileInstanceData = hexTileInstanceData;
         this.hexTileDebugConfig = hexTileDebugConfig;
         this.hexTileType = this.hexTileInstanceData.type;
+        this.materialType = materialType;
 
         this.init();
     }
@@ -77,7 +79,7 @@ export default class HexTileInstance extends THREE.Group {
         const hideScale: number = 0.001;
         const hexTileTransforms: IHexTileTransform[] = this.hexTileInstanceData.transforms;
 
-        const material: THREE.Material = Materials.getInstance().materials[MaterialType.Main];
+        const material: THREE.Material = Materials.getInstance().materials[this.materialType];
 
         const modelName: string = HexTileModelConfig[this.hexTileType].modelName;
         const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel(modelName);
@@ -112,7 +114,7 @@ export default class HexTileInstance extends THREE.Group {
     }
 
     private initHexTileDebug(): void {
-        if (this.hexTileDebugConfig.edge || this.hexTileDebugConfig.rotation) {
+        if (this.hexTileDebugConfig?.edge || this.hexTileDebugConfig?.rotation) {
             for (let i = 0; i < this.hexTileInstanceData.transforms.length; i++) {
                 const transform: IHexTileTransform = this.hexTileInstanceData.transforms[i];
                 const position = HexGridHelper.axialToWorld(transform.position, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);

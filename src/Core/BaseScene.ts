@@ -4,7 +4,6 @@ import TWEEN from 'three/addons/libs/tween.module.js';
 import MainScene from '../Scene/MainScene';
 import SceneConfig from '../Data/Configs/Scene/SceneConfig';
 import Loader from './Loader/AssetsLoader';
-import LoadingOverlay from './Loader/LoadingOverlay';
 import { LightConfig } from '../Data/Configs/Scene/LightConfig';
 import AudioController from './AudioController';
 import ShadowConfig from '../Data/Configs/Scene/ShadowConfig';
@@ -13,6 +12,7 @@ import { ILibrariesData, IWindowSizes } from '../Data/Interfaces/IBaseSceneData'
 import DebugMenu from './DebugMenu/DebugMenu';
 import CameraConfig from '../Data/Configs/Scene/CameraConfig';
 import { DebugConfig } from '../Data/Configs/Debug/DebugConfig';
+import LoadingOverlay from './Loader/LoadingOverlay';
 
 export default class BaseScene {
     private scene: THREE.Scene;
@@ -24,6 +24,7 @@ export default class BaseScene {
     private pixiApp: PIXI.Application;
     private ambientLight: THREE.AmbientLight;
     private directionalLight: THREE.DirectionalLight;
+    private uiContainer: PIXI.Container;
 
     private windowSizes: IWindowSizes;
     private isAssetsLoaded: boolean = false;
@@ -39,6 +40,7 @@ export default class BaseScene {
             ambientLight: this.ambientLight,
             directionalLight: this.directionalLight,
             pixiApp: this.pixiApp,
+            uiContainer: this.uiContainer,
         };
 
         this.mainScene = new MainScene(librariesData);
@@ -90,6 +92,7 @@ export default class BaseScene {
         this.initLights();
         this.initFog();
         this.initAxisHelper();
+        this.initUIContainer();
         this.initLoadingOverlay();
         this.initAudioController();
         this.initOnResize();
@@ -159,9 +162,14 @@ export default class BaseScene {
         }
     }
 
+    private initUIContainer(): void {
+        const uiContainer = this.uiContainer = new PIXI.Container();
+        this.pixiApp.stage.addChild(uiContainer);
+    }
+
     private initLoadingOverlay(): void {
         const loadingOverlay = this.loadingOverlay = new LoadingOverlay();
-        this.scene.add(loadingOverlay);
+        this.pixiApp.stage.addChild(loadingOverlay);
     }
 
     private initAudioController(): void {
