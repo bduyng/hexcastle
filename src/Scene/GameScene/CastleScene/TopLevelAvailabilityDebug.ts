@@ -1,38 +1,38 @@
 import * as THREE from 'three';
-import { IHexCoord } from '../../../../Data/Interfaces/IHexTile';
-import { GameConfig } from '../../../../Data/Configs/GameConfig';
-import HexGridHelper from '../../../../Helpers/HexGridHelper';
-import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
-import { MaterialType } from '../../../../Data/Enums/MaterialType';
-import Materials from '../../../../Core/Materials/Materials';
+import { IHexCoord } from '../../../Data/Interfaces/IHexTile';
+import { GameConfig } from '../../../Data/Configs/GameConfig';
+import HexGridHelper from '../../../Helpers/HexGridHelper';
+import { GridOrientation } from '../../../Data/Enums/GridOrientation';
+import { MaterialType } from '../../../Data/Enums/MaterialType';
+import Materials from '../../../Core/Materials/Materials';
 
-export default class WallDebug extends THREE.Group {
-    private insideTiles: THREE.InstancedMesh;
-    private outsideTiles: THREE.InstancedMesh;
+export default class TopLevelAvailabilityDebug extends THREE.Group {
+    private availableTiles: THREE.InstancedMesh;
+    private unavailableTiles: THREE.InstancedMesh;
 
     constructor() {
         super();
     }
 
-    public show(insideTiles: IHexCoord[], outsideTiles: IHexCoord[]): void {
+    public show(availableTiles: IHexCoord[], unavailableTiles: IHexCoord[]): void {
         this.reset();
 
-        this.insideTiles = this.initTiles(insideTiles, MaterialType.TileDebugGreen);
-        this.add(this.insideTiles);
+        this.availableTiles = this.initTiles(availableTiles, MaterialType.TileDebugGreen);
+        this.add(this.availableTiles);
 
-        this.outsideTiles = this.initTiles(outsideTiles, MaterialType.TileDebugRed);
-        this.add(this.outsideTiles);
+        this.unavailableTiles = this.initTiles(unavailableTiles, MaterialType.TileDebugRed);
+        this.add(this.unavailableTiles);
     }
 
     public reset(): void {
-        if (this.insideTiles) {
-            this.remove(this.insideTiles);
-            this.insideTiles.geometry.dispose();
+        if (this.availableTiles) {
+            this.remove(this.availableTiles);
+            this.availableTiles.geometry.dispose();
         }
 
-        if (this.outsideTiles) {
-            this.remove(this.outsideTiles);
-            this.outsideTiles.geometry.dispose();
+        if (this.unavailableTiles) {
+            this.remove(this.unavailableTiles);
+            this.unavailableTiles.geometry.dispose();
         }
     }
 

@@ -13,19 +13,22 @@ const DebugGameConfig = {
     grid: false,
     generateType: {
         [GenerateEntityType.Landscape]: {
+            show: true,
+            showInstantly: true,
             hexTileDebug: {
                 rotation: false,
                 edge: false,
             },
-            showInstantly: true,
             entropy: true,
+            topLevelAvailability: true,
         },
         [GenerateEntityType.Walls]: {
+            show: false,
+            showInstantly: true,
             hexTileDebug: {
                 rotation: false,
                 edge: false,
             },
-            showInstantly: false,
             innerOuterTiles: false,
         }
     },

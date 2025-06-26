@@ -5,7 +5,7 @@ import { IHexCoord } from "../../../Data/Interfaces/IHexTile";
 import { HexRotation } from "../../../Data/Enums/HexRotation";
 import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig, INewTileStep, IWFCProgressCallback, IWFCAsyncResult } from "../../../Data/Interfaces/IWFC";
 import { NeighborDirections } from "../../../Data/Configs/WFCConfig";
-import { HexTilesRulesConfig } from "../../../Data/Configs/HexTilesRulesConfig";
+import { LandscapeTilesRulesConfig } from "../../../Data/Configs/LandscapeTilesRulesConfig";
 
 export class HexWFC {
     private tiles: Map<HexTileType, IHexTilesRule>;
@@ -215,7 +215,7 @@ export class HexWFC {
 
 
     private init(): void {
-        this.tileRules = HexTilesRulesConfig.filter(tile => this.config.hexTileTypesUsed.includes(tile.type));
+        this.tileRules = LandscapeTilesRulesConfig.filter(tile => this.config.hexTileTypesUsed.includes(tile.type));
 
         this.tiles = new Map(this.tileRules.map(tile => [tile.type, tile]));
         this.tileVariants = this.generateTileVariants();

@@ -18,6 +18,8 @@ import { DebugGameConfig } from '../../../Data/Configs/Debug/DebugConfig';
 import { GenerateEntityOrder } from '../../../Data/Configs/GenerateEntityConfig';
 import { WallGenerator } from './Walls/WallGenerator';
 import WallDebug from './Walls/WallDebug';
+import TopLevelAvailabilityDebug from './TopLevelAvailabilityDebug';
+import { TopLevelAvailabilityConfig } from '../../../Data/Configs/LandscapeTilesRulesConfig';
 
 export default class CastleScene extends THREE.Group {
 
@@ -40,6 +42,8 @@ export default class CastleScene extends THREE.Group {
     private newRadius: number = GameConfig.gameField.radius.default;
     private debugGrid: DebugGrid;
     private wallDebug: WallDebug;
+    private topLevelAvailability: IHexCoord[] = [];
+    private topLevelAvailabilityDebug: TopLevelAvailabilityDebug;
 
     private isIntroActive: boolean = true;
 
@@ -81,6 +85,7 @@ export default class CastleScene extends THREE.Group {
         this.initStartData();
         this.initEntropyHelper();
         this.initWallDebug();
+        this.initTopLevelAvailabilityDebug();
 
         this.initGlobalListeners();
     }
@@ -139,6 +144,8 @@ export default class CastleScene extends THREE.Group {
 
         const tiles: IHexTilesResult[] = this.hexWFC.getTiles();
         this.createTiles(tiles, GenerateEntityType.Landscape);
+
+        this.updateTopLevelAvailability(tiles);
     }
 
     private async generateLandscapeTilesAsync(): Promise<void> {
@@ -154,6 +161,8 @@ export default class CastleScene extends THREE.Group {
         if (result.success) {
             this.steps[GenerateEntityType.Landscape] = this.hexWFC.getSteps();
             this.createTiles(result.grid, GenerateEntityType.Landscape);
+
+            this.updateTopLevelAvailability(result.grid);
         }
 
         GlobalEventBus.emit('game:finishGeneratingWorld');
@@ -161,10 +170,6 @@ export default class CastleScene extends THREE.Group {
     }
 
     private generateWall(): void {
-        if (this.generatingStopped) {
-            return;
-        }
-
         const wallConfig: IWallConfig = {
             center: { q: 0, r: 0 },
             radius: 2,
@@ -232,8 +237,21 @@ export default class CastleScene extends THREE.Group {
         }
     }
 
+    private updateTopLevelAvailability(tiles: IHexTilesResult[]): void {
+        const { available, unavailable } = this.getTopLevelAvailableTiles(tiles);
+        this.topLevelAvailability = available;
+        this.topLevelAvailabilityDebug?.show(available, unavailable);
+    }
+
+    private initTopLevelAvailabilityDebug(): void {
+        if (DebugGameConfig.generateType[GenerateEntityType.Landscape].topLevelAvailability) {
+            const topLevelAvailabilityDebug = this.topLevelAvailabilityDebug = new TopLevelAvailabilityDebug();
+            this.add(topLevelAvailabilityDebug);
+        }
+    }
+
     private showPredefinedLandscapeTiles(): void {
-        if (this.generatingStopped) {
+        if (DebugGameConfig.generateType[this.showingEntityType].show === false) {
             return;
         }
 
@@ -268,6 +286,25 @@ export default class CastleScene extends THREE.Group {
         }
     }
 
+    private getTopLevelAvailableTiles(tiles: IHexTilesResult[]): { available: IHexCoord[], unavailable: IHexCoord[] } {
+        const topLevelAvailableTiles: IHexCoord[] = [];
+        const topLevelUnavailableTiles: IHexCoord[] = [];
+
+        for (let i = 0; i < tiles.length; i++) {
+            const tile: IHexTilesResult = tiles[i];
+            if (TopLevelAvailabilityConfig[tile.type]) {
+                topLevelAvailableTiles.push(tile.position);
+            } else {
+                topLevelUnavailableTiles.push(tile.position);
+            }
+        }
+
+        return {
+            available: topLevelAvailableTiles,
+            unavailable: topLevelUnavailableTiles,
+        };
+    }
+
     private afterShowGenerateEntity(): void {
         switch (this.showingEntityType) {
             case GenerateEntityType.Landscape:
@@ -288,6 +325,8 @@ export default class CastleScene extends THREE.Group {
 
         this.checkShowEntityInstant();
         this.tilesShowState = TilesShowState.Ready;
+
+        this.checkToShowEntity();
     }
 
     private showAllTilesByType(generateEntityType: GenerateEntityType): void {
@@ -340,8 +379,9 @@ export default class CastleScene extends THREE.Group {
             this.steps[type] = [];
         }
 
-
+        this.wallDebug?.reset();
         this.entropyHelper?.reset();
+        this.topLevelAvailabilityDebug?.reset();
     }
 
     private initGlobalListeners(): void {
@@ -361,13 +401,18 @@ export default class CastleScene extends THREE.Group {
         this.checkAsyncGenerate();
 
         await this.generateLandscapeTiles();
+        if (this.generatingStopped) {
+            return;
+        }
+
         this.generateWall();
 
         this.configureDelay();
-
         this.showPredefinedLandscapeTiles();
         this.checkShowEntityInstant();
+
         this.tilesShowState = TilesShowState.Ready;
+        this.checkToShowEntity();
     }
 
     private checkAsyncGenerate(): void {
@@ -382,22 +427,22 @@ export default class CastleScene extends THREE.Group {
     }
 
     private checkShowEntityInstant(): void {
-        if (this.generatingStopped) {
-            return;
-        }
-
-        if (DebugGameConfig.generateType[this.showingEntityType].showInstantly) {
+        const generateTypeConfig = DebugGameConfig.generateType[this.showingEntityType];
+        if (generateTypeConfig.showInstantly && generateTypeConfig.show) {
             this.showAllTilesByType(this.showingEntityType);
             this.tilesShowState = TilesShowState.CompleteEntity;
             this.afterShowGenerateEntity();
-        } 
+        }
+    }
+
+    private checkToShowEntity(): void {
+        if (DebugGameConfig.generateType[this.showingEntityType].show === false) {
+            this.tilesShowState = TilesShowState.CompleteEntity;
+            this.afterShowGenerateEntity();
+        }
     }
 
     private configureDelay(): void {
-        if (this.generatingStopped) {
-            return;
-        }
-
         switch (this.showingEntityType) {
             case GenerateEntityType.Landscape:
                 const delays = GameConfig.gameField.showTilesDelays;
@@ -408,7 +453,6 @@ export default class CastleScene extends THREE.Group {
                 this.showTileStepTime = 30;
                 break;
         }
-
     }
 
     private onFieldRadiusChanged(radius: number): void {

@@ -47,14 +47,14 @@ export default class Materials {
         this.materials[MaterialType.TileDebugGreen] = new THREE.MeshBasicMaterial({
             color: 0x00ff00,
             transparent: true,
-            opacity: 0.5,
+            opacity: 0.25,
             depthWrite: false,
         });
 
         this.materials[MaterialType.TileDebugRed] = new THREE.MeshBasicMaterial({
             color: 0xff0000,
             transparent: true,
-            opacity: 0.5,
+            opacity: 0.4,
             depthWrite: false,
         });
     }

@@ -1,13 +1,13 @@
 import { IHexCoord } from "../../../../Data/Interfaces/IHexTile";
 import { HexTileType } from "../../../../Data/Enums/HexTileType";
 import { TileEdgeType } from "../../../../Data/Enums/TileEdgeType";
-import { HexTilesRulesConfig } from "../../../../Data/Configs/HexTilesRulesConfig";
 import { HexRotation } from "../../../../Data/Enums/HexRotation";
 import { IHexTilesResult, INewTileStep, ITileVariant } from "../../../../Data/Interfaces/IWFC";
 import { IWallConfig, IWallGateConfig } from "../../../../Data/Interfaces/IWall";
 import { WallGateTiles, WallTileTypes } from "../../../../Data/Configs/WallGeneratorConfig";
 import { NeighborDirections } from "../../../../Data/Configs/WFCConfig";
 import HexGridHelper from "../../../../Helpers/HexGridHelper";
+import { WallTilesRulesConfig } from "../../../../Data/Configs/WallTilesRulesConfig";
 
 export class WallGenerator {
     private wallTileVariants: ITileVariant[] = [];
@@ -103,7 +103,7 @@ export class WallGenerator {
         this.wallTileVariants = [];
 
         for (const tileType of WallTileTypes) {
-            const tileRule = HexTilesRulesConfig.find(rule => rule.type === tileType);
+            const tileRule = WallTilesRulesConfig.find(rule => rule.type === tileType);
             if (!tileRule) continue;
 
             for (let rotation = 0; rotation < 6; rotation++) {

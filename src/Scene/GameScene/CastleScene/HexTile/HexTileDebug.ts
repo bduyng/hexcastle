@@ -6,7 +6,7 @@ import { HexTileType } from '../../../../Data/Enums/HexTileType';
 import { TileEdgeType } from '../../../../Data/Enums/TileEdgeType';
 import CanvasPlaneMesh from '../../../../Helpers/CanvasPlaneMesh';
 import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
-import { HexTilesRulesConfig } from '../../../../Data/Configs/HexTilesRulesConfig';
+import { LandscapeTilesRulesConfig } from '../../../../Data/Configs/LandscapeTilesRulesConfig';
 import { IHexTileDebugConfig } from '../../../../Data/Interfaces/IHexTile';
 import { GameConfig } from '../../../../Data/Configs/GameConfig';
 import { HexTileCategory } from '../../../../Data/Enums/HexTileCategory';
@@ -154,7 +154,7 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     private getEdgeTypes(hexTileType: HexTileType): TileEdgeType[] {
-        const hexTileRules = HexTilesRulesConfig.find(rule => rule.type === hexTileType);
+        const hexTileRules = LandscapeTilesRulesConfig.find(rule => rule.type === hexTileType);
         return hexTileRules ? hexTileRules.edges : [];
     }
 
