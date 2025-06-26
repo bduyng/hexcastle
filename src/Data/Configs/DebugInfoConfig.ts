@@ -40,5 +40,15 @@ const EdgeColor: { [key in TileEdgeType]: string } = {
     [TileEdgeType.Inside]: '#00ff00',
     [TileEdgeType.Outside]: '#ff0000',
 }
+const IslandsDebugConfig = {
+    colors: [
+        '#00ff00', // Green
+        '#0000ff', // Blue
+        '#ffff00', // Yellow
+        '#ff00ff', // Magenta
+        '#00ffff', // Cyan
+    ],
+    centerColor: '#ff0000', // White
+}
 
-export { RotationAngleName, EdgeColor, TileDebugInfoConfigByCategory };
+export { RotationAngleName, EdgeColor, TileDebugInfoConfigByCategory, IslandsDebugConfig };

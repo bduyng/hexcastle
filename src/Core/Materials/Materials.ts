@@ -57,6 +57,13 @@ export default class Materials {
             opacity: 0.4,
             depthWrite: false,
         });
+
+        this.materials[MaterialType.TileDebugWhite] = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5,
+            depthWrite: false,
+        });
     }
 }
 

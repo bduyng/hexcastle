@@ -20,6 +20,9 @@ import { WallGenerator } from './Walls/WallGenerator';
 import WallDebug from './Walls/WallDebug';
 import TopLevelAvailabilityDebug from './TopLevelAvailabilityDebug';
 import { TopLevelAvailabilityConfig } from '../../../Data/Configs/LandscapeTilesRulesConfig';
+import IslandFinder from './IslandFinder';
+import IslandsDebug from './IslandsDebug';
+import { IIsland } from '../../../Data/Interfaces/IIsland';
 
 export default class CastleScene extends THREE.Group {
 
@@ -44,6 +47,8 @@ export default class CastleScene extends THREE.Group {
     private wallDebug: WallDebug;
     private topLevelAvailability: IHexCoord[] = [];
     private topLevelAvailabilityDebug: TopLevelAvailabilityDebug;
+    private islandFinder: IslandFinder;
+    private islandsDebug: IslandsDebug;
 
     private isIntroActive: boolean = true;
 
@@ -86,6 +91,8 @@ export default class CastleScene extends THREE.Group {
         this.initEntropyHelper();
         this.initWallDebug();
         this.initTopLevelAvailabilityDebug();
+        this.initIslandFinder();
+        this.initIslandsDebug();
 
         this.initGlobalListeners();
     }
@@ -146,6 +153,11 @@ export default class CastleScene extends THREE.Group {
         this.createTiles(tiles, GenerateEntityType.Landscape);
 
         this.updateTopLevelAvailability(tiles);
+
+        const islands: IIsland[] = this.islandFinder.findIslands(this.topLevelAvailability);
+        console.log(islands);
+
+        this.islandsDebug?.show(islands);
     }
 
     private async generateLandscapeTilesAsync(): Promise<void> {
@@ -247,6 +259,17 @@ export default class CastleScene extends THREE.Group {
         if (DebugGameConfig.generateType[GenerateEntityType.Landscape].topLevelAvailability) {
             const topLevelAvailabilityDebug = this.topLevelAvailabilityDebug = new TopLevelAvailabilityDebug();
             this.add(topLevelAvailabilityDebug);
+        }
+    }
+
+    private initIslandFinder(): void {
+        this.islandFinder = new IslandFinder();
+    }
+
+    private initIslandsDebug(): void {
+        if (DebugGameConfig.generateType[GenerateEntityType.Landscape].islands) {
+            this.islandsDebug = new IslandsDebug();
+            this.add(this.islandsDebug);
         }
     }
 
