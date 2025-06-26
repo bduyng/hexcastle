@@ -36,6 +36,7 @@ export default class CastleScene extends THREE.Group {
     private showTileStepTime: number = 0;
     private needAsyncGenerate: boolean = false;
     private generatingStopped: boolean = false;
+    private newRadius: number = GameConfig.gameField.radius.default;
 
     private isIntroActive: boolean = true;
 
@@ -334,6 +335,7 @@ export default class CastleScene extends THREE.Group {
     }
 
     private async generateScene(): Promise<void> {
+        DefaultWFCConfig.radius = this.newRadius;
         this.generatingStopped = false;
         this.disableIntro();
 
@@ -392,12 +394,12 @@ export default class CastleScene extends THREE.Group {
     }
 
     private onFieldRadiusChanged(radius: number): void {
-        DefaultWFCConfig.radius = radius;
+        this.newRadius = radius;
 
         if (this.isIntroActive) {
-            this.intro.showByRadius(DefaultWFCConfig.radius);
+            this.intro.showByRadius(this.newRadius);
         } else {
-            this.fieldRadiusHelper.show(DefaultWFCConfig.radius);
+            this.fieldRadiusHelper.show(this.newRadius);
         }
     }
 
@@ -409,7 +411,7 @@ export default class CastleScene extends THREE.Group {
 
     private sliderPointerDown(): void {
         if (!this.isIntroActive) {
-            this.fieldRadiusHelper.show(DefaultWFCConfig.radius);
+            this.fieldRadiusHelper.show(this.newRadius);
         }
     }
 

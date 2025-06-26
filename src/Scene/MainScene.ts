@@ -36,7 +36,8 @@ export default class MainScene {
 
     private initUI(): void {
         const ui = this.ui = new UI();
-        this.data.pixiApp.stage.addChild(ui);
+        this.data.uiContainer.addChild(ui);
+        // this.data.pixiApp.stage.addChild(ui);
 
         ui.onResize();
     }

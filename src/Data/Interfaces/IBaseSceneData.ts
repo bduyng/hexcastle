@@ -9,6 +9,7 @@ export interface ILibrariesData {
     ambientLight: THREE.AmbientLight;
     directionalLight: THREE.DirectionalLight;
     pixiApp: PIXI.Application;
+    uiContainer: PIXI.Container;
 }
 
 export interface IWindowSizes {
