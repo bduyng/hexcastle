@@ -6,12 +6,16 @@ import HexGridHelper from '../../../Helpers/HexGridHelper';
 import Materials from '../../../Core/Materials/Materials';
 import { MaterialType } from '../../../Data/Enums/MaterialType';
 import { GameConfig } from '../../../Data/Configs/GameConfig';
-import { IHexCoord } from '../../../Data/Interfaces/IHexTile';
+import { IHexCoord, IHexTileInstanceData } from '../../../Data/Interfaces/IHexTile';
 import { GridOrientation } from '../../../Data/Enums/GridOrientation';
+import HexTileInstance from './HexTile/HexTileInstance';
+import { HexRotation } from '../../../Data/Enums/HexRotation';
 
 export default class Intro extends THREE.Group {
     private tilesInstanceMesh: THREE.InstancedMesh;
     private hexCoordsById: IHexCoord[] = [];
+    private wallRadiusOne: THREE.Group;
+    private wallRadiusTwo: THREE.Group;
 
     constructor() {
         super();
@@ -30,6 +34,7 @@ export default class Intro extends THREE.Group {
     private init(): void {
         this.initField();
         this.initCastle();
+        this.initWalls();
     }
 
     public showByRadius(radius: number): void {
@@ -43,12 +48,21 @@ export default class Intro extends THREE.Group {
                 ThreeJSHelper.updateInstanceTransform(this.tilesInstanceMesh, index, undefined, undefined, new THREE.Vector3(1, 1, 1));
             }
         }
+
+        if (radius === 1) {
+            this.wallRadiusOne.visible = true;
+        } else {
+            this.wallRadiusTwo.visible = true;
+        }
     }
 
     private hideAllTiles(): void {
         for (let i = 0; i < this.hexCoordsById.length; i++) {
             ThreeJSHelper.updateInstanceTransform(this.tilesInstanceMesh, i, undefined, undefined, new THREE.Vector3(0.001, 0.001, 0.001));
         }
+
+        this.wallRadiusOne.visible = false;
+        this.wallRadiusTwo.visible = false;
     }
 
     private initField(): void {
@@ -94,5 +108,83 @@ export default class Intro extends THREE.Group {
         const material: THREE.Material = Materials.getInstance().materials[MaterialType.Transparent];
         const castleMesh = new THREE.Mesh(geometry, material);
         this.add(castleMesh);
+    }
+
+    private initWalls(): void {
+        this.initWallsRadiusOne();
+        this.initWallsRadiusTwo();
+    }
+
+    private initWallsRadiusOne(): void {
+        this.wallRadiusOne = new THREE.Group();
+        this.add(this.wallRadiusOne);
+
+        const data: IHexTileInstanceData[] = [
+            {
+                type: HexTileType.WallCornerAOutside,
+                transforms: [
+                    { position: { q: 1, r: 0 }, rotation: HexRotation.Rotate240 },
+                    { position: { q: 1, r: -1 }, rotation: HexRotation.Rotate300 },
+                    { position: { q: 0, r: -1 }, rotation: HexRotation.Rotate0 },
+                    { position: { q: -1, r: 0 }, rotation: HexRotation.Rotate60 },
+                    { position: { q: -1, r: 1 }, rotation: HexRotation.Rotate120 },
+                ],
+            },
+            {
+                type: HexTileType.WallCornerAGate,
+                transforms: [
+                    { position: { q: 0, r: 1 }, rotation: HexRotation.Rotate180 },
+                ],
+            }
+        ]
+
+        for (let i = 0; i < data.length; i++) {
+            const hexTileInstance = new HexTileInstance(data[i], null, MaterialType.Transparent);
+            this.wallRadiusOne.add(hexTileInstance);
+
+            hexTileInstance.showAllTiles();
+        }
+    }
+
+    private initWallsRadiusTwo(): void {
+        this.wallRadiusTwo = new THREE.Group();
+        this.add(this.wallRadiusTwo);
+
+        const data: IHexTileInstanceData[] = [
+            {
+                type: HexTileType.WallCornerAOutside,
+                transforms: [
+                    { position: { q: 2, r: 0 }, rotation: HexRotation.Rotate240 },
+                    { position: { q: 2, r: -2 }, rotation: HexRotation.Rotate300 },
+                    { position: { q: 0, r: -2 }, rotation: HexRotation.Rotate0 },
+                    { position: { q: -2, r: 0 }, rotation: HexRotation.Rotate60 },
+                    { position: { q: -2, r: 2 }, rotation: HexRotation.Rotate120 },
+                    { position: { q: 0, r: 2 }, rotation: HexRotation.Rotate180 },
+                ],
+            },
+            {
+                type: HexTileType.WallStraight,
+                transforms: [
+                    { position: { q: 2, r: -1 }, rotation: HexRotation.Rotate300 },
+                    { position: { q: 1, r: -2 }, rotation: HexRotation.Rotate0 },
+                    { position: { q: -1, r: -1 }, rotation: HexRotation.Rotate60 },
+                    { position: { q: -2, r: 1 }, rotation: HexRotation.Rotate120 },
+                    { position: { q: 1, r: 1 }, rotation: HexRotation.Rotate240 },
+                ],
+            },
+            {
+                type: HexTileType.WallStraightGate,
+                transforms: [
+                    { position: { q: -1, r: 2 }, rotation: HexRotation.Rotate180 },
+                ],
+            }
+        ]
+
+        for (let i = 0; i < data.length; i++) {
+            const hexTileInstance = new HexTileInstance(data[i], null, MaterialType.Transparent);
+            this.wallRadiusTwo.add(hexTileInstance);
+
+            hexTileInstance.showAllTiles();
+        }
     }
 }
