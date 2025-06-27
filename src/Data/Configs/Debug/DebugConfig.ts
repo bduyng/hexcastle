@@ -10,22 +10,22 @@ const DebugConfig = {
 
 const DebugGameConfig = {
     tilesDebugMode: null, // HexTileCategory.Walls,
-    grid: true,
+    grid: false,
     generateType: {
         [GenerateEntityType.Landscape]: {
             show: true,
-            showInstantly: true,
+            showInstantly: false,
             hexTileDebug: {
                 rotation: false,
                 edge: false,
             },
             entropy: true,
             topLevelAvailability: false,
-            islands: true,
+            islands: false,
         },
         [GenerateEntityType.Walls]: {
-            show: false,
-            showInstantly: true,
+            show: true,
+            showInstantly: false,
             hexTileDebug: {
                 rotation: false,
                 edge: false,

@@ -49,6 +49,7 @@ export default class CastleScene extends THREE.Group {
     private topLevelAvailabilityDebug: TopLevelAvailabilityDebug;
     private islandFinder: IslandFinder;
     private islandsDebug: IslandsDebug;
+    private islands: IIsland[] = [];
 
     private isIntroActive: boolean = true;
 
@@ -154,9 +155,8 @@ export default class CastleScene extends THREE.Group {
 
         this.updateTopLevelAvailability(tiles);
 
-        const islands: IIsland[] = this.islandFinder.findIslandsWithMinSize(this.topLevelAvailability, 1);
+        const islands: IIsland[] = this.islands = this.islandFinder.findIslandsWithMinSize(this.topLevelAvailability, 1);
         this.islandsDebug?.show(islands);
-        console.log(islands);
     }
 
     private async generateLandscapeTilesAsync(): Promise<void> {
@@ -175,32 +175,62 @@ export default class CastleScene extends THREE.Group {
 
             this.updateTopLevelAvailability(result.grid);
 
-            const islands: IIsland[] = this.islandFinder.findIslandsWithMinSize(this.topLevelAvailability, 1);
+            const islands: IIsland[] = this.islands = this.islandFinder.findIslandsWithMinSize(this.topLevelAvailability, 1);
             this.islandsDebug?.show(islands);
-            console.log(islands);
         }
 
         GlobalEventBus.emit('game:finishGeneratingWorld');
         this.previousGeneratePercent = 0;
     }
 
+    private getRandomBetween(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
     private generateWall(): void {
-        const wallConfig: IWallConfig = {
-            center: { q: 0, r: 0 },
-            radius: 2,
-            maxOffset: 1,
-        };
+        if (this.islands.length === 0) {
+            return;
+        }
 
-        this.wallGenerator.generate(wallConfig);
-        this.steps[GenerateEntityType.Walls] = this.wallGenerator.getSteps();
+        const wallTiles: IHexTilesResult[] = [];
 
-        const wallTiles: IHexTilesResult[] = this.wallGenerator.getTiles();
-        this.createTiles(wallTiles, GenerateEntityType.Walls);
+        for (let i = 0; i < this.islands.length; i++) {
+            const island: IIsland = this.islands[i];
 
-        const insideTiles: IHexCoord[] = this.wallGenerator.getInsideTiles();
-        const outsideTiles: IHexCoord[] = this.wallGenerator.getOutsideTiles();
+            let radius = 1;
+            let maxOffset = 0;
 
-        this.wallDebug?.show(insideTiles, outsideTiles);
+            const maxWallRadius = 5;
+            const maxWallOffset = 2;
+
+            if (island.radiusAvailable <= 2) {
+                radius = island.radiusAvailable;
+                maxOffset = 0;
+            } else if (island.radiusAvailable <= 4) {
+                maxOffset = 1;
+                radius = island.radiusAvailable - maxOffset - 1;
+            } else {
+                maxOffset = this.getRandomBetween(1, maxWallOffset);
+                radius = Math.min(island.radiusAvailable - maxOffset - 1, maxWallRadius);
+            }
+
+            const wallConfig: IWallConfig = {
+                center: island.center,
+                radius: radius,
+                maxOffset: maxOffset,
+            };
+
+            this.wallGenerator.generate(wallConfig);
+            this.steps[GenerateEntityType.Walls].push(...this.wallGenerator.getSteps());
+
+            console.log(this.steps[GenerateEntityType.Walls]);
+            wallTiles.push(...this.wallGenerator.getTiles());
+        }
+            // const wallTiles: IHexTilesResult[] = this.wallGenerator.getTiles();
+            this.createTiles(wallTiles, GenerateEntityType.Walls);
+
+            this.wallDebug?.show(this.wallGenerator.getInsideTiles(), this.wallGenerator.getOutsideTiles());
+        
     }
 
     private getStepsPerFrame(radius: number): number {
@@ -394,6 +424,8 @@ export default class CastleScene extends THREE.Group {
         this.stepIndex = 0;
         this.showingEntityIndex = 0;
         this.showingEntityType = GenerateEntityOrder[this.showingEntityIndex];
+        this.previousGeneratePercent = 0;
+        this.islands = [];
 
         for (const generateType in GenerateEntityType) {
             const type: GenerateEntityType = GenerateEntityType[generateType as keyof typeof GenerateEntityType];
