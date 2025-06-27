@@ -14,7 +14,7 @@ const DebugGameConfig = {
     generateType: {
         [GenerateEntityType.Landscape]: {
             show: true,
-            showInstantly: false,
+            showInstantly: true,
             hexTileDebug: {
                 rotation: false,
                 edge: false,
@@ -25,7 +25,7 @@ const DebugGameConfig = {
         },
         [GenerateEntityType.Walls]: {
             show: true,
-            showInstantly: false,
+            showInstantly: true,
             hexTileDebug: {
                 rotation: false,
                 edge: false,

@@ -26,6 +26,26 @@ const GameConfig = {
                 { radius: 25, steps: 2 }
             ]
         }
+    },
+    walls: {
+        secondWallChance: 0.5,
+        secondWallMinRadius: 2,
+        maxWallRadius: 5,
+        maxWallOffset: 2,
+        rules: [
+            {
+                radiusAvailable: 1,
+                maxOffset: [0, 0],
+            },
+            {
+                radiusAvailable: 4,
+                maxOffset: [1, 1],
+            },
+            {
+                radiusAvailable: Infinity,
+                maxOffset: [1, 2],
+            }
+        ]
     }
 }
 

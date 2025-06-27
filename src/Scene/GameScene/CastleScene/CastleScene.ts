@@ -193,26 +193,24 @@ export default class CastleScene extends THREE.Group {
         }
 
         const wallTiles: IHexTilesResult[] = [];
+        let wallsCount: number = Math.random() < GameConfig.walls.secondWallChance && this.islands.length > 1 ? 2 : 1;
 
-        for (let i = 0; i < this.islands.length; i++) {
+        for (let i = 0; i < wallsCount; i++) {
             const island: IIsland = this.islands[i];
+
+            if (island.radiusAvailable < GameConfig.walls.secondWallMinRadius && wallsCount > 1) {
+                continue;
+            }
 
             let radius = 1;
             let maxOffset = 0;
 
-            const maxWallRadius = 5;
-            const maxWallOffset = 2;
-
-            if (island.radiusAvailable <= 2) {
-                radius = island.radiusAvailable;
-                maxOffset = 0;
-            } else if (island.radiusAvailable <= 4) {
-                maxOffset = 1;
-                radius = island.radiusAvailable - maxOffset - 1;
-            } else {
-                maxOffset = this.getRandomBetween(1, maxWallOffset);
-                radius = Math.min(island.radiusAvailable - maxOffset - 1, maxWallRadius);
-            }
+            GameConfig.walls.rules.forEach((rule) => {
+                if (island.radiusAvailable >= rule.radiusAvailable) {
+                    maxOffset = this.getRandomBetween(rule.maxOffset[rule.maxOffset[0]], rule.maxOffset[rule.maxOffset[1]]);
+                    radius = Math.min(island.radiusAvailable - rule.maxOffset[0] - (maxOffset === 0 ? 0 : 1), GameConfig.walls.maxWallRadius);
+                }
+            });
 
             const wallConfig: IWallConfig = {
                 center: island.center,
@@ -223,14 +221,11 @@ export default class CastleScene extends THREE.Group {
             this.wallGenerator.generate(wallConfig);
             this.steps[GenerateEntityType.Walls].push(...this.wallGenerator.getSteps());
 
-            console.log(this.steps[GenerateEntityType.Walls]);
             wallTiles.push(...this.wallGenerator.getTiles());
         }
-            // const wallTiles: IHexTilesResult[] = this.wallGenerator.getTiles();
-            this.createTiles(wallTiles, GenerateEntityType.Walls);
 
-            this.wallDebug?.show(this.wallGenerator.getInsideTiles(), this.wallGenerator.getOutsideTiles());
-        
+        this.createTiles(wallTiles, GenerateEntityType.Walls);
+        this.wallDebug?.show(this.wallGenerator.getInsideTiles(), this.wallGenerator.getOutsideTiles());
     }
 
     private getStepsPerFrame(radius: number): number {
