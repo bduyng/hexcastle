@@ -154,8 +154,9 @@ export default class CastleScene extends THREE.Group {
 
         this.updateTopLevelAvailability(tiles);
 
-        const islands: IIsland[] = this.islandFinder.findIslands(this.topLevelAvailability);
+        const islands: IIsland[] = this.islandFinder.findIslandsWithMinSize(this.topLevelAvailability, 1);
         this.islandsDebug?.show(islands);
+        console.log(islands);
     }
 
     private async generateLandscapeTilesAsync(): Promise<void> {
@@ -174,8 +175,9 @@ export default class CastleScene extends THREE.Group {
 
             this.updateTopLevelAvailability(result.grid);
 
-            const islands: IIsland[] = this.islandFinder.findIslands(this.topLevelAvailability);
+            const islands: IIsland[] = this.islandFinder.findIslandsWithMinSize(this.topLevelAvailability, 1);
             this.islandsDebug?.show(islands);
+            console.log(islands);
         }
 
         GlobalEventBus.emit('game:finishGeneratingWorld');

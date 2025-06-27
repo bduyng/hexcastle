@@ -25,9 +25,10 @@ export default class IslandFinder {
         return islands;
     }
 
-    public findIslandsWithMinSize(topLevelAvailability: IHexCoord[], minSize: number = 3): IIsland[] {
+    public findIslandsWithMinSize(topLevelAvailability: IHexCoord[], minSize: number): IIsland[] {
         const allIslands = this.findIslands(topLevelAvailability);
-        return allIslands.filter(island => island.area >= minSize);
+        const filteredIslands = allIslands.filter(island => island.area >= minSize && this.isIslandValid(island, topLevelAvailability, minSize));
+        return filteredIslands.sort((a, b) => b.radiusAvailable - a.radiusAvailable);
     }
 
     private dfsFindIsland(startTile: IHexCoord, availableTiles: IHexCoord[], visited: Set<string>): IHexCoord[] {
@@ -65,13 +66,15 @@ export default class IslandFinder {
         const radius = this.calculateIslandRadius(tiles, center);
         const area = tiles.length;
         const perimeter = this.calculateIslandPerimeter(tiles);
+        const radiusAvailable = this.calculateMaxRadiusAroundTile(center, tiles);
 
         return {
             tiles,
             center,
             radius,
             area,
-            perimeter
+            perimeter,
+            radiusAvailable
         };
     }
 
@@ -80,13 +83,49 @@ export default class IslandFinder {
             return { q: 0, r: 0 };
         }
 
-        const sumQ = tiles.reduce((sum, tile) => sum + tile.q, 0);
-        const sumR = tiles.reduce((sum, tile) => sum + tile.r, 0);
+        let bestCenter = tiles[0];
+        let maxRadius = 0;
 
-        return {
-            q: Math.round(sumQ / tiles.length),
-            r: Math.round(sumR / tiles.length)
-        };
+        for (const candidate of tiles) {
+            const radius = this.calculateMaxRadiusAroundTile(candidate, tiles);
+            if (radius > maxRadius) {
+                maxRadius = radius;
+                bestCenter = candidate;
+            }
+        }
+
+        return bestCenter;
+    }
+
+    private calculateMaxRadiusAroundTile(center: IHexCoord, availableTiles: IHexCoord[]): number {
+        let radius = 0;
+        
+        while (true) {
+            const nextRadius = radius + 1;
+            let allTilesInRadiusAvailable = true;
+            
+            for (let r = -nextRadius; r <= nextRadius; r++) {
+                for (let q = -nextRadius; q <= nextRadius; q++) {
+                    const s = -q - r;
+                    if (Math.abs(s) <= nextRadius) {
+                        const tile = { q: center.q + q, r: center.r + r };
+                        if (!this.isTileAvailable(tile, availableTiles)) {
+                            allTilesInRadiusAvailable = false;
+                            break;
+                        }
+                    }
+                }
+                if (!allTilesInRadiusAvailable) break;
+            }
+            
+            if (allTilesInRadiusAvailable) {
+                radius = nextRadius;
+            } else {
+                break;
+            }
+        }
+        
+        return radius;
     }
 
     private calculateIslandRadius(tiles: IHexCoord[], center: IHexCoord): number {
@@ -139,5 +178,23 @@ export default class IslandFinder {
 
     private coordToKey(coord: IHexCoord): string {
         return `${coord.q},${coord.r}`;
+    }
+
+    private isIslandValid(island: IIsland, availableTiles: IHexCoord[], radius: number): boolean {
+        const center = island.center;
+        
+        for (let r = -radius; r <= radius; r++) {
+            for (let q = -radius; q <= radius; q++) {
+                const s = -q - r;
+                if (Math.abs(s) <= radius) {
+                    const tile = { q: center.q + q, r: center.r + r };
+                    if (!this.isTileAvailable(tile, availableTiles)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
     }
 } 

@@ -6,4 +6,5 @@ export interface IIsland {
     radius: number;
     area: number;
     perimeter: number;
+    radiusAvailable: number;
 }

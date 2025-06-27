@@ -17,6 +17,10 @@ export default class IslandsDebug extends THREE.Group {
     public show(islands: IIsland[]): void {
         this.reset();
 
+        if (islands.length === 0) {
+            return;
+        }
+
         const tiles: IHexCoord[][] = [];
         const centers: IHexCoord[] = [];
         for (let i = 0; i < islands.length; i++) {
