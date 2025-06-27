@@ -208,7 +208,11 @@ export default class CastleScene extends THREE.Group {
             GameConfig.walls.rules.forEach((rule) => {
                 if (island.radiusAvailable >= rule.radiusAvailable) {
                     maxOffset = this.getRandomBetween(rule.maxOffset[rule.maxOffset[0]], rule.maxOffset[rule.maxOffset[1]]);
-                    radius = Math.min(island.radiusAvailable - rule.maxOffset[0] - (maxOffset === 0 ? 0 : 1), GameConfig.walls.maxWallRadius);
+                    radius = Math.min(island.radiusAvailable - maxOffset - (maxOffset === 0 ? 0 : 1), GameConfig.walls.maxWallRadius);
+
+                    if (radius > 1) {
+                        radius = this.getRandomBetween(radius - 1, radius);
+                    }
                 }
             });
 
