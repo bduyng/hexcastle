@@ -21,7 +21,7 @@ const DebugGameConfig = {
             },
             entropy: true,
             topLevelAvailability: false,
-            islands: false,
+            islands: true,
         },
         [GenerateEntityType.Walls]: {
             show: false,

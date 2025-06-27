@@ -155,8 +155,6 @@ export default class CastleScene extends THREE.Group {
         this.updateTopLevelAvailability(tiles);
 
         const islands: IIsland[] = this.islandFinder.findIslands(this.topLevelAvailability);
-        console.log(islands);
-
         this.islandsDebug?.show(islands);
     }
 
@@ -175,6 +173,9 @@ export default class CastleScene extends THREE.Group {
             this.createTiles(result.grid, GenerateEntityType.Landscape);
 
             this.updateTopLevelAvailability(result.grid);
+
+            const islands: IIsland[] = this.islandFinder.findIslands(this.topLevelAvailability);
+            this.islandsDebug?.show(islands);
         }
 
         GlobalEventBus.emit('game:finishGeneratingWorld');
@@ -405,6 +406,7 @@ export default class CastleScene extends THREE.Group {
         this.wallDebug?.reset();
         this.entropyHelper?.reset();
         this.topLevelAvailabilityDebug?.reset();
+        this.islandsDebug?.reset();
     }
 
     private initGlobalListeners(): void {

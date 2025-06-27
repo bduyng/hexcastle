@@ -6,7 +6,6 @@ import { GridOrientation } from '../../../Data/Enums/GridOrientation';
 import { MaterialType } from '../../../Data/Enums/MaterialType';
 import Materials from '../../../Core/Materials/Materials';
 import { IIsland } from '../../../Data/Interfaces/IIsland';
-import { IslandsDebugConfig } from '../../../Data/Configs/DebugInfoConfig';
 
 export default class IslandsDebug extends THREE.Group {
     private tiles: THREE.InstancedMesh;
@@ -28,8 +27,6 @@ export default class IslandsDebug extends THREE.Group {
             }
         }
 
-        console.log(islands);
-
         this.tiles = this.initTiles(tiles, centers);
         this.add(this.tiles);
     }
@@ -48,21 +45,15 @@ export default class IslandsDebug extends THREE.Group {
         const instanceCount: number = tiles.reduce((count, island) => count + island.length, 0);
         const tilesInstance = new THREE.InstancedMesh(geometry, material, instanceCount);
 
-        const randomColors: THREE.Color[] = [];
-        for (let i = 0; i < tiles.length; i++) {
-            const colorIndex = i % IslandsDebugConfig.colors.length;
-            randomColors.push(new THREE.Color(IslandsDebugConfig.colors[colorIndex]));
-        }
-
         const defaultRotation: number = GameConfig.gameField.GridOrientation === GridOrientation.PointyTop ? Math.PI / 2 : Math.PI / 3;
         const matrix = new THREE.Matrix4();
 
         let index = 0;
-        let color: THREE.Color;
+        let color: number;
 
         for (let i = 0; i < tiles.length; i++) {
             for (let j = 0; j < tiles[i].length; j++) {
-                color = HexGridHelper.isPositionsEqual(tiles[i][j], centers[i]) ? new THREE.Color(IslandsDebugConfig.centerColor) : randomColors[i];
+                color = HexGridHelper.isPositionsEqual(tiles[i][j], centers[i]) ? 0xff0000 : 0x00ff00;
                 const position = HexGridHelper.axialToWorld(tiles[i][j], GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
                 position.y = 0.05;
                 const rotationQuaternion = new THREE.Quaternion();
@@ -74,7 +65,7 @@ export default class IslandsDebug extends THREE.Group {
                 matrix.compose(position, rotationQuaternion, scale);
 
                 tilesInstance.setMatrixAt(index, matrix);
-                tilesInstance.setColorAt(index, color);
+                tilesInstance.setColorAt(index, new THREE.Color(color));
 
                 index++;
             };
