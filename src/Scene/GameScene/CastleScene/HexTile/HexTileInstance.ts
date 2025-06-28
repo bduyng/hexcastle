@@ -10,6 +10,7 @@ import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 import HexTileDebug from './HexTileDebug';
 import { GameConfig } from '../../../../Data/Configs/GameConfig';
 import { TilesShadowConfig } from '../../../../Data/Configs/TilesShadowConfig';
+import TWEEN from 'three/addons/libs/tween.module.js';
 
 export default class HexTileInstance extends THREE.Group {
     private hexTileInstanceData: IHexTileInstanceData;
@@ -41,9 +42,20 @@ export default class HexTileInstance extends THREE.Group {
 
     public showTile(position: IHexCoord): void {
         const index: number = this.hexTileInstanceIndexes.find(index => index.transform.position.q === position.q && index.transform.position.r === position.r)?.index;
-        
+
         if (index !== undefined) {
-            ThreeJSHelper.updateInstanceTransform(this.hexTileInstanceMesh, index, undefined, undefined, new THREE.Vector3(1, 1, 1));
+            const scale = { value: 0.001 };
+
+            new TWEEN.Tween(scale)
+                .to({ value: 1 }, 100)
+                .easing(TWEEN.Easing.Sinusoidal.Out)
+                .start()
+                .onUpdate(() => {
+                    ThreeJSHelper.updateInstanceTransform(this.hexTileInstanceMesh, index, undefined, undefined, new THREE.Vector3(scale.value, scale.value, scale.value));
+                })
+                .onComplete(() => {
+                    ThreeJSHelper.updateInstanceTransform(this.hexTileInstanceMesh, index, undefined, undefined, new THREE.Vector3(1, 1, 1));
+                });
         }
 
         const tileDebug = this.hexTilesDebug.find(tile => tile.position.q === position.q && tile.position.r === position.r);
