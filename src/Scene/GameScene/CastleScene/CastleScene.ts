@@ -522,7 +522,7 @@ export default class CastleScene extends THREE.Group {
                 break;
 
             case GenerateEntityType.Walls:
-                this.showTileStepTime = 30;
+                this.showTileStepTime = 50;
                 break;
         }
     }

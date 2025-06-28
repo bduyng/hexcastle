@@ -10,8 +10,8 @@ const GameConfig = {
             default: 5
         },
         showTilesDelays: {
-            min: 8,
-            max: 40,
+            min: 6,
+            max: 30,
             coeff: 200,
         }
     },

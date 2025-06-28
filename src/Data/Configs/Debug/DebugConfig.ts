@@ -19,7 +19,7 @@ const DebugGameConfig = {
                 rotation: false,
                 edge: false,
             },
-            entropy: true,
+            entropy: false,
             topLevelAvailability: false,
             islands: false,
         },
