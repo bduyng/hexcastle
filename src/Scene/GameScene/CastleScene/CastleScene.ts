@@ -25,7 +25,6 @@ import IslandsDebug from './IslandsDebug';
 import { IIsland } from '../../../Data/Interfaces/IIsland';
 import { TilesShadowConfig } from '../../../Data/Configs/TilesShadowConfig';
 import { ILibrariesData } from '../../../Data/Interfaces/IBaseSceneData';
-import { HexTileType } from '../../../Data/Enums/HexTileType';
 
 export default class CastleScene extends THREE.Group {
 
