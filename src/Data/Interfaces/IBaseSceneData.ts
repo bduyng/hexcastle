@@ -10,6 +10,7 @@ export interface ILibrariesData {
     directionalLight: THREE.DirectionalLight;
     pixiApp: PIXI.Application;
     uiContainer: PIXI.Container;
+    renderer: THREE.WebGLRenderer;
 }
 
 export interface IWindowSizes {

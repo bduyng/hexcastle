@@ -23,6 +23,9 @@ import { TopLevelAvailabilityConfig } from '../../../Data/Configs/LandscapeTiles
 import IslandFinder from './IslandFinder';
 import IslandsDebug from './IslandsDebug';
 import { IIsland } from '../../../Data/Interfaces/IIsland';
+import { TilesShadowConfig } from '../../../Data/Configs/TilesShadowConfig';
+import { ILibrariesData } from '../../../Data/Interfaces/IBaseSceneData';
+import { HexTileType } from '../../../Data/Enums/HexTileType';
 
 export default class CastleScene extends THREE.Group {
 
@@ -50,11 +53,14 @@ export default class CastleScene extends THREE.Group {
     private islandFinder: IslandFinder;
     private islandsDebug: IslandsDebug;
     private islands: IIsland[] = [];
+    private data: ILibrariesData;
 
     private isIntroActive: boolean = true;
 
-    constructor() {
+    constructor(data: ILibrariesData) {
         super();
+
+        this.data = data;
 
         this.init();
     }
@@ -320,6 +326,7 @@ export default class CastleScene extends THREE.Group {
     }
 
     private showTiles(stepIndex: number, count: number, generateEntityType: GenerateEntityType): void {
+        let needShadowUpdate: boolean = false;
         for (let i = stepIndex; i < stepIndex + count; i++) {
             if (i >= this.steps[generateEntityType].length) {
                 this.tilesShowState = TilesShowState.CompleteEntity;
@@ -334,6 +341,13 @@ export default class CastleScene extends THREE.Group {
                 }
             }
 
+            if (TilesShadowConfig[step.tile?.type]?.needUpdate) {
+                needShadowUpdate = true;
+            }
+        }
+
+        if (needShadowUpdate) {
+            this.data.renderer.shadowMap.needsUpdate = true;
         }
 
         if (this.showingEntityType === GenerateEntityType.Landscape) {
@@ -469,6 +483,7 @@ export default class CastleScene extends THREE.Group {
         this.showPredefinedLandscapeTiles();
         this.checkShowEntityInstant();
 
+        this.data.renderer.shadowMap.needsUpdate = true;
         this.tilesShowState = TilesShowState.Ready;
         this.checkToShowEntity();
     }

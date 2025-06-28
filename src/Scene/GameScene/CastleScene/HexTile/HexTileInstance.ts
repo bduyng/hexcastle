@@ -9,6 +9,7 @@ import HexGridHelper from '../../../../Helpers/HexGridHelper';
 import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
 import HexTileDebug from './HexTileDebug';
 import { GameConfig } from '../../../../Data/Configs/GameConfig';
+import { TilesShadowConfig } from '../../../../Data/Configs/TilesShadowConfig';
 
 export default class HexTileInstance extends THREE.Group {
     private hexTileInstanceData: IHexTileInstanceData;
@@ -111,6 +112,9 @@ export default class HexTileInstance extends THREE.Group {
         }
 
         instanceMesh.instanceMatrix.needsUpdate = true;
+
+        instanceMesh.castShadow = TilesShadowConfig[this.hexTileType].castShadow;
+        instanceMesh.receiveShadow = TilesShadowConfig[this.hexTileType].receiveShadow;
     }
 
     private initHexTileDebug(): void {

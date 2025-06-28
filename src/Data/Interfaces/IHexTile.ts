@@ -31,3 +31,9 @@ export interface IHexTileInstanceIndex {
     index: number;
     transform: IHexTileTransform;
 }
+
+export interface ITileShadowConfig {
+    castShadow: boolean;
+    receiveShadow: boolean;
+    needUpdate: boolean;
+}

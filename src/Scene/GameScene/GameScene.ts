@@ -53,7 +53,7 @@ export default class GameScene extends THREE.Group {
     }
 
     private initCastleScene(): void {
-        const castleScene = this.castleScene = new CastleScene();
+        const castleScene = this.castleScene = new CastleScene(this.data);
         this.add(castleScene);
     }
 
