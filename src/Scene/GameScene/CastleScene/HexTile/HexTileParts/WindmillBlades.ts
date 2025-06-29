@@ -35,7 +35,7 @@ export default class WindmillBlades extends HexTilePartAbstract {
 
     private init(): void {
         const material: THREE.Material = Materials.getInstance().materials[MaterialType.Main];
-        const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel('building_windmill_top_fan_red');
+        const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel('building_windmill_top_fan');
 
         const view: THREE.Mesh = this.view = new THREE.Mesh(geometry, material);
         this.add(view);
