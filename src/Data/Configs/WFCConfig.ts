@@ -10,7 +10,7 @@ const WFCTiles: HexTileType[] = [
 
     HexTileType.RoadA, // 2 road edges
     HexTileType.RoadB, // 2 road edges
-    HexTileType.RoadC, // 2 road edges
+    // HexTileType.RoadC, // 2 road edges
         // HexTileType.RoadD, // 3 road edges
         // HexTileType.RoadE, // 3 road edges
         // HexTileType.RoadF, // 3 road edges
@@ -31,7 +31,7 @@ const WFCTiles: HexTileType[] = [
     HexTileType.RiverA, // 2 river edges
     HexTileType.RiverACurvy, // 2 river edges
     HexTileType.RiverB, // 2 river edges
-    HexTileType.RiverC, // 3 river edges
+    // HexTileType.RiverC, // 3 river edges
         // HexTileType.RiverCrossingA, // 2 river edges
         // HexTileType.RiverCrossingB, // 2 river edges
         // HexTileType.RiverD, // 3 river edges

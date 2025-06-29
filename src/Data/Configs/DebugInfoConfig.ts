@@ -27,6 +27,9 @@ const TileDebugInfoConfigByCategory = {
     [HexTileCategory.Walls]: {
         positionY: 1.03,
     },
+    [HexTileCategory.City]: {
+        positionY: 1.03,
+    },
 }
 
 
