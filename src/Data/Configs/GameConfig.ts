@@ -51,6 +51,9 @@ const GameConfig = {
     city: {
         showTilesDelays: 80,
         fillPercentage: 0.4,
+    },
+    nature: {
+        showTilesDelays: 60,
     }
 }
 

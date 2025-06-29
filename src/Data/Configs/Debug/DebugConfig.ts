@@ -39,6 +39,14 @@ const DebugGameConfig = {
                 rotation: false,
                 edge: false,
             },
+        },
+        [GenerateEntityType.Nature]: {
+            show: true,
+            showInstantly: false,
+            hexTileDebug: {
+                rotation: false,
+                edge: false,
+            },
         }
     },
 }

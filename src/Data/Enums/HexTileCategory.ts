@@ -5,4 +5,5 @@ export enum HexTileCategory {
     Rivers = 'RIVERS',
     Walls = 'WALLS',
     City = 'CITY',
+    Nature = 'NATURE',
 }

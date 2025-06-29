@@ -29,6 +29,7 @@ import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
 import HexTileParts from './HexTile/HexTileParts/HexTileParts';
 import { HexTilePartsConfig } from '../../../Data/Configs/HexTilePartsConfig';
 import Clouds from './Clouds';
+import { NatureGenerator } from './Nature/NatureGenerator';
 
 export default class CastleScene extends THREE.Group {
 
@@ -62,6 +63,7 @@ export default class CastleScene extends THREE.Group {
     private wallsCityConfig: IWallCityConfig[] = [];
     private hexTileParts: HexTileParts;
     private clouds: Clouds;
+    private natureGenerator: NatureGenerator;
 
     private isIntroActive: boolean = true;
 
@@ -114,6 +116,7 @@ export default class CastleScene extends THREE.Group {
         this.initCityGenerator();
         this.initHexTileParts();
         this.initClouds();
+        this.initNatureGenerator();
 
         this.initGlobalListeners();
     }
@@ -303,6 +306,20 @@ export default class CastleScene extends THREE.Group {
         }
     }
 
+    private generateNature(): void {
+        if (this.topLevelAvailabilityAfterCity.length === 0) {
+            return;
+        }
+
+        this.natureGenerator.generate(this.topLevelAvailabilityAfterCity);
+
+        const steps: INewTileStep[] = this.natureGenerator.getSteps();
+        this.steps[GenerateEntityType.Nature] = steps;
+
+        const tiles: IHexTilesResult[] = this.natureGenerator.getTiles();
+        this.createTiles(tiles, GenerateEntityType.Nature);
+    }
+
     private getStepsPerFrame(radius: number): number {
         for (let i = 0; i < GameConfig.WFC.stepsPerFrame.values.length; i++) {
             const item = GameConfig.WFC.stepsPerFrame.values[i];
@@ -388,6 +405,10 @@ export default class CastleScene extends THREE.Group {
     private initClouds(): void {
         this.clouds = new Clouds();
         this.add(this.clouds);
+    }
+
+    private initNatureGenerator(): void {
+        this.natureGenerator = new NatureGenerator();
     }
 
     private showPredefinedLandscapeTiles(): void {
@@ -563,6 +584,7 @@ export default class CastleScene extends THREE.Group {
 
         this.generateWall();
         this.generateCity();
+        this.generateNature();
 
         this.configureDelay();
         this.showPredefinedLandscapeTiles();
@@ -614,6 +636,10 @@ export default class CastleScene extends THREE.Group {
 
             case GenerateEntityType.City:
                 this.showTileStepTime = GameConfig.city.showTilesDelays;
+                break;
+
+            case GenerateEntityType.Nature:
+                this.showTileStepTime = GameConfig.nature.showTilesDelays;
                 break;
         }
     }

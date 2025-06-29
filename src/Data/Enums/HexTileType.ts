@@ -52,8 +52,17 @@ export enum HexTileType {
     WallStraightGate = 'WALL_STRAIGHT_GATE',
 
     // nature
+    HillsA = 'HILLS_A',
+    HillsATrees = 'HILLS_A_TREES',
+    HillsB = 'HILLS_B',
+    HillsBTrees = 'HILLS_B_TREES',
+    HillsC = 'HILLS_C',
     MountainA = 'MOUNTAIN_A',
-
+    MountainB = 'MOUNTAIN_B',
+    MountainC = 'MOUNTAIN_C',
+    TreesALarge = 'TREES_A_LARGE',
+    TreesAMedium = 'TREES_A_MEDIUM',
+    
     // buildings
     CastleBlue = 'CASTLE_BLUE',
     ArcheryRangeBlue = 'ARCHERY_RANGE_BLUE',

@@ -74,6 +74,18 @@ const HexTilesByCategory: { [key in HexTileCategory]: HexTileType[] } = {
         HexTileType.WellRed,
         HexTileType.WindmillRed,
     ],
+    [HexTileCategory.Nature]: [
+        HexTileType.HillsA,
+        HexTileType.HillsATrees,
+        HexTileType.HillsB,
+        HexTileType.HillsBTrees,
+        HexTileType.HillsC,
+        HexTileType.MountainA,
+        HexTileType.MountainB,
+        HexTileType.MountainC,
+        HexTileType.TreesALarge,
+        HexTileType.TreesAMedium,
+    ],
 }
 
 

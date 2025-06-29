@@ -139,8 +139,35 @@ const HexTileModelConfig: { [key in HexTileType]: IHexTileModelConfig } = {
     },
 
     // nature
+    [HexTileType.HillsA]: {
+        modelName: 'hills_A',
+    },
+    [HexTileType.HillsATrees]: {
+        modelName: 'hills_A_trees',
+    },
+    [HexTileType.HillsB]: {
+        modelName: 'hills_B',
+    },
+    [HexTileType.HillsBTrees]: {
+        modelName: 'hills_B_trees',
+    },
+    [HexTileType.HillsC]: {
+        modelName: 'hills_C',
+    },
     [HexTileType.MountainA]: {
         modelName: 'mountain_A',
+    },
+    [HexTileType.MountainB]: {
+        modelName: 'mountain_B',
+    },
+    [HexTileType.MountainC]: {
+        modelName: 'mountain_C',
+    },
+    [HexTileType.TreesALarge]: {
+        modelName: 'trees_A_large',
+    },
+    [HexTileType.TreesAMedium]: {
+        modelName: 'trees_A_medium',
     },
 
     // buildings

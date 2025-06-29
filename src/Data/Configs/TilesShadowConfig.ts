@@ -181,7 +181,43 @@ const TilesShadowConfig: { [key in HexTileType]: ITileShadowConfig } = {
     },
 
     // Nature
+    [HexTileType.HillsA]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.HillsATrees]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.HillsB]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.HillsBTrees]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.HillsC]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
     [HexTileType.MountainA]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.MountainB]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.MountainC]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.TreesALarge]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.TreesAMedium]: {
         castShadow: true,
         receiveShadow: true,
     },

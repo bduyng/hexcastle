@@ -182,9 +182,45 @@ const TilesShowAnimationConfig: { [key in HexTileType]: ITileShowAnimationConfig
     },
 
     // Nature
+    [HexTileType.HillsA]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.HillsATrees]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.HillsB]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.HillsBTrees]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.HillsC]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
     [HexTileType.MountainA]: {
-        time: 100,
-        easing: TWEEN.Easing.Quadratic.Out
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.MountainB]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.MountainC]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.TreesALarge]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.TreesAMedium]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
     },
 
     // City

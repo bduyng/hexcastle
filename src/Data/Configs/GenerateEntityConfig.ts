@@ -4,7 +4,7 @@ const GenerateEntityOrder: GenerateEntityType[] = [
     GenerateEntityType.Landscape,
     GenerateEntityType.Walls,
     GenerateEntityType.City,
-    // GenerateEntityType.Nature,
+    GenerateEntityType.Nature,
 ];
 
 export { GenerateEntityOrder };
