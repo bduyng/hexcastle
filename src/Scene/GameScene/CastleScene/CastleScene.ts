@@ -23,7 +23,6 @@ import { TopLevelAvailabilityConfig } from '../../../Data/Configs/LandscapeTiles
 import IslandFinder from './IslandFinder';
 import IslandsDebug from './IslandsDebug';
 import { IIsland } from '../../../Data/Interfaces/IIsland';
-import { TilesShadowConfig } from '../../../Data/Configs/TilesShadowConfig';
 import { ILibrariesData } from '../../../Data/Interfaces/IBaseSceneData';
 import { CityGenerator } from './City/CityGenerator';
 import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
@@ -240,7 +239,7 @@ export default class CastleScene extends THREE.Group {
             });
 
             insideTiles.push(...this.wallGenerator.getInsideTiles());
-        }        
+        }
 
         this.createTiles(wallTiles, GenerateEntityType.Walls);
         this.wallDebug?.show(insideTiles);
@@ -255,7 +254,7 @@ export default class CastleScene extends THREE.Group {
 
         for (let i = 0; i < this.wallsCityConfig.length; i++) {
             const wallCityConfig: IWallCityConfig = this.wallsCityConfig[i];
-           
+
             this.cityGenerator.generate(wallCityConfig);
             const steps: INewTileStep[] = this.cityGenerator.getSteps();
             this.steps[GenerateEntityType.City].push(...steps);
@@ -372,10 +371,6 @@ export default class CastleScene extends THREE.Group {
                     hexTileInstance.showTile(step.tile.position);
                 }
             }
-
-            if (TilesShadowConfig[step.tile?.type]?.needUpdate) {
-                needShadowUpdate = true;
-            }
         }
 
         if (needShadowUpdate) {
@@ -425,7 +420,7 @@ export default class CastleScene extends THREE.Group {
         this.configureDelay();
 
         this.tilesShowState = TilesShowState.Ready;
-        
+
         this.checkShowEntityInstant();
         this.checkToShowEntity();
     }
@@ -515,7 +510,7 @@ export default class CastleScene extends THREE.Group {
 
         this.configureDelay();
         this.showPredefinedLandscapeTiles();
-        
+
         this.data.renderer.shadowMap.needsUpdate = true;
         this.tilesShowState = TilesShowState.Ready;
 
@@ -559,6 +554,10 @@ export default class CastleScene extends THREE.Group {
 
             case GenerateEntityType.Walls:
                 this.showTileStepTime = 50;
+                break;
+
+            case GenerateEntityType.City:
+                this.showTileStepTime = 80;
                 break;
         }
     }

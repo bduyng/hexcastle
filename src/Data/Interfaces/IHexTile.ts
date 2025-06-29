@@ -35,5 +35,9 @@ export interface IHexTileInstanceIndex {
 export interface ITileShadowConfig {
     castShadow: boolean;
     receiveShadow: boolean;
-    needUpdate: boolean;
+}
+
+export interface ITileShowAnimationConfig {
+    time: number;
+    easing: (t: number) => number;
 }

@@ -127,7 +127,6 @@ export default class BaseScene {
 
         renderer.shadowMap.enabled = ShadowConfig.enabled;
         renderer.shadowMap.type = ShadowConfig.type;
-        renderer.shadowMap.autoUpdate = false;
     }
 
     private initCamera(): void {

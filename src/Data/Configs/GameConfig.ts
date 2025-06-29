@@ -10,8 +10,8 @@ const GameConfig = {
             default: 5
         },
         showTilesDelays: {
-            min: 6,
-            max: 30,
+            min: 4,
+            max: 23,
             coeff: 200,
         }
     },
@@ -46,6 +46,9 @@ const GameConfig = {
                 maxOffset: [1, 2],
             }
         ]
+    },
+    city: {
+        fillPercentage: 0.4,
     }
 }
 

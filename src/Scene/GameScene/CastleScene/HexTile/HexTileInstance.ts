@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import ThreeJSHelper from '../../../../Helpers/ThreeJSHelper';
-import { IHexTileTransform, IHexTileInstanceData, IHexCoord, IHexTileDebugConfig, IHexTileInstanceIndex } from '../../../../Data/Interfaces/IHexTile';
+import { IHexTileTransform, IHexTileInstanceData, IHexCoord, IHexTileDebugConfig, IHexTileInstanceIndex, ITileShowAnimationConfig } from '../../../../Data/Interfaces/IHexTile';
 import { HexTileType } from '../../../../Data/Enums/HexTileType';
 import HexTileModelConfig from '../../../../Data/Configs/HexTileModelConfig';
 import Materials from '../../../../Core/Materials/Materials';
@@ -11,6 +11,7 @@ import HexTileDebug from './HexTileDebug';
 import { GameConfig } from '../../../../Data/Configs/GameConfig';
 import { TilesShadowConfig } from '../../../../Data/Configs/TilesShadowConfig';
 import TWEEN from 'three/addons/libs/tween.module.js';
+import { TilesShowAnimationConfig } from '../../../../Data/Configs/TilesShowAnimationConfig';
 
 export default class HexTileInstance extends THREE.Group {
     private hexTileInstanceData: IHexTileInstanceData;
@@ -42,13 +43,14 @@ export default class HexTileInstance extends THREE.Group {
 
     public showTile(position: IHexCoord): void {
         const index: number = this.hexTileInstanceIndexes.find(index => index.transform.position.q === position.q && index.transform.position.r === position.r)?.index;
-
+        
         if (index !== undefined) {
+            const config: ITileShowAnimationConfig = TilesShowAnimationConfig[this.hexTileType];
             const scale = { value: 0.001 };
 
             new TWEEN.Tween(scale)
-                .to({ value: 1 }, 100)
-                .easing(TWEEN.Easing.Quadratic.Out)
+                .to({ value: 1 }, config.time)
+                .easing(config.easing)
                 .start()
                 .onUpdate(() => {
                     ThreeJSHelper.updateInstanceTransform(this.hexTileInstanceMesh, index, undefined, undefined, new THREE.Vector3(scale.value, scale.value, scale.value));
