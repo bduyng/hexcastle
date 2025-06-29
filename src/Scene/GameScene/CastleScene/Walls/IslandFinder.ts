@@ -1,6 +1,6 @@
-import { IHexCoord } from '../../../Data/Interfaces/IHexTile';
-import { IIsland } from '../../../Data/Interfaces/IIsland';
-import HexGridHelper from '../../../Helpers/HexGridHelper';
+import { IHexCoord } from '../../../../Data/Interfaces/IHexTile';
+import { IIsland } from '../../../../Data/Interfaces/IIsland';
+import HexGridHelper from '../../../../Helpers/HexGridHelper';
 
 export default class IslandFinder {
     constructor() {

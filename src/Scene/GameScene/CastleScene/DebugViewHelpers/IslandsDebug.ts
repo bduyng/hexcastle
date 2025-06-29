@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { IHexCoord } from '../../../Data/Interfaces/IHexTile';
-import { GameConfig } from '../../../Data/Configs/GameConfig';
-import HexGridHelper from '../../../Helpers/HexGridHelper';
-import { GridOrientation } from '../../../Data/Enums/GridOrientation';
-import { MaterialType } from '../../../Data/Enums/MaterialType';
-import Materials from '../../../Core/Materials/Materials';
-import { IIsland } from '../../../Data/Interfaces/IIsland';
+import { IHexCoord } from '../../../../Data/Interfaces/IHexTile';
+import { GameConfig } from '../../../../Data/Configs/GameConfig';
+import HexGridHelper from '../../../../Helpers/HexGridHelper';
+import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
+import { MaterialType } from '../../../../Data/Enums/MaterialType';
+import Materials from '../../../../Core/Materials/Materials';
+import { IIsland } from '../../../../Data/Interfaces/IIsland';
 
 export default class IslandsDebug extends THREE.Group {
     private tiles: THREE.InstancedMesh;

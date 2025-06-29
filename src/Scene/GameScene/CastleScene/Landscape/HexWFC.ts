@@ -1,11 +1,11 @@
-import { IHexTilesRule } from "../../../Data/Interfaces/IBaseSceneData";
-import { HexTileType } from "../../../Data/Enums/HexTileType";
-import { TileEdgeType } from "../../../Data/Enums/TileEdgeType";
-import { IHexCoord } from "../../../Data/Interfaces/IHexTile";
-import { HexRotation } from "../../../Data/Enums/HexRotation";
-import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig, INewTileStep, IWFCProgressCallback, IWFCAsyncResult } from "../../../Data/Interfaces/IWFC";
-import { NeighborDirections } from "../../../Data/Configs/WFCConfig";
-import { LandscapeTilesRulesConfig } from "../../../Data/Configs/LandscapeTilesRulesConfig";
+import { IHexTilesRule } from "../../../../Data/Interfaces/IBaseSceneData";
+import { HexTileType } from "../../../../Data/Enums/HexTileType";
+import { TileEdgeType } from "../../../../Data/Enums/TileEdgeType";
+import { IHexCoord } from "../../../../Data/Interfaces/IHexTile";
+import { HexRotation } from "../../../../Data/Enums/HexRotation";
+import { IWFCHexTilesInfo, IHexTilesResult, ITileVariant, IWFCConfig, INewTileStep, IWFCProgressCallback, IWFCAsyncResult } from "../../../../Data/Interfaces/IWFC";
+import { NeighborDirections } from "../../../../Data/Configs/WFCConfig";
+import { LandscapeTilesRulesConfig } from "../../../../Data/Configs/LandscapeTilesRulesConfig";
 
 export class HexWFC {
     private tiles: Map<HexTileType, IHexTilesRule>;

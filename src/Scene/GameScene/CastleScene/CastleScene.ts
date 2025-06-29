@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { IHexTilesResult, INewTileStep } from '../../../Data/Interfaces/IWFC';
 import { DefaultWFCConfig } from '../../../Data/Configs/WFCConfig';
-import { HexWFC } from './HexWFC';
+import { HexWFC } from './Landscape/HexWFC';
 import HexTileInstance from './HexTile/HexTileInstance';
 import { IHexCoord, IHexTileInstanceData, IHexTileTransform } from '../../../Data/Interfaces/IHexTile';
 import { TilesShowState } from '../../../Data/Enums/TilesShowState';
@@ -18,16 +18,17 @@ import { DebugGameConfig } from '../../../Data/Configs/Debug/DebugConfig';
 import { GenerateEntityOrder } from '../../../Data/Configs/GenerateEntityConfig';
 import { WallGenerator } from './Walls/WallGenerator';
 import WallDebug from './Walls/WallDebug';
-import TopLevelAvailabilityDebug from './TopLevelAvailabilityDebug';
+import TopLevelAvailabilityDebug from './DebugViewHelpers/TopLevelAvailabilityDebug';
 import { TopLevelAvailabilityConfig } from '../../../Data/Configs/LandscapeTilesRulesConfig';
-import IslandFinder from './IslandFinder';
-import IslandsDebug from './IslandsDebug';
+import IslandFinder from './Walls/IslandFinder';
+import IslandsDebug from './DebugViewHelpers/IslandsDebug';
 import { IIsland } from '../../../Data/Interfaces/IIsland';
 import { ILibrariesData } from '../../../Data/Interfaces/IBaseSceneData';
 import { CityGenerator } from './City/CityGenerator';
 import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
 import HexTileParts from './HexTile/HexTileParts/HexTileParts';
 import { HexTilePartsConfig } from '../../../Data/Configs/HexTilePartsConfig';
+import Clouds from './Clouds';
 
 export default class CastleScene extends THREE.Group {
 
@@ -60,6 +61,7 @@ export default class CastleScene extends THREE.Group {
     private cityGenerator: CityGenerator;
     private wallsCityConfig: IWallCityConfig[] = [];
     private hexTileParts: HexTileParts;
+    private clouds: Clouds;
 
     private isIntroActive: boolean = true;
 
@@ -90,6 +92,7 @@ export default class CastleScene extends THREE.Group {
         }
 
         this.hexTileParts.update(dt);
+        this.clouds.update(dt);
     }
 
     public start(): void {
@@ -110,6 +113,7 @@ export default class CastleScene extends THREE.Group {
         this.initIslandsDebug();
         this.initCityGenerator();
         this.initHexTileParts();
+        this.initClouds();
 
         this.initGlobalListeners();
     }
@@ -379,6 +383,11 @@ export default class CastleScene extends THREE.Group {
     private initHexTileParts(): void {
         this.hexTileParts = new HexTileParts();
         this.add(this.hexTileParts);
+    }
+
+    private initClouds(): void {
+        this.clouds = new Clouds();
+        this.add(this.clouds);
     }
 
     private showPredefinedLandscapeTiles(): void {

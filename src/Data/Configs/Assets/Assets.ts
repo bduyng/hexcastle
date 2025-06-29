@@ -83,7 +83,20 @@ const ModelAssets: string[] = [
     'wall_straight_gate.glb',
 
     // nature
-    'mountain_A.glb'
+    'hills_A.glb',
+    'hills_A_trees.glb',
+    'hills_B.glb',
+    'hills_B_trees.glb',
+    'hills_C.glb',
+    'mountain_A.glb',
+    'mountain_B.glb',
+    'mountain_C.glb',
+    'trees_A_large.glb',
+    'trees_A_medium.glb',
+
+    // clouds
+    'cloud_big.glb',
+    'cloud_small.glb',
 ];
 
 const PixiAssets: string[] = [
