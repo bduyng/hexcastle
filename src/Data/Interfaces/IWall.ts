@@ -12,3 +12,8 @@ export interface IWallGateConfig {
     replace: HexTileType;
     probability: number;
 }
+
+export interface IWallCityConfig {
+    center: IHexCoord;
+    tiles: IHexCoord[];
+}

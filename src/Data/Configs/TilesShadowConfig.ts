@@ -221,13 +221,71 @@ const TilesShadowConfig: { [key in HexTileType]: ITileShadowConfig } = {
         receiveShadow: true,
         needUpdate: true,
     },
-    
+
     // Nature
     [HexTileType.MountainA]: {
         castShadow: true,
         receiveShadow: true,
         needUpdate: true,
     },
+
+    // City
+    [HexTileType.Castle]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.ArcheryRange]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.Barracks]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.Blacksmith]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.Church]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.HomeA]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.HomeB]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.Market]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.Tavern]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.Well]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+    [HexTileType.Windmill]: {
+        castShadow: true,
+        receiveShadow: true,
+        needUpdate: true,
+    },
+
 }
 
 export { TilesShadowConfig };

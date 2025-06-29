@@ -48,6 +48,18 @@ const ModelAssets: string[] = [
 
     // buildings
     'building_castle_blue.glb',
+    'building_archeryrange_blue.glb',
+    'building_barracks_blue.glb',
+    'building_blacksmith_blue.glb',
+    'building_church_blue.glb',
+    'building_home_A_blue.glb',
+    'building_home_B_blue.glb',
+    'building_market_blue.glb',
+    'building_tavern_blue.glb',
+    'building_well_blue.glb',
+    'building_windmill_blue.glb',
+    'building_windmill_top_fan_blue.glb',
+
 
     // wall
     'wall_corner_A_gate.glb',

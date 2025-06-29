@@ -8,31 +8,22 @@ import Materials from '../../../../Core/Materials/Materials';
 
 export default class WallDebug extends THREE.Group {
     private insideTiles: THREE.InstancedMesh;
-    private outsideTiles: THREE.InstancedMesh;
 
     constructor() {
         super();
     }
 
-    public show(insideTiles: IHexCoord[], outsideTiles: IHexCoord[]): void {
+    public show(insideTiles: IHexCoord[]): void {
         this.reset();
 
         this.insideTiles = this.initTiles(insideTiles, MaterialType.TileDebugGreen);
         this.add(this.insideTiles);
-
-        this.outsideTiles = this.initTiles(outsideTiles, MaterialType.TileDebugRed);
-        this.add(this.outsideTiles);
     }
 
     public reset(): void {
         if (this.insideTiles) {
             this.remove(this.insideTiles);
             this.insideTiles.geometry.dispose();
-        }
-
-        if (this.outsideTiles) {
-            this.remove(this.outsideTiles);
-            this.outsideTiles.geometry.dispose();
         }
     }
 

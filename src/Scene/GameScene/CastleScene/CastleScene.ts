@@ -12,7 +12,7 @@ import { GameConfig } from '../../../Data/Configs/GameConfig';
 import Intro from './Intro';
 import FieldRadiusHelper from './FieldRadiusHelper';
 import HexGridHelper from '../../../Helpers/HexGridHelper';
-import { IWallConfig } from '../../../Data/Interfaces/IWall';
+import { IWallCityConfig, IWallConfig } from '../../../Data/Interfaces/IWall';
 import { GenerateEntityType } from '../../../Data/Enums/GenerateEntityType';
 import { DebugGameConfig } from '../../../Data/Configs/Debug/DebugConfig';
 import { GenerateEntityOrder } from '../../../Data/Configs/GenerateEntityConfig';
@@ -25,6 +25,8 @@ import IslandsDebug from './IslandsDebug';
 import { IIsland } from '../../../Data/Interfaces/IIsland';
 import { TilesShadowConfig } from '../../../Data/Configs/TilesShadowConfig';
 import { ILibrariesData } from '../../../Data/Interfaces/IBaseSceneData';
+import { CityGenerator } from './City/CityGenerator';
+import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
 
 export default class CastleScene extends THREE.Group {
 
@@ -53,6 +55,8 @@ export default class CastleScene extends THREE.Group {
     private islandsDebug: IslandsDebug;
     private islands: IIsland[] = [];
     private data: ILibrariesData;
+    private cityGenerator: CityGenerator;
+    private wallsCityConfig: IWallCityConfig[] = [];
 
     private isIntroActive: boolean = true;
 
@@ -99,6 +103,7 @@ export default class CastleScene extends THREE.Group {
         this.initTopLevelAvailabilityDebug();
         this.initIslandFinder();
         this.initIslandsDebug();
+        this.initCityGenerator();
 
         this.initGlobalListeners();
     }
@@ -188,10 +193,6 @@ export default class CastleScene extends THREE.Group {
         this.previousGeneratePercent = 0;
     }
 
-    private getRandomBetween(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
     private generateWall(): void {
         if (this.islands.length === 0) {
             return;
@@ -199,11 +200,12 @@ export default class CastleScene extends THREE.Group {
 
         const wallTiles: IHexTilesResult[] = [];
         let wallsCount: number = Math.random() < GameConfig.walls.secondWallChance && this.islands.length > 1 ? 2 : 1;
+        const insideTiles: IHexCoord[] = [];
 
         for (let i = 0; i < wallsCount; i++) {
             const island: IIsland = this.islands[i];
 
-            if (island.radiusAvailable < GameConfig.walls.secondWallMinRadius && wallsCount > 1) {
+            if (island.radiusAvailable < GameConfig.walls.secondWallMinRadius && wallsCount === 2 && i === 1) {
                 continue;
             }
 
@@ -212,11 +214,11 @@ export default class CastleScene extends THREE.Group {
 
             GameConfig.walls.rules.forEach((rule) => {
                 if (island.radiusAvailable >= rule.radiusAvailable) {
-                    maxOffset = this.getRandomBetween(rule.maxOffset[rule.maxOffset[0]], rule.maxOffset[rule.maxOffset[1]]);
+                    maxOffset = ThreeJSHelper.getRandomBetween(rule.maxOffset[rule.maxOffset[0]], rule.maxOffset[rule.maxOffset[1]]);
                     radius = Math.min(island.radiusAvailable - maxOffset - (maxOffset === 0 ? 0 : 1), GameConfig.walls.maxWallRadius);
 
                     if (radius > 1) {
-                        radius = this.getRandomBetween(radius - 1, radius);
+                        radius = ThreeJSHelper.getRandomBetween(radius - 1, radius);
                     }
                 }
             });
@@ -231,10 +233,37 @@ export default class CastleScene extends THREE.Group {
             this.steps[GenerateEntityType.Walls].push(...this.wallGenerator.getSteps());
 
             wallTiles.push(...this.wallGenerator.getTiles());
-        }
+
+            this.wallsCityConfig.push({
+                center: island.center,
+                tiles: this.wallGenerator.getInsideTiles(),
+            });
+
+            insideTiles.push(...this.wallGenerator.getInsideTiles());
+        }        
 
         this.createTiles(wallTiles, GenerateEntityType.Walls);
-        this.wallDebug?.show(this.wallGenerator.getInsideTiles(), this.wallGenerator.getOutsideTiles());
+        this.wallDebug?.show(insideTiles);
+    }
+
+    private generateCity(): void {
+        if (this.islands.length === 0) {
+            return;
+        }
+
+        const cityTiles: IHexTilesResult[] = [];
+
+        for (let i = 0; i < this.wallsCityConfig.length; i++) {
+            const wallCityConfig: IWallCityConfig = this.wallsCityConfig[i];
+           
+            this.cityGenerator.generate(wallCityConfig);
+            const steps: INewTileStep[] = this.cityGenerator.getSteps();
+            this.steps[GenerateEntityType.City].push(...steps);
+
+            cityTiles.push(...this.cityGenerator.getTiles());
+        }
+
+        this.createTiles(cityTiles, GenerateEntityType.City);
     }
 
     private getStepsPerFrame(radius: number): number {
@@ -308,6 +337,10 @@ export default class CastleScene extends THREE.Group {
             this.islandsDebug = new IslandsDebug();
             this.add(this.islandsDebug);
         }
+    }
+
+    private initCityGenerator(): void {
+        this.cityGenerator = new CityGenerator();
     }
 
     private showPredefinedLandscapeTiles(): void {
@@ -391,9 +424,9 @@ export default class CastleScene extends THREE.Group {
         this.time = 0;
         this.configureDelay();
 
-        this.checkShowEntityInstant();
         this.tilesShowState = TilesShowState.Ready;
-
+        
+        this.checkShowEntityInstant();
         this.checkToShowEntity();
     }
 
@@ -438,6 +471,7 @@ export default class CastleScene extends THREE.Group {
         this.showingEntityType = GenerateEntityOrder[this.showingEntityIndex];
         this.previousGeneratePercent = 0;
         this.islands = [];
+        this.wallsCityConfig = [];
 
         for (const generateType in GenerateEntityType) {
             const type: GenerateEntityType = GenerateEntityType[generateType as keyof typeof GenerateEntityType];
@@ -477,13 +511,15 @@ export default class CastleScene extends THREE.Group {
         }
 
         this.generateWall();
+        this.generateCity();
 
         this.configureDelay();
         this.showPredefinedLandscapeTiles();
-        this.checkShowEntityInstant();
-
+        
         this.data.renderer.shadowMap.needsUpdate = true;
         this.tilesShowState = TilesShowState.Ready;
+
+        this.checkShowEntityInstant();
         this.checkToShowEntity();
     }
 

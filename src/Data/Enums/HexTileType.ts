@@ -53,4 +53,18 @@ export enum HexTileType {
 
     // nature
     MountainA = 'MOUNTAIN_A',
+
+    // buildings
+    Castle = 'CASTLE',
+    ArcheryRange = 'ARCHERY_RANGE',
+    Barracks = 'BARRACKS',
+    Blacksmith = 'BLACKSMITH',
+    Church = 'CHURCH',
+    HomeA = 'HOME_A',
+    HomeB = 'HOME_B',
+    Market = 'MARKET',
+    Tavern = 'TAVERN',
+    Well = 'WELL',
+    Windmill = 'WINDMILL',
+
 }

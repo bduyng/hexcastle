@@ -142,6 +142,41 @@ const HexTileModelConfig: { [key in HexTileType]: IHexTileModelConfig } = {
     [HexTileType.MountainA]: {
         modelName: 'mountain_A',
     },
+
+    // buildings
+    [HexTileType.Castle]: {
+        modelName: 'building_castle_blue',
+    },
+    [HexTileType.ArcheryRange]: {
+        modelName: 'building_archeryrange_blue',
+    },
+    [HexTileType.Barracks]: {
+        modelName: 'building_barracks_blue',
+    },
+    [HexTileType.Blacksmith]: {
+        modelName: 'building_blacksmith_blue',
+    },
+    [HexTileType.Church]: {
+        modelName: 'building_church_blue',
+    },
+    [HexTileType.HomeA]: {
+        modelName: 'building_home_A_blue',
+    },
+    [HexTileType.HomeB]: {
+        modelName: 'building_home_B_blue',
+    },
+    [HexTileType.Market]: {
+        modelName: 'building_market_blue',
+    },
+    [HexTileType.Tavern]: {
+        modelName: 'building_tavern_blue',
+    },
+    [HexTileType.Well]: {
+        modelName: 'building_well_blue',
+    },
+    [HexTileType.Windmill]: {
+        modelName: 'building_windmill_blue',
+    },
 };
 
 export default HexTileModelConfig;

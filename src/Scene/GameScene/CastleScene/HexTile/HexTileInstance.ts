@@ -48,7 +48,7 @@ export default class HexTileInstance extends THREE.Group {
 
             new TWEEN.Tween(scale)
                 .to({ value: 1 }, 100)
-                .easing(TWEEN.Easing.Sinusoidal.Out)
+                .easing(TWEEN.Easing.Quadratic.Out)
                 .start()
                 .onUpdate(() => {
                     ThreeJSHelper.updateInstanceTransform(this.hexTileInstanceMesh, index, undefined, undefined, new THREE.Vector3(scale.value, scale.value, scale.value));
