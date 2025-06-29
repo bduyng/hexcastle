@@ -49,11 +49,29 @@ const GameConfig = {
         ]
     },
     city: {
-        showTilesDelays: 80,
+        showTilesDelays: 60,
         fillPercentage: 0.4,
     },
     nature: {
-        showTilesDelays: 60,
+        showTilesDelays: 40,
+        fillPercentage: 0.05,
+        clusterSettings: {
+            trees: {
+                fillPercentage: 0.03,
+                clusterChance: 0.8,
+                maxClusterSize: 8
+            },
+            mountains: {
+                fillPercentage: 0.01,
+                clusterChance: 0.7,
+                maxClusterSize: 4
+            },
+            hills: {
+                fillPercentage: 0.01,
+                clusterChance: 0.35,
+                maxClusterSize: 2
+            }
+        }
     }
 }
 
