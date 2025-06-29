@@ -47,6 +47,7 @@ const ModelAssets: string[] = [
     'hex_river_L.glb',
 
     // buildings
+    // blue
     'building_castle_blue.glb',
     'building_archeryrange_blue.glb',
     'building_barracks_blue.glb',
@@ -58,6 +59,16 @@ const ModelAssets: string[] = [
     'building_windmill_blue.glb',
     'building_windmill_top_fan_blue.glb',
 
+    // red
+    'building_castle_red.glb',
+    'building_archeryrange_red.glb',
+    'building_barracks_red.glb',
+    'building_church_red.glb',
+    'building_home_B_red.glb',
+    'building_market_red.glb',
+    'building_tavern_red.glb',
+    'building_well_red.glb',
+    'building_windmill_red.glb',
 
     // wall
     'wall_corner_A_gate.glb',

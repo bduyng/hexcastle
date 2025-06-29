@@ -10,9 +10,9 @@ const GameConfig = {
             default: 5
         },
         showTilesDelays: {
-            min: 4,
-            max: 23,
-            coeff: 200,
+            min: 5,
+            max: 20,
+            coeff: 100,
         }
     },
     WFC: {
@@ -25,9 +25,10 @@ const GameConfig = {
                 { radius: 20, steps: 3 },
                 { radius: 25, steps: 2 }
             ]
-        }
+        },
     },
     walls: {
+        showTilesDelays: 50,
         secondWallChance: 0.5,
         secondWallMinRadius: 2,
         maxWallRadius: 5,
@@ -48,6 +49,7 @@ const GameConfig = {
         ]
     },
     city: {
+        showTilesDelays: 80,
         fillPercentage: 0.4,
     }
 }

@@ -16,7 +16,7 @@ export class CityGenerator {
 
     }
 
-    public generate(wallCityConfig: IWallCityConfig): void {
+    public generate(wallCityConfig: IWallCityConfig, cityIndex: number): void {
         this.reset();
 
         const centerIndex = wallCityConfig.tiles.findIndex(tile => tile.q === wallCityConfig.center.q && tile.r === wallCityConfig.center.r);
@@ -24,8 +24,8 @@ export class CityGenerator {
             wallCityConfig.tiles.splice(centerIndex, 1);
         }
 
-        this.generateCastle(wallCityConfig.center);
-        this.generateBuildings(wallCityConfig.tiles);
+        this.generateCastle(wallCityConfig.center, cityIndex);
+        this.generateBuildings(wallCityConfig.tiles, cityIndex);
     }
 
     public reset(): void {
@@ -41,7 +41,7 @@ export class CityGenerator {
         return this.hexTilesResults;
     }
 
-    private generateCastle(center: IHexCoord): void {
+    private generateCastle(center: IHexCoord, cityIndex: number): void {
         const randomRotation = ThreeJSHelper.getRandomFromArray([
             HexRotation.Rotate0,
             HexRotation.Rotate60,
@@ -51,8 +51,13 @@ export class CityGenerator {
             HexRotation.Rotate300
         ]);
 
+        const castleType = [
+            HexTileType.CastleBlue,
+            HexTileType.CastleRed
+        ]
+
         const castle: IHexTilesResult = {
-            type: HexTileType.Castle,
+            type: castleType[cityIndex],
             position: center,
             rotation: randomRotation,
         }
@@ -61,13 +66,13 @@ export class CityGenerator {
         this.newTileSteps.push({
             tile: {
                 position: center,
-                type: HexTileType.Castle,
+                type: castleType[cityIndex],
                 rotation: randomRotation,
             },
         });
     }
 
-    private generateBuildings(tiles: IHexCoord[]): void {
+    private generateBuildings(tiles: IHexCoord[], cityIndex: number): void {
         const totalTiles = tiles.length;
         const buildingsToPlace = Math.floor(totalTiles * GameConfig.city.fillPercentage);
 
@@ -75,14 +80,14 @@ export class CityGenerator {
 
         const placedBuildings: { [key in HexTileType]?: number } = {};
 
-        AvailableWallTileTypes.forEach(buildingType => {
+        AvailableWallTileTypes[cityIndex].forEach(buildingType => {
             placedBuildings[buildingType] = 0;
         });
 
         for (let i = 0; i < buildingsToPlace && i < shuffledTiles.length; i++) {
             const position = shuffledTiles[i];
 
-            const selectedBuildingType = this.selectBuildingTypeWithWeightsAndLimits(AvailableWallTileTypes, BuildingConfig, placedBuildings);
+            const selectedBuildingType = this.selectBuildingTypeWithWeightsAndLimits(AvailableWallTileTypes[cityIndex], BuildingConfig, placedBuildings);
 
             if (!selectedBuildingType) {
                 continue;

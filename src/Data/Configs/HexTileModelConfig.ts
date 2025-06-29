@@ -144,32 +144,59 @@ const HexTileModelConfig: { [key in HexTileType]: IHexTileModelConfig } = {
     },
 
     // buildings
-    [HexTileType.Castle]: {
+    [HexTileType.CastleBlue]: {
         modelName: 'building_castle_blue',
     },
-    [HexTileType.ArcheryRange]: {
+    [HexTileType.ArcheryRangeBlue]: {
         modelName: 'building_archeryrange_blue',
     },
-    [HexTileType.Barracks]: {
+    [HexTileType.BarracksBlue]: {
         modelName: 'building_barracks_blue',
     },
-    [HexTileType.Church]: {
+    [HexTileType.ChurchBlue]: {
         modelName: 'building_church_blue',
     },
-    [HexTileType.HomeB]: {
+    [HexTileType.HomeBBlue]: {
         modelName: 'building_home_B_blue',
     },
-    [HexTileType.Market]: {
+    [HexTileType.MarketBlue]: {
         modelName: 'building_market_blue',
     },
-    [HexTileType.Tavern]: {
+    [HexTileType.TavernBlue]: {
         modelName: 'building_tavern_blue',
     },
-    [HexTileType.Well]: {
+    [HexTileType.WellBlue]: {
         modelName: 'building_well_blue',
     },
-    [HexTileType.Windmill]: {
+    [HexTileType.WindmillBlue]: {
         modelName: 'building_windmill_blue',
+    },
+    [HexTileType.CastleRed]: {
+        modelName: 'building_castle_red',
+    },
+    [HexTileType.ArcheryRangeRed]: {
+        modelName: 'building_archeryrange_red',
+    },
+    [HexTileType.BarracksRed]: {
+        modelName: 'building_barracks_red',
+    },
+    [HexTileType.ChurchRed]: {
+        modelName: 'building_church_red',
+    },
+    [HexTileType.HomeBRed]: {
+        modelName: 'building_home_B_red',
+    },
+    [HexTileType.MarketRed]: {
+        modelName: 'building_market_red',
+    },
+    [HexTileType.TavernRed]: {
+        modelName: 'building_tavern_red',
+    },
+    [HexTileType.WellRed]: {
+        modelName: 'building_well_red',
+    },
+    [HexTileType.WindmillRed]: {
+        modelName: 'building_windmill_red',
     },
 };
 

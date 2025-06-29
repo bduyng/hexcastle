@@ -255,7 +255,7 @@ export default class CastleScene extends THREE.Group {
         for (let i = 0; i < this.wallsCityConfig.length; i++) {
             const wallCityConfig: IWallCityConfig = this.wallsCityConfig[i];
 
-            this.cityGenerator.generate(wallCityConfig);
+            this.cityGenerator.generate(wallCityConfig, i);
             const steps: INewTileStep[] = this.cityGenerator.getSteps();
             this.steps[GenerateEntityType.City].push(...steps);
 
@@ -553,11 +553,11 @@ export default class CastleScene extends THREE.Group {
                 break;
 
             case GenerateEntityType.Walls:
-                this.showTileStepTime = 50;
+                this.showTileStepTime = GameConfig.walls.showTilesDelays;
                 break;
 
             case GenerateEntityType.City:
-                this.showTileStepTime = 80;
+                this.showTileStepTime = GameConfig.city.showTilesDelays;
                 break;
         }
     }

@@ -54,6 +54,26 @@ const HexTilesByCategory: { [key in HexTileCategory]: HexTileType[] } = {
         HexTileType.WallStraight,
         HexTileType.WallStraightGate,
     ],
+    [HexTileCategory.City]: [
+        HexTileType.CastleBlue,
+        HexTileType.ArcheryRangeBlue,
+        HexTileType.BarracksBlue,
+        HexTileType.ChurchBlue,
+        HexTileType.HomeBBlue,
+        HexTileType.MarketBlue,
+        HexTileType.TavernBlue,
+        HexTileType.WellBlue,
+        HexTileType.WindmillBlue,
+        HexTileType.CastleRed,
+        HexTileType.ArcheryRangeRed,
+        HexTileType.BarracksRed,
+        HexTileType.ChurchRed,
+        HexTileType.HomeBRed,
+        HexTileType.MarketRed,
+        HexTileType.TavernRed,
+        HexTileType.WellRed,
+        HexTileType.WindmillRed,
+    ],
 }
 
 

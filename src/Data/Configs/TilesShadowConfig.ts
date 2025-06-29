@@ -187,39 +187,78 @@ const TilesShadowConfig: { [key in HexTileType]: ITileShadowConfig } = {
     },
 
     // City
-    [HexTileType.Castle]: {
+    // Blue buildings
+    [HexTileType.CastleBlue]: {
         castShadow: true,
         receiveShadow: true,
     },
-    [HexTileType.ArcheryRange]: {
+    [HexTileType.ArcheryRangeBlue]: {
         castShadow: true,
         receiveShadow: true,
     },
-    [HexTileType.Barracks]: {
+    [HexTileType.BarracksBlue]: {
         castShadow: true,
         receiveShadow: true,
     },
-    [HexTileType.Church]: {
+    [HexTileType.ChurchBlue]: {
         castShadow: true,
         receiveShadow: true,
     },
-    [HexTileType.HomeB]: {
+    [HexTileType.HomeBBlue]: {
         castShadow: true,
         receiveShadow: true,
     },
-    [HexTileType.Market]: {
+    [HexTileType.MarketBlue]: {
         castShadow: true,
         receiveShadow: true,
     },
-    [HexTileType.Tavern]: {
+    [HexTileType.TavernBlue]: {
         castShadow: true,
         receiveShadow: true,
     },
-    [HexTileType.Well]: {
+    [HexTileType.WellBlue]: {
         castShadow: true,
         receiveShadow: true,
     },
-    [HexTileType.Windmill]: {
+    [HexTileType.WindmillBlue]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+
+    // Red buildings
+    [HexTileType.CastleRed]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.ArcheryRangeRed]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.BarracksRed]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.ChurchRed]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.HomeBRed]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.MarketRed]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.TavernRed]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.WellRed]: {
+        castShadow: true,
+        receiveShadow: true,
+    },
+    [HexTileType.WindmillRed]: {
         castShadow: true,
         receiveShadow: true,
     },

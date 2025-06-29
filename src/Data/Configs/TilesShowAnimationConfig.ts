@@ -188,43 +188,78 @@ const TilesShowAnimationConfig: { [key in HexTileType]: ITileShowAnimationConfig
     },
 
     // City
-    [HexTileType.Castle]: {
+    [HexTileType.CastleBlue]: {
         time: 400,
         easing: TWEEN.Easing.Back.Out
     },
-    [HexTileType.ArcheryRange]: {
+    [HexTileType.ArcheryRangeBlue]: {
         time: 400,
         easing: TWEEN.Easing.Back.Out
     },
-    [HexTileType.Barracks]: {
+    [HexTileType.BarracksBlue]: {
         time: 400,
         easing: TWEEN.Easing.Back.Out
     },
-    [HexTileType.Church]: {
+    [HexTileType.ChurchBlue]: {
         time: 400,
         easing: TWEEN.Easing.Back.Out
     },
-    [HexTileType.HomeB]: {
+    [HexTileType.HomeBBlue]: {
         time: 400,
         easing: TWEEN.Easing.Back.Out
     },
-    [HexTileType.Market]: {
+    [HexTileType.MarketBlue]: {
         time: 400,
         easing: TWEEN.Easing.Back.Out
     },
-    [HexTileType.Tavern]: {
+    [HexTileType.TavernBlue]: {
         time: 400,
         easing: TWEEN.Easing.Back.Out
     },
-    [HexTileType.Well]: {
+    [HexTileType.WellBlue]: {
         time: 400,
         easing: TWEEN.Easing.Back.Out
     },
-    [HexTileType.Windmill]: {
+    [HexTileType.WindmillBlue]: {
         time: 400,
         easing: TWEEN.Easing.Back.Out
     },
-
+    [HexTileType.CastleRed]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.ArcheryRangeRed]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.BarracksRed]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.ChurchRed]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.HomeBRed]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.MarketRed]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.TavernRed]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.WellRed]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    },
+    [HexTileType.WindmillRed]: {
+        time: 400,
+        easing: TWEEN.Easing.Back.Out
+    }
 }
 
 export { TilesShowAnimationConfig };
