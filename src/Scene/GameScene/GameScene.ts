@@ -4,6 +4,8 @@ import TilesDebugMode from './CastleScene/DebugViewHelpers/TilesDebugMode';
 import CastleScene from './CastleScene/CastleScene';
 import CameraController from './CameraController';
 import { DebugGameConfig } from '../../Data/Configs/Debug/DebugConfig';
+import { GlobalEventBus } from '../../Core/GlobalEvents';
+import { DefaultWFCConfig } from '../../Data/Configs/WFCConfig';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -23,7 +25,7 @@ export default class GameScene extends THREE.Group {
             this.castleScene.update(dt);
         }
 
-        this.cameraController.update();
+        this.cameraController.update(dt);
     }
 
     public start(): void {
@@ -39,6 +41,7 @@ export default class GameScene extends THREE.Group {
             this.initTilesDebugMode();
         } else {
             this.initCastleScene();
+            this.initGlobalListeners();
         }
     }
 
@@ -55,6 +58,10 @@ export default class GameScene extends THREE.Group {
     private initCastleScene(): void {
         const castleScene = this.castleScene = new CastleScene(this.data);
         this.add(castleScene);
+    }
+
+    private initGlobalListeners(): void {
+        GlobalEventBus.on('game:generateStarted', () => this.cameraController.moveForTargetRadius(DefaultWFCConfig.radius));
     }
 
 }

@@ -532,13 +532,15 @@ export default class CastleScene extends THREE.Group {
     private initGlobalListeners(): void {
         GlobalEventBus.on('game:generate', () => this.generateScene());
         GlobalEventBus.on('game:fieldRadiusChanged', (radius: number) => this.onFieldRadiusChanged(radius));
+        GlobalEventBus.on('game:stopGenerate', () => this.stopGenerate());
         GlobalEventBus.on('ui:sliderPointerUp', () => this.onSliderPointerUp());
         GlobalEventBus.on('ui:sliderPointerDown', () => this.sliderPointerDown());
-        GlobalEventBus.on('game:stopGenerate', () => this.stopGenerate());
     }
 
     private async generateScene(): Promise<void> {
         DefaultWFCConfig.radius = this.newRadius;
+        GlobalEventBus.emit('game:generateStarted');
+
         this.generatingStopped = false;
         this.disableIntro();
 

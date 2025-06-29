@@ -8,6 +8,8 @@ export type GlobalEvents = {
     'game:startGeneratingWorld': void;
     'game:progressGeneratingWorld': number;
     'game:finishGeneratingWorld': void;
+    'game:startInteractionOrbitControls': void;
+    'game:generateStarted': number;
 
     'ui:sliderPointerDown': void;
     'ui:sliderPointerUp': void;
