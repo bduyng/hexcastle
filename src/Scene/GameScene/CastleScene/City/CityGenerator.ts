@@ -28,6 +28,19 @@ export class CityGenerator {
         this.generateBuildings(wallCityConfig.tiles, cityIndex);
     }
 
+    public generateOnlyCastle(availableTiles: IHexCoord[], cityIndex: number): void {
+        this.reset();
+
+        if (availableTiles.length === 0) {
+            return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * availableTiles.length);
+        const center = availableTiles[randomIndex];
+
+        this.generateCastle(center, cityIndex);
+    }
+
     public reset(): void {
         this.hexTilesResults = [];
         this.newTileSteps = [];
