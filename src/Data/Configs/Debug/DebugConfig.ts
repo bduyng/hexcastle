@@ -10,11 +10,11 @@ const DebugConfig = {
 
 const DebugGameConfig = {
     tilesDebugMode: null, // HexTileCategory.Walls,
-    grid: true,
+    grid: false,
     generateType: {
         [GenerateEntityType.Landscape]: {
             show: true,
-            showInstantly: false,
+            showInstantly: true,
             hexTileDebug: {
                 rotation: false,
                 edge: false,

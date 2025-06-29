@@ -35,7 +35,7 @@ const BuildingConfig: { [key in HexTileType]?: IBuildingConfig } = {
         maxCount: 1
     },
     [HexTileType.WindmillBlue]: {
-        weight: 0.7,
+        weight: 2,
         maxCount: 1
     },
     [HexTileType.MarketBlue]: {
@@ -68,7 +68,7 @@ const BuildingConfig: { [key in HexTileType]?: IBuildingConfig } = {
         maxCount: 1
     },
     [HexTileType.WindmillRed]: {
-        weight: 0.7,
+        weight: 2,
         maxCount: 1
     },
     [HexTileType.MarketRed]: {

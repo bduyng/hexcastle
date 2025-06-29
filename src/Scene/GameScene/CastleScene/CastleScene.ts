@@ -26,6 +26,8 @@ import { IIsland } from '../../../Data/Interfaces/IIsland';
 import { ILibrariesData } from '../../../Data/Interfaces/IBaseSceneData';
 import { CityGenerator } from './City/CityGenerator';
 import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
+import HexTileParts from './HexTile/HexTileParts/HexTileParts';
+import { HexTilePartsConfig } from '../../../Data/Configs/HexTilePartsConfig';
 
 export default class CastleScene extends THREE.Group {
 
@@ -57,6 +59,7 @@ export default class CastleScene extends THREE.Group {
     private data: ILibrariesData;
     private cityGenerator: CityGenerator;
     private wallsCityConfig: IWallCityConfig[] = [];
+    private hexTileParts: HexTileParts;
 
     private isIntroActive: boolean = true;
 
@@ -85,6 +88,8 @@ export default class CastleScene extends THREE.Group {
         if (this.tilesShowState === TilesShowState.CompleteEntity) {
             this.afterShowGenerateEntity();
         }
+
+        this.hexTileParts.update(dt);
     }
 
     public start(): void {
@@ -104,6 +109,7 @@ export default class CastleScene extends THREE.Group {
         this.initIslandFinder();
         this.initIslandsDebug();
         this.initCityGenerator();
+        this.initHexTileParts();
 
         this.initGlobalListeners();
     }
@@ -370,6 +376,11 @@ export default class CastleScene extends THREE.Group {
         this.cityGenerator = new CityGenerator();
     }
 
+    private initHexTileParts(): void {
+        this.hexTileParts = new HexTileParts();
+        this.add(this.hexTileParts);
+    }
+
     private showPredefinedLandscapeTiles(): void {
         if (DebugGameConfig.generateType[this.showingEntityType].show === false) {
             return;
@@ -397,6 +408,10 @@ export default class CastleScene extends THREE.Group {
                 const hexTileInstance = this.findHexTileInstanceByPosition(step.tile.position, generateEntityType);
                 if (hexTileInstance) {
                     hexTileInstance.showTile(step.tile.position);
+
+                    if (HexTilePartsConfig[step.tile.type]) {
+                        this.hexTileParts.showPart(step.tile.type, step.tile.rotation, step.tile.position);
+                    }
                 }
             }
         }
@@ -507,6 +522,7 @@ export default class CastleScene extends THREE.Group {
             this.steps[type] = [];
         }
 
+        this.hexTileParts.reset();
         this.wallDebug?.reset();
         this.entropyHelper?.reset();
         this.topLevelAvailabilityDebug?.reset();
