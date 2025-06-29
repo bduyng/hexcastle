@@ -14,7 +14,7 @@ const DebugGameConfig = {
     generateType: {
         [GenerateEntityType.Landscape]: {
             show: true,
-            showInstantly: true,
+            showInstantly: false,
             hexTileDebug: {
                 rotation: false,
                 edge: false,

@@ -31,7 +31,7 @@ const GameConfig = {
         showTilesDelays: 50,
         secondWallChance: 0.5,
         secondWallMinRadius: 2,
-        maxWallRadius: 5,
+        maxWallRadius: 6,
         maxWallOffset: 2,
         rules: [
             {
