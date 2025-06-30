@@ -5,7 +5,7 @@ export default class Clouds extends THREE.Group {
         super();
     }
 
-    public update(dt: number): void {
+    // public update(dt: number): void {
       
-    }
+    // }
 }
