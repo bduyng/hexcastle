@@ -185,9 +185,11 @@ export default class Clouds extends THREE.Group {
             [CloudType.Small]: 0
         };
 
+        const positions = this.getUniformCloudPositions(cloudsCount);
+
         for (let i = 0; i < cloudsCount; i++) {
             const type = Math.random() < 0.5 ? CloudType.Big : CloudType.Small;
-            const position = this.getRandomStartPosition();
+            const position = positions[i];
             const rotation = this.getStartRotation();
             const speed = THREE.MathUtils.randFloat(CloudsConfig.speed.min, CloudsConfig.speed.max);
             const scale = THREE.MathUtils.randFloat(CloudsConfig.scale.min, CloudsConfig.scale.max);
@@ -209,13 +211,37 @@ export default class Clouds extends THREE.Group {
         }
     }
 
-    private getRandomStartPosition(): THREE.Vector3 {
-        const randomAngle = Math.random() * 2 * Math.PI;
-        const randomRadius = Math.random() * this.maxDistance;
-        const randomX = randomRadius * Math.cos(randomAngle);
-        const randomZ = randomRadius * Math.sin(randomAngle);
-        const height = THREE.MathUtils.randFloat(CloudsConfig.height.min, CloudsConfig.height.max);
-        return new THREE.Vector3(randomX, height, randomZ);
+    private getUniformCloudPositions(count: number): THREE.Vector3[] {
+        const positions: THREE.Vector3[] = [];
+        
+        const rings = Math.ceil(Math.sqrt(count / Math.PI));
+        const sectorsPerRing = Math.ceil(count / rings);
+        
+        let cloudIndex = 0;
+        
+        for (let ring = 0; ring < rings && cloudIndex < count; ring++) {
+            const ringRadius = (ring + 0.5) * this.maxDistance / rings;
+            const sectorsInThisRing = Math.min(sectorsPerRing, count - cloudIndex);
+            
+            for (let sector = 0; sector < sectorsInThisRing && cloudIndex < count; sector++) {
+                const angle = (sector + Math.random() * 0.5) * 2 * Math.PI / sectorsInThisRing;
+                const radius = ringRadius + (Math.random() - 0.5) * this.maxDistance / rings;
+                
+                const x = radius * Math.cos(angle);
+                const z = radius * Math.sin(angle);
+                const height = THREE.MathUtils.randFloat(CloudsConfig.height.min, CloudsConfig.height.max);
+                
+                positions.push(new THREE.Vector3(x, height, z));
+                cloudIndex++;
+            }
+        }
+        
+        for (let i = positions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [positions[i], positions[j]] = [positions[j], positions[i]];
+        }
+        
+        return positions;
     }
 
     private getStartRotation(): THREE.Quaternion {
