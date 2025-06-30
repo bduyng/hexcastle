@@ -6,6 +6,7 @@ const ModelAssets: string[] = [
     // base tiles
     'hex_grass.glb',
     'hex_water.glb',
+    'hex_error.glb',
 
     // roads
     'hex_road_A.glb',

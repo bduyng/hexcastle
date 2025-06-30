@@ -40,12 +40,17 @@ export default class CameraController extends THREE.Group {
         this.targetPosition = new THREE.Vector3(0, 0, 0).add(direction.multiplyScalar(this.targetDistance));
 
         const currentPosition = this.camera.position;
+        const currentDistanceFromCenter = currentPosition.length();
         const distanceToTarget = currentPosition.distanceTo(this.targetPosition);
         this.speed = distanceToTarget;
 
         if (instant) {
             this.camera.position.copy(this.targetPosition);
             this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+            this.state = CameraState.Free;
+        }
+
+        if (this.targetDistance < currentDistanceFromCenter) {
             this.state = CameraState.Free;
         }
     }

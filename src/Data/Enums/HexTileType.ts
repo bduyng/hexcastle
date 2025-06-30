@@ -2,6 +2,7 @@ export enum HexTileType {
     // base
     Grass = 'GRASS',
     Water = 'WATER',
+    Error = 'ERROR',
 
     // roads
     RoadA = 'ROAD_A',
