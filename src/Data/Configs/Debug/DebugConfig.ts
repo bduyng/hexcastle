@@ -1,11 +1,11 @@
 import { GenerateEntityType } from "../../Enums/GenerateEntityType";
 
 const DebugConfig = {
-    fpsMeter: true,
-    rendererStats: true,
+    fpsMeter: false,
+    rendererStats: false,
     orbitControls: true,
     showAxisHelper: false,
-    gui: true,
+    gui: false,
 };
 
 const DebugGameConfig = {

@@ -1,5 +1,6 @@
 export enum MaterialType {
     Main = 'MAIN',
+    Cloud = 'CLOUD',
     Transparent = 'TRANSPARENT',
     TileDebugGreen = 'TILE_DEBUG_GREEN',
     TileDebugRed = 'TILE_DEBUG_RED',

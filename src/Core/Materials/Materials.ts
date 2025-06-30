@@ -20,6 +20,7 @@ export default class Materials {
 
     private initMaterials(): void {
         this.initMainMaterial();
+        this.initCloudMaterial();
         this.initTransparentMaterial();
         this.initTileDebugMaterials();
     }
@@ -31,6 +32,18 @@ export default class Materials {
 
         this.materials[MaterialType.Main] = new THREE.MeshLambertMaterial({
             map: texture,
+        });
+    }
+
+    private initCloudMaterial(): void {
+        const texture: THREE.Texture = Loader.assets['hexagons_medieval'] as THREE.Texture;
+        texture.flipY = false;
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        this.materials[MaterialType.Cloud] = new THREE.MeshLambertMaterial({
+            map: texture,
+            transparent: true,
+            opacity: 0.9,
         });
     }
 

@@ -21,6 +21,10 @@ export default class GameScene extends THREE.Group {
     }
 
     public update(dt: number): void {
+        if (dt > 0.1) {
+            dt = 0.1;
+        }
+
         if (this.castleScene) {
             this.castleScene.update(dt);
         }
