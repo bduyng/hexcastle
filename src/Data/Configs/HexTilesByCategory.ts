@@ -5,6 +5,7 @@ const HexTilesByCategory: { [key in HexTileCategory]: HexTileType[] } = {
     [HexTileCategory.Base]: [
         HexTileType.Grass,
         HexTileType.Water,
+        HexTileType.Error,
     ],
     [HexTileCategory.Roads]: [
         HexTileType.RoadA,

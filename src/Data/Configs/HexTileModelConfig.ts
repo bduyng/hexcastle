@@ -9,6 +9,9 @@ const HexTileModelConfig: { [key in HexTileType]: IHexTileModelConfig } = {
     [HexTileType.Water]: {
         modelName: 'hex_water',
     },
+    [HexTileType.Error]: {
+        modelName: 'hex_error',
+    },
 
     // roads
     [HexTileType.RoadA]: {

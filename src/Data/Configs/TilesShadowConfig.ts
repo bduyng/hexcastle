@@ -11,6 +11,10 @@ const TilesShadowConfig: { [key in HexTileType]: ITileShadowConfig } = {
         castShadow: false,
         receiveShadow: true,
     },
+    [HexTileType.Error]: {
+        castShadow: false,
+        receiveShadow: true,
+    },
 
     // Roads
     [HexTileType.RoadA]: {

@@ -12,6 +12,10 @@ const TilesShowAnimationConfig: { [key in HexTileType]: ITileShowAnimationConfig
         time: 100,
         easing: TWEEN.Easing.Quadratic.Out
     },
+    [HexTileType.Error]: {
+        time: 100,
+        easing: TWEEN.Easing.Quadratic.Out
+    },
 
     // Roads
     [HexTileType.RoadA]: {

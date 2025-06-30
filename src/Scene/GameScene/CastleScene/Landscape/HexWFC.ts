@@ -44,12 +44,23 @@ export class HexWFC {
             const hexTile: IWFCHexTilesInfo = this.findLowestEntropyHexTile();
 
             if (!hexTile) {
+                this.fillRemainingTilesWithError();
                 return true;
             }
 
             if (hexTile.entropy === 0) {
-                hexTile.collapsed = true;
-                hexTile.entropy = 0;
+                this.placeErrorTile(hexTile);
+                
+                this.steps.push({
+                    tile: {
+                        position: hexTile.coord,
+                        type: HexTileType.Error,
+                        rotation: HexRotation.Rotate0
+                    },
+                    landscapeFreeCells: this.getFreeCellsInfo()
+                });
+                
+                stepIndex++;
                 continue;
             }
 
@@ -57,8 +68,18 @@ export class HexWFC {
 
             const success: boolean = this.propagateConstraints(hexTile);
             if (!success) {
-                hexTile.collapsed = false;
-                hexTile.entropy = 0;
+                this.placeErrorTile(hexTile);
+                
+                this.steps.push({
+                    tile: {
+                        position: hexTile.coord,
+                        type: HexTileType.Error,
+                        rotation: HexRotation.Rotate0
+                    },
+                    landscapeFreeCells: this.getFreeCellsInfo()
+                });
+                
+                stepIndex++;
                 continue;
             }
 
@@ -109,6 +130,7 @@ export class HexWFC {
                 const hexTile: IWFCHexTilesInfo = this.findLowestEntropyHexTile();
 
                 if (!hexTile) {
+                    this.fillRemainingTilesWithError();
                     const result = this.getTiles();
                     return {
                         success: true,
@@ -118,8 +140,30 @@ export class HexWFC {
                 }
 
                 if (hexTile.entropy === 0) {
-                    hexTile.collapsed = true;
-                    hexTile.entropy = 0;
+                    this.placeErrorTile(hexTile);
+                    
+                    const newStep = {
+                        tile: {
+                            position: hexTile.coord,
+                            type: HexTileType.Error,
+                            rotation: HexRotation.Rotate0
+                        },
+                        landscapeFreeCells: this.getFreeCellsInfo()
+                    };
+
+                    this.steps.push(newStep);
+
+                    if (progressCallback) {
+                        progressCallback(stepIndex);
+                    }
+
+                    stepIndex++;
+                    stepsInCurrentFrame++;
+
+                    if (stepsInCurrentFrame >= stepsPerFrame) {
+                        await this.yieldToMainThread();
+                        stepsInCurrentFrame = 0;
+                    }
                     continue;
                 }
 
@@ -127,9 +171,30 @@ export class HexWFC {
 
                 const success: boolean = this.propagateConstraints(hexTile);
                 if (!success) {
-                    hexTile.collapsed = false;
-                    hexTile.entropy = 0;
-                    this.steps.pop();
+                    this.placeErrorTile(hexTile);
+                    
+                    const newStep = {
+                        tile: {
+                            position: hexTile.coord,
+                            type: HexTileType.Error,
+                            rotation: HexRotation.Rotate0
+                        },
+                        landscapeFreeCells: this.getFreeCellsInfo()
+                    };
+
+                    this.steps.push(newStep);
+
+                    if (progressCallback) {
+                        progressCallback(stepIndex);
+                    }
+
+                    stepIndex++;
+                    stepsInCurrentFrame++;
+
+                    if (stepsInCurrentFrame >= stepsPerFrame) {
+                        await this.yieldToMainThread();
+                        stepsInCurrentFrame = 0;
+                    }
                     continue;
                 }
 
@@ -348,7 +413,6 @@ export class HexWFC {
 
             checked.add(currentKey);
 
-            // Проверяем все соседние ячейки для текущей
             for (let direction = 0; direction < 6; direction++) {
                 const neighborCoord = this.getNeighborCoord(currentHexTile.coord, direction);
                 const neighborKey = this.getCoordKey(neighborCoord);
@@ -357,14 +421,11 @@ export class HexWFC {
                 if (!neighbor || neighbor.collapsed)
                     continue;
 
-                // Получаем все возможные варианты для текущей ячейки
                 const currentVariants = Array.from(currentHexTile.possibleVariants);
                 const oppositeDirection = this.getOppositeDirection(direction);
 
-                // Собираем все возможные ребра, которые могут быть у текущей ячейки
                 const possibleEdges = new Set(currentVariants.map(v => v.edges[direction]));
 
-                // Фильтруем варианты соседа, оставляя только те, которые совместимы хотя бы с одним вариантом текущей ячейки
                 const compatibleVariants = Array.from(neighbor.possibleVariants).filter(variant => {
                     const neighborEdge = variant.edges[oppositeDirection];
                     return possibleEdges.has(neighborEdge);
@@ -457,5 +518,29 @@ export class HexWFC {
         }
 
         return true;
+    }
+
+    private fillRemainingTilesWithError(): void {
+        for (const tile of this.grid.values()) {
+            if (!tile.collapsed) {
+                this.placeErrorTile(tile);
+            }
+        }
+    }
+
+    private placeErrorTile(tile: IWFCHexTilesInfo): void {
+        const errorVariant = this.tileVariants.find(v => v.type === HexTileType.Error);
+        if (!errorVariant) {
+            console.error('Error tile variant not found');
+            return;
+        }
+        
+        tile.collapsed = true;
+        tile.possibleVariants = new Set<ITileVariant>([errorVariant]);
+        tile.possibleTiles = new Set<HexTileType>([errorVariant.type]);
+        tile.possibleRotations = new Set<HexRotation>([errorVariant.rotation]);
+        tile.rotation = errorVariant.rotation;
+        tile.type = errorVariant.type;
+        tile.entropy = 1;
     }
 }

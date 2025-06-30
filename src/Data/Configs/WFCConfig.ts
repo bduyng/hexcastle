@@ -7,6 +7,7 @@ const WFCTiles: HexTileType[] = [
     // Base tiles
     HexTileType.Grass,
     HexTileType.Water,
+    HexTileType.Error,
 
     HexTileType.RoadA, // 2 road edges
     HexTileType.RoadB, // 2 road edges
