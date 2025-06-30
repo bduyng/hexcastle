@@ -430,12 +430,25 @@ const LandscapeTilesRulesConfig: IHexTilesRule[] = [
         ],
         weight: 1,
     },
+    {
+        type: HexTileType.Error,
+        edges: [ // 0 - 60 - 120 - 180 - 240 - 300
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+            TileEdgeType.Grass,
+        ],
+        weight: 0,
+    },
 ];
 
 const TopLevelAvailabilityConfig: { [key in HexTileType]?: boolean } = {
     // Base tiles
     [HexTileType.Grass]: true,
     [HexTileType.Water]: false,
+    [HexTileType.Error]: true,
 
     // Road tiles
     [HexTileType.RoadA]: true,

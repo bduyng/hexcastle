@@ -10,9 +10,9 @@ const GameConfig = {
             default: 5
         },
         showTilesDelays: {
-            min: 8,
-            max: 40,
-            coeff: 200,
+            min: 5,
+            max: 20,
+            coeff: 100,
         }
     },
     WFC: {
@@ -25,6 +25,52 @@ const GameConfig = {
                 { radius: 20, steps: 3 },
                 { radius: 25, steps: 2 }
             ]
+        },
+    },
+    walls: {
+        showTilesDelays: 50,
+        secondWallChance: 0.5,
+        secondWallMinRadius: 2,
+        maxWallRadius: 6,
+        maxWallOffset: 2,
+        rules: [
+            {
+                radiusAvailable: 1,
+                maxOffset: [0, 0],
+            },
+            {
+                radiusAvailable: 4,
+                maxOffset: [1, 1],
+            },
+            {
+                radiusAvailable: Infinity,
+                maxOffset: [1, 2],
+            }
+        ]
+    },
+    city: {
+        showTilesDelays: 60,
+        fillPercentage: 0.4,
+    },
+    nature: {
+        showTilesDelays: 40,
+        fillPercentage: 0.05,
+        clusterSettings: {
+            trees: {
+                fillPercentage: 0.03,
+                clusterChance: 0.8,
+                maxClusterSize: 8
+            },
+            mountains: {
+                fillPercentage: 0.01,
+                clusterChance: 0.7,
+                maxClusterSize: 4
+            },
+            hills: {
+                fillPercentage: 0.01,
+                clusterChance: 0.35,
+                maxClusterSize: 2
+            }
         }
     }
 }

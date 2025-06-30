@@ -137,4 +137,13 @@ export default class ThreeJSHelper {
         instanceMesh.setMatrixAt(index, newMatrix);
         instanceMesh.instanceMatrix.needsUpdate = true;
     }
+
+    public static getRandomBetween(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    public static getRandomFromArray<T>(array: T[]): T {
+        const randomIndex = Math.floor(Math.random() * array.length);
+        return array[randomIndex];
+    }
 }

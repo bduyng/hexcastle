@@ -127,6 +127,10 @@ export default class DebugMenu {
         if (!this.isAssetsLoaded) {
             orbitControls.enabled = false;
         }
+
+        orbitControls.addEventListener('start', () => {
+            GlobalEventBus.emit('game:startInteractionOrbitControls');
+        });
     }
 
     private initLilGUIHelper(): void {

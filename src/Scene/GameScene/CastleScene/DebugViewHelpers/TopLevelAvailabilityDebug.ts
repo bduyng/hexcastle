@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { IHexCoord } from '../../../Data/Interfaces/IHexTile';
-import { GameConfig } from '../../../Data/Configs/GameConfig';
-import HexGridHelper from '../../../Helpers/HexGridHelper';
-import { GridOrientation } from '../../../Data/Enums/GridOrientation';
-import { MaterialType } from '../../../Data/Enums/MaterialType';
-import Materials from '../../../Core/Materials/Materials';
+import { IHexCoord } from '../../../../Data/Interfaces/IHexTile';
+import { GameConfig } from '../../../../Data/Configs/GameConfig';
+import HexGridHelper from '../../../../Helpers/HexGridHelper';
+import { GridOrientation } from '../../../../Data/Enums/GridOrientation';
+import { MaterialType } from '../../../../Data/Enums/MaterialType';
+import Materials from '../../../../Core/Materials/Materials';
 
 export default class TopLevelAvailabilityDebug extends THREE.Group {
     private availableTiles: THREE.InstancedMesh;

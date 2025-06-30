@@ -65,3 +65,13 @@ div { -webkit-user-select: none !important; }
   transition: opacity 0.3s ease-in-out;
 }
 
+.credits
+{
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  color: #000000;
+  font-size: 16px;
+  font-family: sans-serif;
+  opacity: 0.5;
+}

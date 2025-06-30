@@ -72,4 +72,10 @@ export default class HexGridHelper {
     public static isPositionsEqual(coord1: IHexCoord, coord2: IHexCoord): boolean {
         return coord1.q === coord2.q && coord1.r === coord2.r;
     }
+
+    public static removeSameTiles(hexTiles1: IHexCoord[], hexTiles2: IHexCoord[]): IHexCoord[] {
+        return hexTiles1.filter(tile1 => {
+            return !hexTiles2.some(tile2 => this.isPositionsEqual(tile1, tile2));
+        });
+    }
 }

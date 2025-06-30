@@ -4,6 +4,9 @@ const CameraConfig = {
         near: 1,
         far: 130,
     },
+    startAngle: 35,
+    distanceRadiusCoeff: 4,
+    distanceRadiusAdd: 10,
 }
 
 export default CameraConfig;

@@ -31,3 +31,13 @@ export interface IHexTileInstanceIndex {
     index: number;
     transform: IHexTileTransform;
 }
+
+export interface ITileShadowConfig {
+    castShadow: boolean;
+    receiveShadow: boolean;
+}
+
+export interface ITileShowAnimationConfig {
+    time: number;
+    easing: (t: number) => number;
+}

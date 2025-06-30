@@ -41,6 +41,7 @@ export default class BaseScene {
             directionalLight: this.directionalLight,
             pixiApp: this.pixiApp,
             uiContainer: this.uiContainer,
+            renderer: this.renderer,
         };
 
         this.mainScene = new MainScene(librariesData);
@@ -143,7 +144,25 @@ export default class BaseScene {
         const directionalLight = this.directionalLight = new THREE.DirectionalLight(directionalLightConfig.color, directionalLightConfig.intensity);
         this.scene.add(directionalLight);
 
-        directionalLight.position.set(5, 10, 0);
+        directionalLight.position.set(7, 17, 5);
+
+        // const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 1);
+        // this.scene.add(lightHelper);
+
+        if (ShadowConfig.enabled) {
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = ShadowConfig.size;
+            directionalLight.shadow.mapSize.height = ShadowConfig.size;
+            directionalLight.shadow.camera.near = ShadowConfig.cameraNear;
+            directionalLight.shadow.camera.far = ShadowConfig.cameraFar;
+            directionalLight.shadow.camera.left = -ShadowConfig.cameraSize;
+            directionalLight.shadow.camera.right = ShadowConfig.cameraSize;
+            directionalLight.shadow.camera.top = ShadowConfig.cameraSize;
+            directionalLight.shadow.camera.bottom = -ShadowConfig.cameraSize;
+
+            // const shadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+            // this.scene.add(shadowHelper);
+        }
     }
 
     private initFog(): void {

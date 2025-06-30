@@ -2,6 +2,7 @@ export enum HexTileType {
     // base
     Grass = 'GRASS',
     Water = 'WATER',
+    Error = 'ERROR',
 
     // roads
     RoadA = 'ROAD_A',
@@ -52,5 +53,35 @@ export enum HexTileType {
     WallStraightGate = 'WALL_STRAIGHT_GATE',
 
     // nature
+    HillsA = 'HILLS_A',
+    HillsATrees = 'HILLS_A_TREES',
+    HillsB = 'HILLS_B',
+    HillsBTrees = 'HILLS_B_TREES',
+    HillsC = 'HILLS_C',
     MountainA = 'MOUNTAIN_A',
+    MountainB = 'MOUNTAIN_B',
+    MountainC = 'MOUNTAIN_C',
+    TreesALarge = 'TREES_A_LARGE',
+    TreesAMedium = 'TREES_A_MEDIUM',
+    
+    // buildings
+    CastleBlue = 'CASTLE_BLUE',
+    ArcheryRangeBlue = 'ARCHERY_RANGE_BLUE',
+    BarracksBlue = 'BARRACKS_BLUE',
+    ChurchBlue = 'CHURCH_BLUE',
+    HomeBBlue = 'HOME_B_BLUE',
+    MarketBlue = 'MARKET_BLUE',
+    TavernBlue = 'TAVERN_BLUE',
+    WellBlue = 'WELL_BLUE',
+    WindmillBlue = 'WINDMILL_BLUE',
+
+    CastleRed = 'CASTLE_RED',
+    ArcheryRangeRed = 'ARCHERY_RANGE_RED',
+    BarracksRed = 'BARRACKS_RED',
+    ChurchRed = 'CHURCH_RED',
+    HomeBRed = 'HOME_B_RED',
+    MarketRed = 'MARKET_RED',
+    TavernRed = 'TAVERN_RED',
+    WellRed = 'WELL_RED',
+    WindmillRed = 'WINDMILL_RED',
 }

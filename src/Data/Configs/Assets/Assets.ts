@@ -6,6 +6,7 @@ const ModelAssets: string[] = [
     // base tiles
     'hex_grass.glb',
     'hex_water.glb',
+    'hex_error.glb',
 
     // roads
     'hex_road_A.glb',
@@ -47,7 +48,31 @@ const ModelAssets: string[] = [
     'hex_river_L.glb',
 
     // buildings
+    // blue
     'building_castle_blue.glb',
+    'building_archeryrange_blue.glb',
+    'building_barracks_blue.glb',
+    'building_church_blue.glb',
+    'building_home_B_blue.glb',
+    'building_market_blue.glb',
+    'building_tavern_blue.glb',
+    'building_well_blue.glb',
+    'building_windmill_blue.glb',
+    'building_windmill_top_fan.glb',
+
+    // red
+    'building_castle_red.glb',
+    'building_archeryrange_red.glb',
+    'building_barracks_red.glb',
+    'building_church_red.glb',
+    'building_home_B_red.glb',
+    'building_market_red.glb',
+    'building_tavern_red.glb',
+    'building_well_red.glb',
+    'building_windmill_red.glb',
+
+    // parts
+    'building_windmill_top_fan.glb',
 
     // wall
     'wall_corner_A_gate.glb',
@@ -59,7 +84,20 @@ const ModelAssets: string[] = [
     'wall_straight_gate.glb',
 
     // nature
-    'mountain_A.glb'
+    'hills_A.glb',
+    'hills_A_trees.glb',
+    'hills_B.glb',
+    'hills_B_trees.glb',
+    'hills_C.glb',
+    'mountain_A.glb',
+    'mountain_B.glb',
+    'mountain_C.glb',
+    'trees_A_large.glb',
+    'trees_A_medium.glb',
+
+    // clouds
+    'cloud_big.glb',
+    'cloud_small.glb',
 ];
 
 const PixiAssets: string[] = [
