@@ -484,6 +484,7 @@ export default class CastleScene extends THREE.Group {
         this.showingEntityIndex++;
         if (this.showingEntityIndex >= GenerateEntityOrder.length) {
             this.tilesShowState = TilesShowState.Completed;
+            this.clouds.show();
             return;
         }
 
@@ -557,6 +558,8 @@ export default class CastleScene extends THREE.Group {
         this.entropyHelper?.reset();
         this.topLevelAvailabilityDebug?.reset();
         this.islandsDebug?.reset();
+
+        this.clouds.hide();
     }
 
     private initGlobalListeners(): void {

@@ -3,109 +3,258 @@ import Materials from '../../../Core/Materials/Materials';
 import { MaterialType } from '../../../Data/Enums/MaterialType';
 import ThreeJSHelper from '../../../Helpers/ThreeJSHelper';
 import { GameConfig } from '../../../Data/Configs/GameConfig';
-import { CloudsState } from '../../../Data/Enums/CloudsState';
+import { CloudsState, CloudState } from '../../../Data/Enums/CloudsState';
 import TWEEN from 'three/addons/libs/tween.module.js';
+import { CloudType } from '../../../Data/Enums/CloudType';
+import { DefaultWFCConfig } from '../../../Data/Configs/WFCConfig';
+import { CloudsConfig } from '../../../Data/Configs/CloudsConfig';
+import { IClouds } from '../../../Data/Interfaces/ICloud';
 
 export default class Clouds extends THREE.Group {
-    private cloudInstanceType1: THREE.InstancedMesh;
-    private type1ActiveCount: number;
+    private cloudInstances: { [key in CloudType]?: THREE.InstancedMesh } = {};
     private movingVector: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
     private maxDistance: number;
-    private speed: number = 5;
+    private time: number = 0;
+    private stepIndex: number = 0;
+    private clouds: IClouds[] = [];
 
     private state: CloudsState = CloudsState.Hided;
 
     constructor() {
         super();
 
-        setTimeout(() => {
-            this.show();
-        }, 2000); // Delay to ensure the scene is ready
-
         this.init();
     }
 
     public update(dt: number): void {
-        if (this.state !== CloudsState.Moving) {
-            return;
+        if (this.state === CloudsState.Showing) {
+            this.showClouds(dt);
         }
 
-        for (let i = 0; i < this.type1ActiveCount; i++) {
-            const vectorDelta = this.movingVector.clone().multiplyScalar(dt * this.speed);
-            ThreeJSHelper.addInstancePosition(this.cloudInstanceType1, i, vectorDelta);
-
-           
+        if (this.state === CloudsState.Moving) {
+            this.moveClouds(dt);
         }
     }
 
     public show(): void {
-        this.state = CloudsState.Showing;
+        this.maxDistance = DefaultWFCConfig.radius * GameConfig.gameField.hexSize * 2;
+        this.initMovingVector();
+        this.initClouds();
 
-        const angle = 30;
+        this.state = CloudsState.Showing;
+    }
+
+    public hide(): void {
+        this.state = CloudsState.Hided;
+
+        for (let i = 0; i < this.clouds.length; i++) {
+            const type = this.clouds[i].type;
+            const index = this.clouds[i].index;
+            const instance = this.cloudInstances[type];
+
+            ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(0.001, 0.001, 0.001));
+
+            if (this.clouds[i].tween) {
+                this.clouds[i].tween.stop();
+            }
+
+            if (this.clouds[i].edgeTween) {
+                this.clouds[i].edgeTween.stop();
+            }
+        }
+
+        this.reset();
+    }
+
+    private reset(): void {
+        this.time = 0;
+        this.stepIndex = 0;
+        this.clouds = [];
+    }
+
+    private initMovingVector(): void {
+        const angle = THREE.MathUtils.randFloat(0, 360);
         const angleRadians = angle * (Math.PI / 180);
         this.movingVector.x = Math.cos(angleRadians);
         this.movingVector.z = Math.sin(angleRadians);
+    }
 
-        const radius = GameConfig.gameField.radius.default;
-        this.maxDistance = radius * GameConfig.gameField.hexSize * 2;
+    private moveClouds(dt: number): void {
+        for (let i = 0; i < this.clouds.length; i++) {
+            const type = this.clouds[i].type;
+            const index = this.clouds[i].index;
 
-        this.type1ActiveCount = 5;
+            const vectorDelta = this.movingVector.clone().multiplyScalar(dt * this.clouds[i].speed);
+            ThreeJSHelper.addInstancePosition(this.cloudInstances[type], index, vectorDelta);
 
-        this.setCloudsStartPosition();
+            const transform = ThreeJSHelper.getTransformInstance(this.cloudInstances[type], index);
+            const currentPosition = transform.position;
+            const distanceFromCenter = Math.sqrt(currentPosition.x * currentPosition.x + currentPosition.z * currentPosition.z);
 
-        for (let i = 0; i < this.type1ActiveCount; i++) {
-            this.showCloud(this.cloudInstanceType1, i);
+            if (distanceFromCenter > this.maxDistance && this.clouds[i].state === CloudState.Moving) {
+                this.clouds[i].state = CloudState.Hiding;
+                this.hideSingleCloud(type, index, i, this.clouds[i].scale);
+            }
         }
     }
 
-    private setCloudsStartPosition(): void {
-        for (let i = 0; i < this.type1ActiveCount; i++) {
-            this.setCloudStartPosition(this.cloudInstanceType1, i);
-        }
+    private hideSingleCloud(type: CloudType, index: number, cloudsIndex: number, scale: number): void {
+        const instance = this.cloudInstances[type];
+
+        const scaleObject = { value: scale };
+
+        this.clouds[cloudsIndex].edgeTween = new TWEEN.Tween(scaleObject)
+            .to({ value: 0.001 }, 400)
+            .easing(TWEEN.Easing.Back.In)
+            .start()
+            .onUpdate(() => {
+                ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(scaleObject.value, scaleObject.value, scaleObject.value));
+            })
+            .onComplete(() => {
+                ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(0.001, 0.001, 0.001));
+                this.resetToNewPosition(type, index);
+
+                this.clouds[cloudsIndex].state = CloudState.Showing;
+                this.showSingleCloud(type, index, cloudsIndex, scale);
+            });
     }
 
-    private setCloudStartPosition(instance: THREE.InstancedMesh, index: number): void {
-        const randomAngle = Math.random() * 2 * Math.PI; // Random angle in radians
-        const randomRadius = Math.random() * this.maxDistance; // Random radius within the maxDistance
-        const randomX = randomRadius * Math.cos(randomAngle);
-        const randomZ = randomRadius * Math.sin(randomAngle);
-        const position = new THREE.Vector3(randomX, 5, randomZ);
+    private showSingleCloud(type: CloudType, index: number, cloudsIndex: number, scale: number): void {
+        const instance = this.cloudInstances[type];
 
-        const rotationYAngle = Math.atan2(this.movingVector.x, this.movingVector.z) + Math.PI / 2;
-        const rotationQuaternion = new THREE.Quaternion();
-        rotationQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationYAngle);
+        const scaleObject = { value: 0.001 };
 
-        ThreeJSHelper.updateInstanceTransform(instance, index, position, rotationQuaternion, new THREE.Vector3(0.001, 0.001, 0.001));
-    }
-
-    private showCloud(instance: THREE.InstancedMesh, index: number): void {
-        const scale = { value: 0.001 };
-
-        new TWEEN.Tween(scale)
-            .to({ value: 1 }, 300)
+        this.clouds[cloudsIndex].edgeTween = new TWEEN.Tween(scaleObject)
+            .to({ value: scale }, 400)
             .easing(TWEEN.Easing.Back.Out)
             .start()
             .onUpdate(() => {
-                ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(scale.value, scale.value, scale.value));
+                ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(scaleObject.value, scaleObject.value, scaleObject.value));
             })
             .onComplete(() => {
-                ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(1, 1, 1));
+                ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(scale, scale, scale));
+                this.clouds[cloudsIndex].state = CloudState.Moving;
+            });
+    }
+
+    private resetToNewPosition(type: CloudType, index: number): void {
+        const instance = this.cloudInstances[type];
+        const transform = ThreeJSHelper.getTransformInstance(instance, index);
+        const currentPosition = transform.position;
+
+        const dotProduct = currentPosition.x * this.movingVector.x + currentPosition.z * this.movingVector.z;
+        const discriminant = dotProduct * dotProduct - (currentPosition.x * currentPosition.x + currentPosition.z * currentPosition.z - this.maxDistance * this.maxDistance);
+        const distanceBack = dotProduct + Math.sqrt(discriminant);
+
+        const displacement = this.movingVector.clone().multiplyScalar(-distanceBack);
+        ThreeJSHelper.addInstancePosition(this.cloudInstances[type], index, displacement);
+    }
+
+    private showClouds(dt: number): void {
+        this.time += dt;
+
+        if (this.time >= CloudsConfig.showStepTime / 1000) {
+            this.time = 0;
+
+            const type = this.clouds[this.stepIndex].type;
+            const index = this.clouds[this.stepIndex].index;
+            const scale = this.clouds[this.stepIndex].scale;
+            const instance = this.cloudInstances[type];
+            this.showCloud(instance, index, scale, this.stepIndex);
+
+            this.stepIndex++;
+
+            if (this.stepIndex >= this.clouds.length) {
                 this.state = CloudsState.Moving;
+                this.stepIndex = 0;
+            }
+        }
+    }
+
+    private getCloudsCountByRadius(): number {
+        const radius = DefaultWFCConfig.radius;
+        const config = CloudsConfig.countByRadius.find(item => radius >= item.radius[0] && radius <= item.radius[1]);
+        return config.count;
+    }
+
+    private initClouds(): void {
+        const cloudsCount = this.getCloudsCountByRadius();
+
+        const indexByType: { [key in CloudType]: number } = {
+            [CloudType.Big]: 0,
+            [CloudType.Small]: 0
+        };
+
+        for (let i = 0; i < cloudsCount; i++) {
+            const type = Math.random() < 0.5 ? CloudType.Big : CloudType.Small;
+            const position = this.getRandomStartPosition();
+            const rotation = this.getStartRotation();
+            const speed = THREE.MathUtils.randFloat(CloudsConfig.speed.min, CloudsConfig.speed.max);
+            const scale = THREE.MathUtils.randFloat(CloudsConfig.scale.min, CloudsConfig.scale.max);
+
+            const instance = this.cloudInstances[type];
+            ThreeJSHelper.updateInstanceTransform(instance, indexByType[type], position, rotation, new THREE.Vector3(0.001, 0.001, 0.001));
+
+            this.clouds.push({
+                type: type,
+                index: indexByType[type],
+                speed: speed,
+                scale: scale,
+                tween: null,
+                edgeTween: null,
+                state: CloudState.Moving,
+            });
+
+            indexByType[type]++;
+        }
+    }
+
+    private getRandomStartPosition(): THREE.Vector3 {
+        const randomAngle = Math.random() * 2 * Math.PI;
+        const randomRadius = Math.random() * this.maxDistance;
+        const randomX = randomRadius * Math.cos(randomAngle);
+        const randomZ = randomRadius * Math.sin(randomAngle);
+        const height = THREE.MathUtils.randFloat(CloudsConfig.height.min, CloudsConfig.height.max);
+        return new THREE.Vector3(randomX, height, randomZ);
+    }
+
+    private getStartRotation(): THREE.Quaternion {
+        const rotationYAngle = Math.atan2(this.movingVector.x, this.movingVector.z) + Math.PI / 2;
+        const rotationQuaternion = new THREE.Quaternion();
+        rotationQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationYAngle);
+        return rotationQuaternion;
+    }
+
+    private showCloud(instance: THREE.InstancedMesh, index: number, scale: number, stepIndex: number): void {
+        const scaleObject = { value: 0.001 };
+
+        this.clouds[stepIndex].tween = new TWEEN.Tween(scaleObject)
+            .to({ value: scale }, 300)
+            .easing(TWEEN.Easing.Back.Out)
+            .start()
+            .onUpdate(() => {
+                ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(scaleObject.value, scaleObject.value, scaleObject.value));
+            })
+            .onComplete(() => {
+                ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(scale, scale, scale));
             });
     }
 
     private init(): void {
-        const cloudBigInstance = this.cloudInstanceType1 = this.initCloud('cloud_big');
-        this.add(cloudBigInstance);
+        const cloudInstanceBig = this.cloudInstances[CloudType.Big] = this.initCloud('cloud_big');
+        this.add(cloudInstanceBig);
+
+        const cloudInstanceSmall = this.cloudInstances[CloudType.Small] = this.initCloud('cloud_small');
+        this.add(cloudInstanceSmall);
     }
 
     private initCloud(modelName: string): THREE.InstancedMesh {
         const hideScale: number = 0.001;
-        const material: THREE.Material = Materials.getInstance().materials[MaterialType.Main];
+        const material: THREE.Material = Materials.getInstance().materials[MaterialType.Cloud];
 
         const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel(modelName);
 
-        const instanceCount: number = 10;
+        const instanceCount: number = CloudsConfig.maxCount;
         const instanceMesh = new THREE.InstancedMesh(geometry, material, instanceCount);
 
         instanceMesh.frustumCulled = false;
@@ -113,7 +262,7 @@ export default class Clouds extends THREE.Group {
         const matrix = new THREE.Matrix4();
 
         for (let i = 0; i < instanceCount; i++) {
-            const position = new THREE.Vector3(0, 5, 0);
+            const position = new THREE.Vector3(0, 0, 0);
             const rotationYAngle = 0;
             const rotationQuaternion = new THREE.Quaternion();
             rotationQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationYAngle);

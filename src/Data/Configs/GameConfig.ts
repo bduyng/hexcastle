@@ -53,7 +53,7 @@ const GameConfig = {
         fillPercentage: 0.4,
     },
     nature: {
-        showTilesDelays: 40,
+        showTilesDelays: 30,
         fillPercentage: 0.14,
         clusterSettings: {
             trees: {
