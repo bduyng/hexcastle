@@ -138,6 +138,38 @@ export default class ThreeJSHelper {
         instanceMesh.instanceMatrix.needsUpdate = true;
     }
 
+    public static addInstancePosition(instanceMesh: THREE.InstancedMesh, index: number, position: THREE.Vector3): void {
+        const matrix = new THREE.Matrix4();
+        instanceMesh.getMatrixAt(index, matrix);
+
+        const newMatrix = new THREE.Matrix4();
+        const newPosition = new THREE.Vector3(0, 0, 0);
+        const newRotationQuaternion = new THREE.Quaternion();
+        const newScale = new THREE.Vector3(1, 1, 1);
+
+        matrix.decompose(newPosition, newRotationQuaternion, newScale);
+
+        newPosition.add(position);
+
+        newMatrix.compose(newPosition, newRotationQuaternion, newScale);
+
+        instanceMesh.setMatrixAt(index, newMatrix);
+        instanceMesh.instanceMatrix.needsUpdate = true;
+    }
+
+    public static getTransformInstance(instanceMesh: THREE.InstancedMesh, index: number): { position: THREE.Vector3, rotation: THREE.Quaternion, scale: THREE.Vector3 } {
+        const matrix = new THREE.Matrix4();
+        instanceMesh.getMatrixAt(index, matrix);
+
+        const position = new THREE.Vector3();
+        const rotation = new THREE.Quaternion();
+        const scale = new THREE.Vector3();
+
+        matrix.decompose(position, rotation, scale);
+
+        return { position, rotation, scale };
+    }
+
     public static getRandomBetween(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }

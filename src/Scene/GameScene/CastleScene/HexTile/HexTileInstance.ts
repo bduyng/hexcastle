@@ -102,6 +102,8 @@ export default class HexTileInstance extends THREE.Group {
         const instanceCount: number = hexTileTransforms.length;
         const instanceMesh = this.hexTileInstanceMesh = new THREE.InstancedMesh(geometry, material, instanceCount);
         this.add(instanceMesh);
+
+        instanceMesh.frustumCulled = false;
         // instanceMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 
         const defaultRotation: number = GameConfig.gameField.GridOrientation === GridOrientation.PointyTop ? Math.PI : Math.PI / 2 + Math.PI / 3;

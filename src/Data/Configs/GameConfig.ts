@@ -54,12 +54,12 @@ const GameConfig = {
     },
     nature: {
         showTilesDelays: 40,
-        fillPercentage: 0.05,
+        fillPercentage: 0.14,
         clusterSettings: {
             trees: {
-                fillPercentage: 0.03,
+                fillPercentage: 0.12,
                 clusterChance: 0.8,
-                maxClusterSize: 8
+                maxClusterSize: 10
             },
             mountains: {
                 fillPercentage: 0.01,

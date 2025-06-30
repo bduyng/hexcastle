@@ -94,7 +94,7 @@ export default class CastleScene extends THREE.Group {
         }
 
         this.hexTileParts.update(dt);
-        // this.clouds.update(dt);
+        this.clouds.update(dt);
     }
 
     public start(): void {
