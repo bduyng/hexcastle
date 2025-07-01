@@ -3,8 +3,8 @@ const CloudsConfig = {
     maxCount: 20,
     showStepTime: 50,
     speed: {
-        min: 0.2,
-        max: 0.8,
+        min: 0.1,
+        max: 0.5,
     },
     height: {
         min: 5,
