@@ -13,6 +13,7 @@ import DebugMenu from './DebugMenu/DebugMenu';
 import CameraConfig from '../Data/Configs/Scene/CameraConfig';
 import { DebugConfig } from '../Data/Configs/Debug/DebugConfig';
 import LoadingOverlay from './Loader/LoadingOverlay';
+import { KeyboardController } from './KeyboardController';
 
 export default class BaseScene {
     private scene: THREE.Scene;
@@ -65,6 +66,7 @@ export default class BaseScene {
     private async init(): Promise<void> {
         await this.initPixiJS();
         this.initThreeJS();
+        this.initKeyboardController();
         this.initUpdate();
     }
 
@@ -99,6 +101,10 @@ export default class BaseScene {
         this.initOnResize();
 
         this.initDebugMenu();
+    }
+
+    private initKeyboardController(): void {
+        new KeyboardController();
     }
 
     private initLoader(): void {

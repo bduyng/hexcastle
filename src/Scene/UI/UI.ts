@@ -121,5 +121,13 @@ export default class UI extends PIXI.Container {
             this.generateButton.show();
             this.stopButton.hide();
         });
+
+        GlobalEventBus.on('ui:sliderIncreaseRadius', () => {
+            this.fieldRadius.increaseRadius();
+        });
+
+        GlobalEventBus.on('ui:sliderDecreaseRadius', () => {
+            this.fieldRadius.decreaseRadius();
+        });
     }
 }

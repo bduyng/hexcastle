@@ -30,6 +30,7 @@ import HexTileParts from './HexTile/HexTileParts/HexTileParts';
 import { HexTilePartsConfig } from '../../../Data/Configs/HexTilePartsConfig';
 import Clouds from './Clouds';
 import { NatureGenerator } from './Nature/NatureGenerator';
+import { ButtonType } from '../../../Data/Enums/ButtonType';
 
 export default class CastleScene extends THREE.Group {
 
@@ -64,6 +65,7 @@ export default class CastleScene extends THREE.Group {
     private hexTileParts: HexTileParts;
     private clouds: Clouds;
     private natureGenerator: NatureGenerator;
+    private stopButtonActive: boolean = false;
 
     private isIntroActive: boolean = true;
 
@@ -184,6 +186,7 @@ export default class CastleScene extends THREE.Group {
 
     private async generateLandscapeTilesAsync(): Promise<void> {
         GlobalEventBus.emit('game:startGeneratingWorld');
+        this.stopButtonActive = true;
 
         const stepsPerFrame = this.getStepsPerFrame(DefaultWFCConfig.radius);
 
@@ -203,6 +206,7 @@ export default class CastleScene extends THREE.Group {
         }
 
         GlobalEventBus.emit('game:finishGeneratingWorld');
+        this.stopButtonActive = false;
         this.previousGeneratePercent = 0;
     }
 
@@ -568,6 +572,7 @@ export default class CastleScene extends THREE.Group {
         GlobalEventBus.on('game:stopGenerate', () => this.stopGenerate());
         GlobalEventBus.on('ui:sliderPointerUp', () => this.onSliderPointerUp());
         GlobalEventBus.on('ui:sliderPointerDown', () => this.sliderPointerDown());
+        GlobalEventBus.on('game:pressKey', (buttonType: ButtonType) => this.onPressKey(buttonType));
     }
 
     private async generateScene(): Promise<void> {
@@ -668,6 +673,26 @@ export default class CastleScene extends THREE.Group {
     private sliderPointerDown(): void {
         if (!this.isIntroActive) {
             this.fieldRadiusHelper.show(this.newRadius);
+        }
+    }
+
+    private onPressKey(buttonType: ButtonType): void {
+        switch (buttonType) {
+            case ButtonType.Left:
+                GlobalEventBus.emit('ui:sliderDecreaseRadius');
+                break;
+
+            case ButtonType.Right:
+                GlobalEventBus.emit('ui:sliderIncreaseRadius');
+                break;
+
+            case ButtonType.Start:
+                if (this.stopButtonActive) {
+                    this.stopGenerate();
+                } else {
+                    this.generateScene();
+                }
+                break;
         }
     }
 

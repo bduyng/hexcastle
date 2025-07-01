@@ -1,5 +1,6 @@
 // src/Core/EventBus.ts
 import mitt, { Emitter } from 'mitt';
+import { ButtonType } from '../Data/Enums/ButtonType';
 
 export type GlobalEvents = {
     'game:generate': void;
@@ -10,9 +11,12 @@ export type GlobalEvents = {
     'game:finishGeneratingWorld': void;
     'game:startInteractionOrbitControls': void;
     'game:generateStarted': number;
+    'game:pressKey': ButtonType;
 
     'ui:sliderPointerDown': void;
     'ui:sliderPointerUp': void;
+    'ui:sliderIncreaseRadius': void;
+    'ui:sliderDecreaseRadius': void;
 };
 
 export const GlobalEventBus: Emitter<GlobalEvents> = mitt<GlobalEvents>();
