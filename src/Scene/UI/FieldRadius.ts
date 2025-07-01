@@ -15,6 +15,24 @@ export default class FieldRadius extends PIXI.Container {
         this.init();
     }
 
+    public increaseRadius(): void {
+        const value = this.slider.getValue() + 1;
+        if (value <= GameConfig.gameField.radius.max) {
+            this.slider.setValue(value);
+            GlobalEventBus.emit('game:fieldRadiusChanged', value);
+            GlobalEventBus.emit('ui:sliderPointerUp');
+        }
+    }
+
+    public decreaseRadius(): void {
+        const value = this.slider.getValue() - 1;
+        if (value >= GameConfig.gameField.radius.min) {
+            this.slider.setValue(value);
+            GlobalEventBus.emit('game:fieldRadiusChanged', value);
+            GlobalEventBus.emit('ui:sliderPointerUp');
+        }
+    }
+
     private init(): void {
         this.initCaption();
         this.initSlider();

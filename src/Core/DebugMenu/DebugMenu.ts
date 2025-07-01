@@ -6,6 +6,9 @@ import GUIHelper from "./GUIHelper";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { GlobalEventBus } from '../GlobalEvents';
 import { DebugConfig } from '../../Data/Configs/Debug/DebugConfig';
+import { DefaultWFCConfig } from '../../Data/Configs/WFCConfig';
+import { GameConfig } from '../../Data/Configs/GameConfig';
+import TWEEN from 'three/addons/libs/tween.module.js';
 
 export default class DebugMenu {
     private camera: THREE.PerspectiveCamera;
@@ -17,6 +20,9 @@ export default class DebugMenu {
     private orbitControls: OrbitControls;
 
     private isAssetsLoaded: boolean;
+
+    private radius: number = DefaultWFCConfig.radius * GameConfig.gameField.hexSize * 2;
+    private targetTween: any;
 
     constructor(camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer, pixiApp: PIXI.Application) {
         this.camera = camera;
@@ -122,7 +128,22 @@ export default class DebugMenu {
         orbitControls.maxPolarAngle = Math.PI / 2;
         orbitControls.minDistance = 3;
         orbitControls.maxDistance = 90;
-        orbitControls.enablePan = false;
+
+        orbitControls.enablePan = true;
+        orbitControls.screenSpacePanning = false;
+
+        // const maxPanDistance = 5;
+
+        orbitControls.addEventListener('change', () => {
+            const target = orbitControls.target;
+            const distance = Math.sqrt(target.x * target.x + target.z * target.z);
+
+            if (distance > this.radius) {
+                const scale = this.radius / distance;
+                target.x *= scale;
+                target.z *= scale;
+            }
+        });
 
         if (!this.isAssetsLoaded) {
             orbitControls.enabled = false;
@@ -145,6 +166,29 @@ export default class DebugMenu {
         GlobalEventBus.on('ui:sliderPointerUp', () => {
             this.orbitControls.enabled = true;
         });
+
+        GlobalEventBus.on('game:generateStarted', () => {
+            this.radius = DefaultWFCConfig.radius * GameConfig.gameField.hexSize * 2;
+            this.moveOrbitTargetToCenter();
+        });
+    }
+
+    private moveOrbitTargetToCenter(): void {
+        if (this.targetTween) {
+            this.targetTween.stop();
+        }
+
+        this.targetTween = new TWEEN.Tween(this.orbitControls.target)
+            .to({ x: 0, z: 0 }, 300)
+            .easing(TWEEN.Easing.Sinusoidal.In)
+            .start()
+            .onUpdate(() => {
+                this.orbitControls.update();
+            })
+            .onComplete(() => {
+                this.orbitControls.target.set(0, 0, 0);
+                this.orbitControls.update();
+            });
     }
 
     // private onFpsMeterClick(): void {
