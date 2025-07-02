@@ -1,5 +1,5 @@
 const SceneConfig = {
-  backgroundColor: 0x666666,
+  backgroundColor: 0x888888,
   antialias: true,
   fxaaPass: false,
   maxPixelRatio: 2,

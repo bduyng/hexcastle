@@ -1,11 +1,11 @@
 const LightConfig = {
   ambientLight: {
     color: 0xffffff,
-    intensity: 1,
+    intensity: 1.5,
   },
   directionalLight: {
     color: 0xffffff,
-    intensity: 1.3,
+    intensity: 1.7,
     shadows: {
       enabled: true,
       helper: false,
