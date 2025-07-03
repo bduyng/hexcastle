@@ -22,8 +22,7 @@ export default class TilesDebugMode extends THREE.Group {
         const gridSize = Math.ceil(Math.sqrt(this.hexTileCategory.length));
 
         const hexTileDebugConfig: IHexTileDebugConfig = {
-            rotation: true,
-            edge: true,
+            rotationAndEdge: true,
             modelName: true,
         }
 
