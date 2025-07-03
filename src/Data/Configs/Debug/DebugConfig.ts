@@ -5,7 +5,10 @@ const DebugConfig = {
     rendererStats: false,
     orbitControls: true,
     showAxisHelper: false,
-    gui: true,
+    gui: {
+        desktop: true,
+        mobile: false,
+    }
 };
 
 const DebugGameConfig = {

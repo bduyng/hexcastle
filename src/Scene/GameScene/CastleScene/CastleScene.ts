@@ -31,6 +31,7 @@ import { HexTilePartsConfig } from '../../../Data/Configs/HexTilePartsConfig';
 import Clouds from './Clouds';
 import { NatureGenerator } from './Nature/NatureGenerator';
 import { ButtonType } from '../../../Data/Enums/ButtonType';
+import { CloudsConfig } from '../../../Data/Configs/CloudsConfig';
 
 export default class CastleScene extends THREE.Group {
 
@@ -584,9 +585,13 @@ export default class CastleScene extends THREE.Group {
         GlobalEventBus.on('game:pressKey', (buttonType: ButtonType) => this.onPressKey(buttonType));
 
         GlobalEventBus.on('debug:gridChanged', () => this.debugOnGridChanged());
-        GlobalEventBus.on('debug:landscapeShow', () => this.debugOnLandscapeShow());
+        GlobalEventBus.on('debug:landscapeShow', () => this.debugOnLayerShow(GenerateEntityType.Landscape));
         GlobalEventBus.on('debug:entropyChanged', () => this.debugOnEntropyChanged());
         GlobalEventBus.on('debug:landscapeRotationChanged', () => this.debugOnLandscapeRotationChanged());
+        GlobalEventBus.on('debug:wallsShow', () => this.debugOnLayerShow(GenerateEntityType.Walls));
+        GlobalEventBus.on('debug:cityShow', () => this.debugOnLayerShow(GenerateEntityType.City));
+        GlobalEventBus.on('debug:natureShow', () => this.debugOnLayerShow(GenerateEntityType.Nature));
+        GlobalEventBus.on('debug:cloudsShow', () => this.debugOnCloudsShow());
     }
 
     private async generateScene(): Promise<void> {
@@ -750,9 +755,9 @@ export default class CastleScene extends THREE.Group {
         }
     }
 
-    private debugOnLandscapeShow(): void {
-        this.hexTileInstances[GenerateEntityType.Landscape].forEach((hexTileInstance) => {
-            if (DebugGameConfig.generateType[GenerateEntityType.Landscape].show) {
+    private debugOnLayerShow(entityType: GenerateEntityType): void {
+        this.hexTileInstances[entityType].forEach((hexTileInstance) => {
+            if (DebugGameConfig.generateType[entityType].show) {
                 hexTileInstance.visible = true;
             } else {
                 hexTileInstance.visible = false;
@@ -777,18 +782,13 @@ export default class CastleScene extends THREE.Group {
         this.hexTileInstances[GenerateEntityType.Landscape].forEach((hexTileInstance) => {
             hexTileInstance.enableDebug(DebugGameConfig.generateType[GenerateEntityType.Landscape].hexTileDebug);
         });
+    }
 
-
-        // const config = DebugGameConfig.generateType[GenerateEntityType.Landscape].hexTileDebug;
-
-        // if (config.rotation || config.edge) {
-        //     this.hexTileInstances[GenerateEntityType.Landscape].forEach((hexTileInstance) => {
-        //         hexTileInstance.enableDebug(DebugGameConfig.generateType[GenerateEntityType.Landscape].hexTileDebug);
-        //     });
-        // } else {
-        //     this.hexTileInstances[GenerateEntityType.Landscape].forEach((hexTileInstance) => {
-        //         hexTileInstance.disableDebug();
-        //     });
-        // }
+    private debugOnCloudsShow(): void {
+        if (CloudsConfig.show) {
+            this.clouds.showInstant();
+        } else {
+            this.clouds.hideInstant();
+        }
     }
 }

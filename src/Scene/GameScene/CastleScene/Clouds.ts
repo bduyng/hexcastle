@@ -83,6 +83,14 @@ export default class Clouds extends THREE.Group {
         this.reset();
     }
 
+    public showInstant(): void {
+        this.visible = true;
+    }
+
+    public hideInstant(): void {
+        this.visible = false;
+    }
+
     private reset(): void {
         this.time = 0;
         this.stepIndex = 0;

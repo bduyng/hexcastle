@@ -49,7 +49,7 @@ const TreesTiles: HexTileType[] = [
     HexTileType.TreesAMedium,
 ];
 
-const MountainsTiles: HexTileType[] = [
+const RocksTiles: HexTileType[] = [
     HexTileType.MountainA,
     HexTileType.MountainB,
     HexTileType.MountainC,
@@ -63,4 +63,4 @@ const SingleTiles: HexTileType[] = [
     HexTileType.HillsC,
 ];
 
-export { NatureConfig, TreesTiles, MountainsTiles, SingleTiles };
+export { NatureConfig, TreesTiles, RocksTiles, SingleTiles };

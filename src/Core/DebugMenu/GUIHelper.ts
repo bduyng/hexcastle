@@ -1,5 +1,6 @@
 import { Pane } from 'tweakpane';
 import { DebugConfig } from '../../Data/Configs/Debug/DebugConfig';
+import isMobile from 'ismobilejs';
 
 export default class GUIHelper {
     static instance: GUIHelper;
@@ -14,7 +15,7 @@ export default class GUIHelper {
         this.gui.hidden = true;
         this.gui.containerElem_.style.width = '275px';
 
-        this.gui.expanded = true;
+        this.gui.expanded = false;
 
         GUIHelper.instance = this;
 
@@ -58,8 +59,12 @@ export default class GUIHelper {
     }
 
     public showAfterAssetsLoad(): void {
-        if ((<any>DebugConfig).gui) {
-            this.gui.hidden = false;
+        const isMobileDevice = isMobile(window.navigator).any;
+
+        if (isMobileDevice) {
+            this.gui.hidden = !DebugConfig.gui.mobile;
+        } else {
+            this.gui.hidden = !DebugConfig.gui.desktop;
         }
     }
 

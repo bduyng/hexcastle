@@ -35,7 +35,6 @@ const GameConfig = {
         secondWallChance: 0.5,
         secondWallMinRadius: 2,
         maxWallRadius: 6,
-        maxWallOffset: 2,
         rules: [
             {
                 radiusAvailable: 1,
@@ -57,20 +56,20 @@ const GameConfig = {
     },
     nature: {
         showTilesDelays: 25,
-        fillPercentage: 0.14,
+        overallFillPercentage: 0.2,
         clusterSettings: {
             trees: {
-                fillPercentage: 0.12,
+                fillPercentage: 0.8,
                 clusterChance: 0.8,
                 maxClusterSize: 10
             },
-            mountains: {
-                fillPercentage: 0.01,
+            rocks: {
+                fillPercentage: 0.05,
                 clusterChance: 0.7,
                 maxClusterSize: 4
             },
             hills: {
-                fillPercentage: 0.01,
+                fillPercentage: 0.15,
                 clusterChance: 0.35,
                 maxClusterSize: 2
             }

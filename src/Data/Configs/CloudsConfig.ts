@@ -1,5 +1,6 @@
 
 const CloudsConfig = {
+    show: true,
     maxCount: 20,
     showStepTime: 50,
     speed: {
