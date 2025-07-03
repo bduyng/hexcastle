@@ -352,11 +352,20 @@ export default class CastleScene extends THREE.Group {
         this.hexTileInstances[generateEntityType] = [];
 
         for (let i = 0; i < hexTileInstancesData.length; i++) {
-            const hexTileInstance = new HexTileInstance(hexTileInstancesData[i], DebugGameConfig.generateType[generateEntityType].hexTileDebug);
+            const hexTileInstance = new HexTileInstance(hexTileInstancesData[i]);
             this.add(hexTileInstance);
+
+            const debugConfig = DebugGameConfig.generateType[generateEntityType].hexTileDebug;
+            if (debugConfig.rotationAndEdge) {
+                hexTileInstance.enableDebug(debugConfig);
+            }
 
             this.hexTileInstances[generateEntityType].push(hexTileInstance);
         }
+
+        this.hexTileInstances[generateEntityType].forEach((hexTileInstance) => {
+            hexTileInstance.visible = DebugGameConfig.generateType[generateEntityType].show;
+        });
     }
 
     private initEntropyHelper(): void {
@@ -500,7 +509,7 @@ export default class CastleScene extends THREE.Group {
         this.tilesShowState = TilesShowState.Ready;
 
         this.checkShowEntityInstant();
-        this.checkToShowEntity();
+        // this.checkToShowEntity();
     }
 
     private showAllTilesByType(generateEntityType: GenerateEntityType): void {
@@ -573,6 +582,11 @@ export default class CastleScene extends THREE.Group {
         GlobalEventBus.on('ui:sliderPointerUp', () => this.onSliderPointerUp());
         GlobalEventBus.on('ui:sliderPointerDown', () => this.sliderPointerDown());
         GlobalEventBus.on('game:pressKey', (buttonType: ButtonType) => this.onPressKey(buttonType));
+
+        GlobalEventBus.on('debug:gridChanged', () => this.debugOnGridChanged());
+        GlobalEventBus.on('debug:landscapeShow', () => this.debugOnLandscapeShow());
+        GlobalEventBus.on('debug:entropyChanged', () => this.debugOnEntropyChanged());
+        GlobalEventBus.on('debug:landscapeRotationChanged', () => this.debugOnLandscapeRotationChanged());
     }
 
     private async generateScene(): Promise<void> {
@@ -601,7 +615,17 @@ export default class CastleScene extends THREE.Group {
         this.tilesShowState = TilesShowState.Ready;
 
         this.checkShowEntityInstant();
-        this.checkToShowEntity();
+        // this.checkToShowEntity();
+
+        if (DebugGameConfig.showInstantly) {
+            for (const generateType in GenerateEntityType) {
+                const type: GenerateEntityType = GenerateEntityType[generateType as keyof typeof GenerateEntityType];
+                this.showAllTilesByType(type);
+            }
+
+            this.tilesShowState = TilesShowState.Completed;
+            this.clouds.showInstantly();
+        }
     }
 
     private checkAsyncGenerate(): void {
@@ -624,30 +648,30 @@ export default class CastleScene extends THREE.Group {
         }
     }
 
-    private checkToShowEntity(): void {
-        if (DebugGameConfig.generateType[this.showingEntityType].show === false) {
-            this.tilesShowState = TilesShowState.CompleteEntity;
-            this.afterShowGenerateEntity();
-        }
-    }
+    // private checkToShowEntity(): void {
+    //     if (DebugGameConfig.generateType[this.showingEntityType].show === false) {
+    //         this.tilesShowState = TilesShowState.CompleteEntity;
+    //         this.afterShowGenerateEntity();
+    //     }
+    // }
 
     private configureDelay(): void {
         switch (this.showingEntityType) {
             case GenerateEntityType.Landscape:
-                const delays = GameConfig.gameField.showTilesDelays;
-                this.showTileStepTime = Math.max(delays.min, Math.min(delays.max, 1 / DefaultWFCConfig.radius * delays.coeff));
+                const delays = GameConfig.landscape.showTilesDelays;
+                this.showTileStepTime = Math.max(delays.min, Math.min(delays.max, 1 / DefaultWFCConfig.radius * delays.coeff)) / GameConfig.gameField.showTilesTimeScale;
                 break;
 
             case GenerateEntityType.Walls:
-                this.showTileStepTime = GameConfig.walls.showTilesDelays;
+                this.showTileStepTime = GameConfig.walls.showTilesDelays / GameConfig.gameField.showTilesTimeScale;
                 break;
 
             case GenerateEntityType.City:
-                this.showTileStepTime = GameConfig.city.showTilesDelays;
+                this.showTileStepTime = GameConfig.city.showTilesDelays / GameConfig.gameField.showTilesTimeScale;
                 break;
 
             case GenerateEntityType.Nature:
-                this.showTileStepTime = GameConfig.nature.showTilesDelays;
+                this.showTileStepTime = GameConfig.nature.showTilesDelays / GameConfig.gameField.showTilesTimeScale;
                 break;
         }
     }
@@ -707,5 +731,64 @@ export default class CastleScene extends THREE.Group {
         this.tilesShowState = TilesShowState.NotReady;
 
         this.generatingStopped = true;
+    }
+
+    private debugOnGridChanged(): void {
+        if (DebugGameConfig.grid) {
+            if (!this.debugGrid) {
+                const debugGrid = this.debugGrid = new DebugGrid();
+                this.add(debugGrid);
+                debugGrid.create(DefaultWFCConfig.radius);
+            } else {
+                this.debugGrid.create(DefaultWFCConfig.radius);
+            }
+        } else {
+            if (this.debugGrid) {
+                this.remove(this.debugGrid);
+                this.debugGrid = null;
+            }
+        }
+    }
+
+    private debugOnLandscapeShow(): void {
+        this.hexTileInstances[GenerateEntityType.Landscape].forEach((hexTileInstance) => {
+            if (DebugGameConfig.generateType[GenerateEntityType.Landscape].show) {
+                hexTileInstance.visible = true;
+            } else {
+                hexTileInstance.visible = false;
+            }
+        });
+    }
+
+    private debugOnEntropyChanged(): void {
+        if (DebugGameConfig.generateType[GenerateEntityType.Landscape].entropy) {
+            if (!this.entropyHelper) {
+                this.entropyHelper = new EntropyHelper();
+                this.add(this.entropyHelper);
+            }
+
+            this.entropyHelper.show();
+        } else {
+            this.entropyHelper?.hide();
+        }
+    }
+
+    private debugOnLandscapeRotationChanged(): void {
+        this.hexTileInstances[GenerateEntityType.Landscape].forEach((hexTileInstance) => {
+            hexTileInstance.enableDebug(DebugGameConfig.generateType[GenerateEntityType.Landscape].hexTileDebug);
+        });
+
+
+        // const config = DebugGameConfig.generateType[GenerateEntityType.Landscape].hexTileDebug;
+
+        // if (config.rotation || config.edge) {
+        //     this.hexTileInstances[GenerateEntityType.Landscape].forEach((hexTileInstance) => {
+        //         hexTileInstance.enableDebug(DebugGameConfig.generateType[GenerateEntityType.Landscape].hexTileDebug);
+        //     });
+        // } else {
+        //     this.hexTileInstances[GenerateEntityType.Landscape].forEach((hexTileInstance) => {
+        //         hexTileInstance.disableDebug();
+        //     });
+        // }
     }
 }

@@ -22,8 +22,7 @@ export interface IHexTileInstanceData {
 }
 
 export interface IHexTileDebugConfig {
-    rotation?: boolean;
-    edge?: boolean;
+    rotationAndEdge?: boolean;
     modelName?: boolean;
 }
 

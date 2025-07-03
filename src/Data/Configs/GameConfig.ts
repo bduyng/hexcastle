@@ -3,17 +3,13 @@ import { GridOrientation } from "../Enums/GridOrientation";
 const GameConfig = {
     gameField: {
         hexSize: 1.15,
-        GridOrientation: GridOrientation.PointyTop,
+        GridOrientation: GridOrientation.FlatTop,
         radius: {
             min: 1,
             max: 20,
             default: 5
         },
-        showTilesDelays: {
-            min: 5,
-            max: 20,
-            coeff: 100,
-        }
+        showTilesTimeScale: 1,
     },
     WFC: {
         syncGenerationRadius: 7,
@@ -25,6 +21,13 @@ const GameConfig = {
                 { radius: 20, steps: 3 },
                 { radius: 25, steps: 2 }
             ]
+        },
+    },
+    landscape: {
+        showTilesDelays: {
+            min: 5,
+            max: 20,
+            coeff: 100,
         },
     },
     walls: {

@@ -171,6 +171,14 @@ export default class DebugMenu {
             this.radius = DefaultWFCConfig.radius * GameConfig.gameField.hexSize * 2;
             this.moveOrbitTargetToCenter();
         });
+
+        GlobalEventBus.on('debug:fpsMeterChanged', () => {
+            this.onFpsMeterClick();
+        });
+
+        GlobalEventBus.on('debug:rendererStatsChanged', () => {
+            this.onRendererStatsClick();
+        });
     }
 
     private moveOrbitTargetToCenter(): void {
@@ -191,40 +199,26 @@ export default class DebugMenu {
             });
     }
 
-    // private onFpsMeterClick(): void {
-    //   if (DebugConfig.fpsMeter) {
-    //     if (!this.fpsStats) {
-    //       this.initFPSMeter();
-    //     }
-    //     this.fpsStats.dom.style.display = 'block';
-    //   } else {
-    //     this.fpsStats.dom.style.display = 'none';
-    //   }
-    // }
+    private onFpsMeterClick(): void {
+        if (DebugConfig.fpsMeter) {
+            if (!this.fpsStats) {
+                this.initFPSMeter();
+            }
+            this.fpsStats.dom.style.display = 'block';
+        } else {
+            this.fpsStats.dom.style.display = 'none';
+        }
+    }
 
-    // private onRendererStatsClick(rendererStatsState): void {
-    //   if (DebugConfig.rendererStats) {
-    //     if (rendererStatsState) {
-    //       if (!this.rendererStats) {
-    //         this.initRendererStats();
-    //       }
+    private onRendererStatsClick(): void {
+        if (DebugConfig.rendererStats) {
+            if (!this.rendererStats) {
+                this.initRendererStats();
+            }
 
-    //       this.rendererStats.domElement.style.display = 'block';
-    //     } else {
-    //       this.rendererStats.domElement.style.display = 'none';
-    //     }
-    //   }
-    // }
-
-    // private onOrbitControlsClick(orbitControlsState): void {
-    //   if (orbitControlsState) {
-    //     if (!this.orbitControls) {
-    //       this.initOrbitControls();
-    //     }
-
-    //     this.orbitControls.enabled = true;
-    //   } else {
-    //     this.orbitControls.enabled = false;
-    //   }
-    // }
+            this.rendererStats.domElement.style.display = 'block';
+        } else {
+            this.rendererStats.domElement.style.display = 'none';
+        }
+    }
 }

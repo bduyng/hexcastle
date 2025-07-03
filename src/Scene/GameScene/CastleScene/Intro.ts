@@ -139,7 +139,7 @@ export default class Intro extends THREE.Group {
         ]
 
         for (let i = 0; i < data.length; i++) {
-            const hexTileInstance = new HexTileInstance(data[i], null, MaterialType.Transparent);
+            const hexTileInstance = new HexTileInstance(data[i], MaterialType.Transparent);
             this.wallRadiusOne.add(hexTileInstance);
 
             hexTileInstance.showAllTiles();
@@ -181,7 +181,7 @@ export default class Intro extends THREE.Group {
         ]
 
         for (let i = 0; i < data.length; i++) {
-            const hexTileInstance = new HexTileInstance(data[i], null, MaterialType.Transparent);
+            const hexTileInstance = new HexTileInstance(data[i], MaterialType.Transparent);
             this.wallRadiusTwo.add(hexTileInstance);
 
             hexTileInstance.showAllTiles();

@@ -14,6 +14,14 @@ export default class EntropyHelper extends THREE.Group {
         super();
     }
 
+    public show(): void {
+        this.visible = true;
+    }
+
+    public hide(): void {
+        this.visible = false;
+    }
+
     public setData(steps: INewTileStep[], radius: number): void {
         this.steps = steps;
         this.radius = radius;

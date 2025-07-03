@@ -17,6 +17,14 @@ export type GlobalEvents = {
     'ui:sliderPointerUp': void;
     'ui:sliderIncreaseRadius': void;
     'ui:sliderDecreaseRadius': void;
+
+    'debug:fpsMeterChanged': void;
+    'debug:rendererStatsChanged': void;
+    'debug:gridChanged': void;
+    'debug:landscapeShow': void;
+    'debug:fieldRadiusChanged': void;
+    'debug:entropyChanged': void;
+    'debug:landscapeRotationChanged': void;
 };
 
 export const GlobalEventBus: Emitter<GlobalEvents> = mitt<GlobalEvents>();

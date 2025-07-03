@@ -21,16 +21,32 @@ export default class HexTileInstance extends THREE.Group {
     private hexTileInstanceIndexes: IHexTileInstanceIndex[] = [];
     private hexTilesDebug: { tile: HexTileDebug, position: IHexCoord }[] = [];
     private materialType: MaterialType;
+    private hexTileDebugViews: HexTileDebug[] = [];
 
-    constructor(hexTileInstanceData: IHexTileInstanceData, hexTileDebugConfig: IHexTileDebugConfig = null, materialType: MaterialType = MaterialType.Main) {
+    constructor(hexTileInstanceData: IHexTileInstanceData, materialType: MaterialType = MaterialType.Main) {
         super();
 
         this.hexTileInstanceData = hexTileInstanceData;
-        this.hexTileDebugConfig = hexTileDebugConfig;
         this.hexTileType = this.hexTileInstanceData.type;
         this.materialType = materialType;
 
         this.init();
+    }
+
+    public enableDebug(hexTileDebugConfig: IHexTileDebugConfig): void {
+        this.hexTileDebugConfig = hexTileDebugConfig;
+
+        if (this.hexTileDebugConfig?.rotationAndEdge && this.hexTileDebugViews.length === 0) {
+            this.initHexTileDebug();
+        }
+
+        this.hexTileDebugViews.forEach(debugView => {
+            debugView.showRotationAndEdgeDebug(this.hexTileDebugConfig.rotationAndEdge);
+
+            if (hexTileDebugConfig.rotationAndEdge) {
+                debugView.show();
+            }
+        });
     }
 
     public getPositions(): IHexCoord[] {
@@ -43,7 +59,7 @@ export default class HexTileInstance extends THREE.Group {
 
     public showTile(position: IHexCoord): void {
         const index: number = this.hexTileInstanceIndexes.find(index => index.transform.position.q === position.q && index.transform.position.r === position.r)?.index;
-        
+
         if (index !== undefined) {
             const config: ITileShowAnimationConfig = TilesShowAnimationConfig[this.hexTileType];
             const scale = { value: 0.001 };
@@ -87,7 +103,7 @@ export default class HexTileInstance extends THREE.Group {
 
     private init(): void {
         this.initView();
-        this.initHexTileDebug();
+        // this.initHexTileDebug();
     }
 
     private initView(): void {
@@ -134,24 +150,26 @@ export default class HexTileInstance extends THREE.Group {
     }
 
     private initHexTileDebug(): void {
-        if (this.hexTileDebugConfig?.edge || this.hexTileDebugConfig?.rotation) {
-            for (let i = 0; i < this.hexTileInstanceData.transforms.length; i++) {
-                const transform: IHexTileTransform = this.hexTileInstanceData.transforms[i];
-                const position = HexGridHelper.axialToWorld(transform.position, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
+        for (let i = 0; i < this.hexTileInstanceData.transforms.length; i++) {
+            const transform: IHexTileTransform = this.hexTileInstanceData.transforms[i];
+            const position = HexGridHelper.axialToWorld(transform.position, GameConfig.gameField.hexSize, GameConfig.gameField.GridOrientation);
 
-                const hexTileDebug = new HexTileDebug(this.hexTileType, this.hexTileDebugConfig);
-                this.add(hexTileDebug);
+            const hexTileDebug = new HexTileDebug();
+            this.add(hexTileDebug);
 
-                hexTileDebug.position.copy(position);
-                hexTileDebug.setRotation(transform.rotation);
+            hexTileDebug.setDebugConfig(this.hexTileType, this.hexTileDebugConfig);
 
-                this.hexTilesDebug.push({
-                    tile: hexTileDebug,
-                    position: transform.position
-                });
+            hexTileDebug.position.copy(position);
+            hexTileDebug.setRotation(transform.rotation);
 
-                hexTileDebug.hide();
-            }
+            this.hexTilesDebug.push({
+                tile: hexTileDebug,
+                position: transform.position
+            });
+
+            this.hexTileDebugViews.push(hexTileDebug);
+
+            hexTileDebug.hide();
         }
     }
 }
