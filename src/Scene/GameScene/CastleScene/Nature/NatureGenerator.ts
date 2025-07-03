@@ -4,7 +4,7 @@ import { IHexCoord } from "../../../../Data/Interfaces/IHexTile";
 import { IHexTilesResult, INewTileStep } from "../../../../Data/Interfaces/IWFC";
 import HexGridHelper from "../../../../Helpers/HexGridHelper";
 import { INatureTileConfig } from "../../../../Data/Interfaces/INature";
-import { NatureConfig, SingleTiles, TreesTiles, MountainsTiles } from "../../../../Data/Configs/NatureGeneratorConfig";
+import { NatureConfig, SingleTiles, TreesTiles, RocksTiles } from "../../../../Data/Configs/NatureGeneratorConfig";
 import { GameConfig } from "../../../../Data/Configs/GameConfig";
 
 export class NatureGenerator {
@@ -26,7 +26,7 @@ export class NatureGenerator {
         });
 
         this.generateClusteredTiles(TreesTiles, GameConfig.nature.clusterSettings.trees);
-        this.generateClusteredTiles(MountainsTiles, GameConfig.nature.clusterSettings.mountains);
+        this.generateClusteredTiles(RocksTiles, GameConfig.nature.clusterSettings.rocks);
         this.generateScatteredTiles(SingleTiles, GameConfig.nature.clusterSettings.hills);
     }
 
@@ -35,7 +35,7 @@ export class NatureGenerator {
             const tileConfig = NatureConfig[tileType];
             if (!tileConfig) continue;
 
-            const targetCount = Math.floor(this.availableTiles.size * clusterConfig.fillPercentage);
+            const targetCount = Math.floor(this.availableTiles.size * clusterConfig.fillPercentage * GameConfig.nature.overallFillPercentage);
             let placedCount = 0;
             let attempts = 0;
             const maxAttempts = targetCount * 10;
@@ -119,7 +119,7 @@ export class NatureGenerator {
             const tileConfig = NatureConfig[tileType];
             if (!tileConfig) continue;
 
-            const targetCount = Math.floor(this.availableTiles.size * clusterConfig.fillPercentage);
+            const targetCount = Math.floor(this.availableTiles.size * clusterConfig.fillPercentage * GameConfig.nature.overallFillPercentage);
             let placedCount = 0;
             let attempts = 0;
             const maxAttempts = targetCount * 5;
@@ -208,14 +208,14 @@ export class NatureGenerator {
 
     private isSimilarType(tileType: HexTileType, tileConfig: INatureTileConfig): boolean {
         const isTree = TreesTiles.includes(tileType);
-        const isMountain = MountainsTiles.includes(tileType);
+        const isMountain = RocksTiles.includes(tileType);
         const isHill = SingleTiles.includes(tileType);
 
         const configType = tileConfig.type;
         if (!configType) return false;
 
         const configIsTree = TreesTiles.includes(configType);
-        const configIsMountain = MountainsTiles.includes(configType);
+        const configIsMountain = RocksTiles.includes(configType);
         const configIsHill = SingleTiles.includes(configType);
 
         return (isTree && configIsTree) || (isMountain && configIsMountain) || (isHill && configIsHill);
@@ -243,11 +243,11 @@ export class NatureGenerator {
 
     private areSimilarTypes(tileType1: HexTileType, tileType2: HexTileType): boolean {
         const isTree1 = TreesTiles.includes(tileType1);
-        const isMountain1 = MountainsTiles.includes(tileType1);
+        const isMountain1 = RocksTiles.includes(tileType1);
         const isHill1 = SingleTiles.includes(tileType1);
 
         const isTree2 = TreesTiles.includes(tileType2);
-        const isMountain2 = MountainsTiles.includes(tileType2);
+        const isMountain2 = RocksTiles.includes(tileType2);
         const isHill2 = SingleTiles.includes(tileType2);
 
         return (isTree1 && isTree2) || (isMountain1 && isMountain2) || (isHill1 && isHill2);

@@ -60,7 +60,7 @@ export default class FieldRadius extends PIXI.Container {
     }
 
     private initRadiusValue(): void {
-        const value = this.slider.getValue();
+        const value = GameConfig.gameField.radius.default;
 
         const radiusValue = this.radiusValue = new Text({
             text: `${value}`,
@@ -93,8 +93,10 @@ export default class FieldRadius extends PIXI.Container {
             value: GameConfig.gameField.radius.default,
         }
 
-        const slider = this.slider = new Slider(sliderAssets, 300, sliderOptions);
+        const slider = this.slider = new Slider(sliderAssets, 300);
         this.addChild(slider);
+
+        slider.updateOptions(sliderOptions);
     }
 
     private initSignals(): void {
@@ -109,6 +111,17 @@ export default class FieldRadius extends PIXI.Container {
 
         this.slider.emitter.on('pointerUp', () => {
             GlobalEventBus.emit('ui:sliderPointerUp');
+        });
+
+        GlobalEventBus.on('debug:fieldRadiusChanged', () => {
+            const sliderOptions: SliderOptions = {
+                min: GameConfig.gameField.radius.min,
+                max: GameConfig.gameField.radius.max,
+                step: 1,
+                value: GameConfig.gameField.radius.default,
+            };
+
+            this.slider.updateOptions(sliderOptions);
         });
     }
 }

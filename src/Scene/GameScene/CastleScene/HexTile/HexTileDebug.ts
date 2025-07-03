@@ -17,13 +17,9 @@ export default class HexTileDebug extends THREE.Group {
     private hexTileDebugConfig: IHexTileDebugConfig;
     private modelNamePlane: CanvasPlaneMesh;
 
-    constructor(hexTileType: HexTileType, hexTileDebugConfig: IHexTileDebugConfig = null) {
+    constructor() {
         super();
 
-        this.hexTileType = hexTileType;
-        this.hexTileDebugConfig = hexTileDebugConfig;
-
-        this.init();
     }
 
     public setRotation(rotation: HexRotation): void {
@@ -39,6 +35,19 @@ export default class HexTileDebug extends THREE.Group {
         this.visible = false;
     }
 
+    public setDebugConfig(hexTileType: HexTileType, hexTileDebugConfig: IHexTileDebugConfig): void {
+        this.hexTileType = hexTileType;
+        this.hexTileDebugConfig = hexTileDebugConfig;
+
+        this.init();
+    }
+
+    public showRotationAndEdgeDebug(enable: boolean): void {
+        if (this.debugInfoPlane) {
+            this.debugInfoPlane.visible = enable;
+        }
+    }
+
     public reset(): void {
         if (this.debugInfoPlane) {
             this.debugInfoPlane.reset();
@@ -52,7 +61,7 @@ export default class HexTileDebug extends THREE.Group {
     }
 
     private init(): void {
-        if (this.hexTileDebugConfig?.rotation || this.hexTileDebugConfig?.edge) {
+        if (this.hexTileDebugConfig?.rotationAndEdge) {
             this.initDebugInfoPlane();
         }
 
@@ -82,13 +91,8 @@ export default class HexTileDebug extends THREE.Group {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        if (this.hexTileDebugConfig?.rotation) {
-            this.drawRotationInfo(canvas, resolution, rotation);
-        }
-
-        if (this.hexTileDebugConfig?.edge) {
-            this.drawEdgesInfo(canvas, resolution);
-        }
+        this.drawRotationInfo(canvas, resolution, rotation);
+        this.drawEdgesInfo(canvas, resolution);
     }
 
     private drawRotationInfo(canvas: HTMLCanvasElement, resolution: number, rotation: HexRotation): void {

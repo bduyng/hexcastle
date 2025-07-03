@@ -5,19 +5,22 @@ const DebugConfig = {
     rendererStats: false,
     orbitControls: true,
     showAxisHelper: false,
-    gui: false,
+    gui: {
+        desktop: true,
+        mobile: false,
+    }
 };
 
 const DebugGameConfig = {
     tilesDebugMode: null, // HexTileCategory.Walls,
     grid: false,
+    showInstantly: false,
     generateType: {
         [GenerateEntityType.Landscape]: {
             show: true,
             showInstantly: false,
             hexTileDebug: {
-                rotation: false,
-                edge: false,
+                rotationAndEdge: false,
             },
             entropy: false,
             topLevelAvailability: false,
@@ -27,8 +30,7 @@ const DebugGameConfig = {
             show: true,
             showInstantly: false,
             hexTileDebug: {
-                rotation: false,
-                edge: false,
+                rotationAndEdge: false,
             },
             innerOuterTiles: false,
         },
@@ -36,16 +38,14 @@ const DebugGameConfig = {
             show: true,
             showInstantly: false,
             hexTileDebug: {
-                rotation: false,
-                edge: false,
+                rotationAndEdge: false,
             },
         },
         [GenerateEntityType.Nature]: {
             show: true,
             showInstantly: false,
             hexTileDebug: {
-                rotation: false,
-                edge: false,
+                rotationAndEdge: false,
             },
         }
     },

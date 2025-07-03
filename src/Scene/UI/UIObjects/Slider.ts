@@ -23,19 +23,29 @@ export default class Slider extends PIXI.Container {
     private wrapper: PIXI.Container;
     private globalPointerMove: ((event: PointerEvent) => void) | null = null;
     private globalPointerUp: ((event: PointerEvent) => void) | null = null;
+    private minLabel: Text;
+    private maxLabel: Text;
 
     private thumbOffsetX: number = 6;
     private extraWidth: number = 14;
 
-    constructor(assets: SliderAssets, width: number, options: SliderOptions) {
+    constructor(assets: SliderAssets, width: number) {
         super();
 
         this.assets = assets;
         this.sliderWidth = width;
+
+        this.init();
+    }
+
+    public updateOptions(options: SliderOptions): void {
         this.options = options;
         this.currentValue = options.value;
 
-        this.init();
+        this.minLabel.text = options.min.toString();
+        this.maxLabel.text = options.max.toString();
+        
+        this.setValue(options.value);
     }
 
     public setValue(value: number): void {
@@ -65,7 +75,9 @@ export default class Slider extends PIXI.Container {
         this.wrapper.x = -this.sliderWidth * 0.5;
         this.wrapper.y = -this.thumb.height * 0.5;
 
-        this.setValue(this.options.value);
+        if (this.options?.value) {
+            this.setValue(this.options.value);
+        }
     }
 
     private initBackground(): void {
@@ -104,6 +116,9 @@ export default class Slider extends PIXI.Container {
         const offsetXMin: number = 9;
         const offsetXMax: number = 6;
         const offsetY: number = 30;
+        const minLabelText = this.options?.min ? this.options.min.toString() : '';
+        const maxLabelText = this.options?.max ? this.options.max.toString() : '';
+
         const style = new TextStyle({
             fontFamily: 'kenneyfuture',
             fontSize: 16,
@@ -111,8 +126,8 @@ export default class Slider extends PIXI.Container {
             align: 'center',
         })
 
-        const minLabel = new Text({
-            text: this.options.min.toString(),
+        const minLabel = this.minLabel = new Text({
+            text: minLabelText,
             style: style,
         });
         this.wrapper.addChild(minLabel);
@@ -121,8 +136,8 @@ export default class Slider extends PIXI.Container {
         minLabel.x = offsetXMin;
         minLabel.y = offsetY;
 
-        const maxLabel = new Text({
-            text: this.options.max.toString(),
+        const maxLabel = this.maxLabel = new Text({
+            text: maxLabelText,
             style: style,
         });
         this.wrapper.addChild(maxLabel);

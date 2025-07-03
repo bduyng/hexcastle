@@ -44,6 +44,23 @@ export default class Clouds extends THREE.Group {
         this.state = CloudsState.Showing;
     }
 
+    public showInstantly(): void {
+        this.maxDistance = DefaultWFCConfig.radius * GameConfig.gameField.hexSize * 2;
+        this.initMovingVector();
+        this.initClouds();
+
+        for (let i = 0; i < this.clouds.length; i++) {
+            const type = this.clouds[i].type;
+            const index = this.clouds[i].index;
+            const scale = this.clouds[i].scale;
+            const instance = this.cloudInstances[type];
+
+            ThreeJSHelper.updateInstanceTransform(instance, index, undefined, undefined, new THREE.Vector3(scale, scale, scale));
+        }
+
+        this.state = CloudsState.Moving;
+    }
+
     public hide(): void {
         this.state = CloudsState.Hided;
 
@@ -64,6 +81,14 @@ export default class Clouds extends THREE.Group {
         }
 
         this.reset();
+    }
+
+    public showInstant(): void {
+        this.visible = true;
+    }
+
+    public hideInstant(): void {
+        this.visible = false;
     }
 
     private reset(): void {

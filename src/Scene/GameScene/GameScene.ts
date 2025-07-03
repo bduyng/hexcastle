@@ -6,6 +6,7 @@ import CameraController from './CameraController';
 import { DebugGameConfig } from '../../Data/Configs/Debug/DebugConfig';
 import { GlobalEventBus } from '../../Core/GlobalEvents';
 import { DefaultWFCConfig } from '../../Data/Configs/WFCConfig';
+import GameDebugMenu from './GameDebugMenu';
 
 export default class GameScene extends THREE.Group {
     private data: ILibrariesData;
@@ -46,6 +47,7 @@ export default class GameScene extends THREE.Group {
         } else {
             this.initCastleScene();
             this.initGlobalListeners();
+            this.initGameDebugMenu();
         }
     }
 
@@ -66,6 +68,10 @@ export default class GameScene extends THREE.Group {
 
     private initGlobalListeners(): void {
         GlobalEventBus.on('game:generateStarted', () => this.cameraController.moveForTargetRadius(DefaultWFCConfig.radius));
+    }
+
+    private initGameDebugMenu(): void {
+        new GameDebugMenu();
     }
 
 }

@@ -81,9 +81,11 @@ export default class HexTile extends THREE.Group {
     }
 
     private initDebugInfo(): void {
-        if (this.hexTileDebugConfig.rotation || this.hexTileDebugConfig.edge || this.hexTileDebugConfig.modelName) {
-            const debugInfo = this.debugInfo = new HexTileDebug(this.hexTileType, this.hexTileDebugConfig);
+        if (this.hexTileDebugConfig.rotationAndEdge || this.hexTileDebugConfig.modelName) {
+            const debugInfo = this.debugInfo = new HexTileDebug();
             this.add(debugInfo);
+
+            debugInfo.setDebugConfig(this.hexTileType, this.hexTileDebugConfig);
         }
     }
 }

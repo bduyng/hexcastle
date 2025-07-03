@@ -23,6 +23,14 @@ export default class DebugGrid extends THREE.Group {
         this.initGridCoordinates();
     }
 
+    public show(): void {
+        this.visible = true;
+    }
+
+    public hide(): void {
+        this.visible = false;
+    }
+
     private reset(): void {
         if (this.grid) {
             this.remove(this.grid);
