@@ -59,6 +59,7 @@ const ModelAssets: string[] = [
     'building_well_blue.glb',
     'building_windmill_blue.glb',
     'building_windmill_top_fan.glb',
+    'building_castle_blue_no_flag.glb',
 
     // red
     'building_castle_red.glb',
@@ -73,6 +74,7 @@ const ModelAssets: string[] = [
 
     // parts
     'building_windmill_top_fan.glb',
+    'flag_blue.glb',
 
     // wall
     'wall_corner_A_gate.glb',
