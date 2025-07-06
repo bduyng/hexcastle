@@ -8,7 +8,7 @@ import { PartsConfig } from '../../../../../Data/Configs/HexTilePartsConfig';
 import Loader from '../../../../../Core/Loader/AssetsLoader';
 import { FlagVertexShader, FlagFragmentShader } from '../../../../../Core/Materials/Shaders/FlagShader';
 
-export default class CastleFlag extends HexTilePartAbstract {
+export default class CastleFlagRed extends HexTilePartAbstract {
     private view: THREE.Mesh;
     private config;
     private shaderMaterial: THREE.ShaderMaterial;
@@ -41,7 +41,7 @@ export default class CastleFlag extends HexTilePartAbstract {
     }
 
     private init(): void {
-        const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel('flag_blue');
+        const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel('flag_red');
         
         const texture: THREE.Texture = Loader.assets['hexagons_medieval'] as THREE.Texture;
         

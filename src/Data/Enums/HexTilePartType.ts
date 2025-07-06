@@ -1,4 +1,5 @@
 export enum HexTilePartType {
     WindmillBlades = "WindmillBlades",
-    CastleFlag = "CastleFlag",
+    CastleFlagBlue = "CastleFlagBlue",
+    CastleFlagRed = "CastleFlagRed",
 }
