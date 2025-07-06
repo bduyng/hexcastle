@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { MaterialType } from '../../Data/Enums/MaterialType';
 import Loader from '../Loader/AssetsLoader';
+import { FlagVertexShader, FlagFragmentShader } from './Shaders/FlagShader';
 
 export default class Materials {
     static instance: Materials;
@@ -23,6 +24,7 @@ export default class Materials {
         this.initCloudMaterial();
         this.initTransparentMaterial();
         this.initTileDebugMaterials();
+        this.initFlagMaterial();
     }
 
     private initMainMaterial(): void {
@@ -76,6 +78,22 @@ export default class Materials {
             transparent: true,
             opacity: 0.5,
             depthWrite: false,
+        });
+    }
+
+    private initFlagMaterial(): void {
+        const texture: THREE.Texture = Loader.assets['hexagons_medieval'] as THREE.Texture;
+        texture.flipY = false;
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        this.materials[MaterialType.Flag] = new THREE.ShaderMaterial({
+            vertexShader: FlagVertexShader,
+            fragmentShader: FlagFragmentShader,
+            uniforms: {
+                map: { value: texture },
+                time: { value: 0.0 },
+            },
+            transparent: true
         });
     }
 }
