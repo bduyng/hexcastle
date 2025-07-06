@@ -70,7 +70,14 @@ export default class ThreeJSHelper {
     public static getGeometryFromModel(modelName: string): THREE.BufferGeometry {
         const GLTFModel: GLTF = Loader.assets[modelName] as GLTF;
         const model: THREE.Mesh = GLTFModel.scene.children[0] as THREE.Mesh;
-        return model.geometry.clone();
+        const geometry = model.geometry.clone();
+        
+        // Apply the mesh transformation to the geometry
+        const matrix = new THREE.Matrix4();
+        matrix.compose(model.position, model.quaternion, model.scale);
+        geometry.applyMatrix4(matrix);
+        
+        return geometry;
     }
 
     public static setGeometryRotation(geometry: THREE.BufferGeometry, rotation: THREE.Euler): void {
