@@ -13,7 +13,6 @@ export default class CastleFlag extends HexTilePartAbstract {
     private config;
     private shaderMaterial: THREE.ShaderMaterial;
     private time: number = 0;
-    private viewGroup: THREE.Group;
 
     constructor(hexTilePartType: HexTilePartType) {
         super(hexTilePartType);
@@ -42,9 +41,6 @@ export default class CastleFlag extends HexTilePartAbstract {
     }
 
     private init(): void {
-        this.viewGroup = new THREE.Group();
-        this.add(this.viewGroup);
-
         const geometry: THREE.BufferGeometry = ThreeJSHelper.getGeometryFromModel('flag_blue');
         
         const texture: THREE.Texture = Loader.assets['hexagons_medieval'] as THREE.Texture;
@@ -57,17 +53,19 @@ export default class CastleFlag extends HexTilePartAbstract {
                     map: { value: texture },
                     time: { value: 0.0 },
                 },
-                transparent: true
             });
         }
 
-        const instancedView = this.view = new THREE.InstancedMesh(geometry, this.shaderMaterial, 2);
-        this.viewGroup.add(instancedView);
+        this.shaderMaterial = Materials.getInstance().materials[MaterialType.Flag] as THREE.ShaderMaterial;
+        const count = this.config.viewPositions.length;
+
+        const instancedView = this.view = new THREE.InstancedMesh(geometry, this.shaderMaterial, count);
+        this.add(instancedView);
 
         const matrix = new THREE.Matrix4();
 
-        for (let i = 0; i < 2; i++) {
-            const position = new THREE.Vector3(i * 2, 0, 0); // Разместить флаги с интервалом 2 единицы
+        for (let i = 0; i < count; i++) {
+            const position: THREE.Vector3 = new THREE.Vector3().copy(this.config.viewPositions[i]);
             const rotationQuaternion = new THREE.Quaternion();
             const scale = new THREE.Vector3(1, 1, 1);
 
@@ -76,7 +74,5 @@ export default class CastleFlag extends HexTilePartAbstract {
         }
 
         instancedView.instanceMatrix.needsUpdate = true;
-
-        this.viewGroup.position.copy(this.config.viewPosition);
     }
 }

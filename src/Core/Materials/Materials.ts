@@ -93,7 +93,6 @@ export default class Materials {
                 map: { value: texture },
                 time: { value: 0.0 },
             },
-            transparent: true
         });
     }
 }

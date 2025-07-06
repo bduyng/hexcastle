@@ -7,13 +7,14 @@ export const FlagVertexShader = `
         vUv = uv;
         
         float flagLength = 1.0 - vUv.y;
-        float waveIntensity = flagLength * flagLength;
+        float waveIntensity = flagLength * flagLength * 0.4;
         
         vec3 localPosition = position;
-        float waveOffset = sin(position.z * 20.0 + time * 2.0) * 1.0 * waveIntensity;
+        float waveOffset = sin(position.z * 35.0 + time * 2.0) * 1.0 * waveIntensity;
         localPosition.x += waveOffset;
         
-        vec4 worldPosition = modelMatrix * vec4(localPosition, 1.0);
+        vec4 instancePosition = instanceMatrix * vec4(localPosition, 1.0);
+        vec4 worldPosition = modelMatrix * instancePosition;
         
         vec4 viewPosition = viewMatrix * worldPosition;
         vec4 projectedPosition = projectionMatrix * viewPosition;
@@ -23,9 +24,7 @@ export const FlagVertexShader = `
 `;
 
 export const FlagFragmentShader = `
-    uniform sampler2D map;
-    uniform float time;
-    
+    uniform sampler2D map;    
     varying vec2 vUv;
     
     void main() {

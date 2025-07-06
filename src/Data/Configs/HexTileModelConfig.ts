@@ -175,7 +175,7 @@ const HexTileModelConfig: { [key in HexTileType]: IHexTileModelConfig } = {
 
     // buildings
     [HexTileType.CastleBlue]: {
-        modelName: 'building_castle_blue_no_flag',
+        modelName: 'building_castle_blue',
     },
     [HexTileType.ArcheryRangeBlue]: {
         modelName: 'building_archeryrange_blue',

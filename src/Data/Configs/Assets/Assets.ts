@@ -59,7 +59,6 @@ const ModelAssets: string[] = [
     'building_well_blue.glb',
     'building_windmill_blue.glb',
     'building_windmill_top_fan.glb',
-    'building_castle_blue_no_flag.glb',
 
     // red
     'building_castle_red.glb',

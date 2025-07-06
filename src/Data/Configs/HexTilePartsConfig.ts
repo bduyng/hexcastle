@@ -28,7 +28,13 @@ const PartsConfig = {
         }
     },
     [HexTilePartType.CastleFlag]: {
-        viewPosition: new THREE.Vector3(0, 3.9, 0),
+        viewPositions: [
+            new THREE.Vector3(0, 3.9, 0),
+            new THREE.Vector3(0.66, 1.685, 0.39),
+            new THREE.Vector3(-0.66, 1.685, -0.39),
+            new THREE.Vector3(-0.66, 2.09, 0.39),
+            new THREE.Vector3(0.66, 2.09, -0.39),
+        ],
     }
 }
 
