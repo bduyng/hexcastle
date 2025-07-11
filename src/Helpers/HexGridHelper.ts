@@ -78,4 +78,27 @@ export default class HexGridHelper {
             return !hexTiles2.some(tile2 => this.isPositionsEqual(tile1, tile2));
         });
     }
+
+    public static getHexDistance(coord: IHexCoord): number {
+        return Math.max(Math.abs(coord.q), Math.abs(coord.r), Math.abs(-coord.q - coord.r));
+    }
+
+    public static isHexOnRadiusEdge(coord: IHexCoord, radius: number): boolean {
+        return this.getHexDistance(coord) === radius;
+    }
+
+    public static getAllHexCoordsInRadius(radius: number): IHexCoord[] {
+        const coords: IHexCoord[] = [];
+        
+        for (let q = -radius; q <= radius; q++) {
+            const r1 = Math.max(-radius, -q - radius);
+            const r2 = Math.min(radius, -q + radius);
+            
+            for (let r = r1; r <= r2; r++) {
+                coords.push({ q, r });
+            }
+        }
+        
+        return coords;
+    }
 }
