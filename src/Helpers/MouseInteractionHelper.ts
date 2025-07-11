@@ -17,7 +17,7 @@ export default class MouseInteractionHelper {
   private canvas: HTMLElement;
   private onHexClickCallback: (event: IHexClickEvent) => void;
 
-  constructor(camera: THREE.Camera, scene: THREE.Scene, canvas: HTMLElement) {
+  constructor(camera: THREE.Camera, _scene: THREE.Scene, canvas: HTMLElement) {
     this.camera = camera;
     // this.scene = scene;
     this.canvas = canvas;

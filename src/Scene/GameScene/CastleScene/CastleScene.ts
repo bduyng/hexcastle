@@ -811,39 +811,77 @@ export default class CastleScene extends THREE.Group {
     }
 
     private onHexClick(event: IHexClickEvent): void {
-        const { hexCoord } = event;
+        const { hexCoord, worldPosition } = event;
         const currentRadius = DefaultWFCConfig.radius;
         
-        // Check if the clicked coordinate is within the current field
+        // Calculate distance from center for logging and edge detection
         const distanceFromCenter = HexGridHelper.getHexDistance(hexCoord);
+        
+        // Basic click logging for all hex coordinates (even empty ones)
+        console.log(`🎯 Hex clicked at coordinate (q:${hexCoord.q}, r:${hexCoord.r}), distance from center: ${distanceFromCenter}, world position: (${worldPosition.x.toFixed(2)}, ${worldPosition.z.toFixed(2)})`);
+        
+        // Check if the clicked coordinate is within the current field
         if (distanceFromCenter > currentRadius) {
+            console.log(`❌ Click outside current field radius (${currentRadius})`);
             return; // Click is outside the current field
         }
         
-        // Check if there's actually a hex tile at this position
-        const hasLandscapeTile = this.hexTileInstances[GenerateEntityType.Landscape]?.some(instance => 
-            instance.hasTileByPosition(hexCoord)
-        );
+        // Find which tile types exist at this position and log detailed information
+        let tileInfo = [];
+        let hasAnyTile = false;
         
-        if (!hasLandscapeTile) {
+        // Check all entity types for tiles at this position
+        for (const entityType in GenerateEntityType) {
+            const type = GenerateEntityType[entityType as keyof typeof GenerateEntityType];
+            const instances = this.hexTileInstances[type];
+            
+            if (instances) {
+                const tileInstance = instances.find(instance => instance.hasTileByPosition(hexCoord));
+                if (tileInstance) {
+                    hasAnyTile = true;
+                    tileInfo.push(`${type}`);
+                }
+            }
+        }
+        
+        if (hasAnyTile) {
+            console.log(`🏗️ Hex contains tile types: [${tileInfo.join(', ')}]`);
+        } else {
+            console.log(`🟢 Empty hex space (no tiles present)`);
             return; // No tile at this position
         }
         
         // Check if the clicked hex is on the edge of the current radius
-        if (HexGridHelper.isHexOnRadiusEdge(hexCoord, currentRadius)) {
+        const isEdgeHex = HexGridHelper.isHexOnRadiusEdge(hexCoord, currentRadius);
+        
+        if (isEdgeHex) {
+            console.log(`🔥 Edge hex detected! Current radius: ${currentRadius}`);
+            
             // Check if we can expand (not at max radius)
             const newRadius = currentRadius + 1;
             if (newRadius <= GameConfig.gameField.radius.max) {
-                console.log(`Expanding field from radius ${currentRadius} to ${newRadius} after clicking edge hex at (${hexCoord.q}, ${hexCoord.r})`);
+                console.log(`✅ Expanding field from radius ${currentRadius} to ${newRadius} after clicking edge hex`);
+                console.log(`📈 Triggering area expansion...`);
+                
+                // Visual feedback for expansion
+                console.log(`🌍 New field will contain approximately ${HexGridHelper.getCountByRadius(newRadius)} hex positions`);
                 
                 // Emit radius change event to trigger field expansion
                 GlobalEventBus.emit('game:fieldRadiusChanged', newRadius);
                 
                 // Auto-generate with the new radius after a short delay
                 setTimeout(() => {
+                    console.log(`🚀 Starting generation for expanded area...`);
                     GlobalEventBus.emit('game:generate');
                 }, 100);
+            } else {
+                console.log(`⚠️ Cannot expand further - already at maximum radius (${GameConfig.gameField.radius.max})`);
             }
+        } else {
+            console.log(`📍 Interior hex clicked (not on edge) - no expansion triggered`);
         }
+        
+        // Additional logging for debugging purposes
+        console.log(`📊 Current field stats: radius=${currentRadius}, total positions=${HexGridHelper.getCountByRadius(currentRadius)}`);
     }
 }
