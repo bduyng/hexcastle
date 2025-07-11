@@ -32,6 +32,7 @@ import Clouds from './Clouds';
 import { NatureGenerator } from './Nature/NatureGenerator';
 import { ButtonType } from '../../../Data/Enums/ButtonType';
 import { CloudsConfig } from '../../../Data/Configs/CloudsConfig';
+import MouseInteractionHelper, { IHexClickEvent } from '../../../Helpers/MouseInteractionHelper';
 
 export default class CastleScene extends THREE.Group {
 
@@ -67,6 +68,7 @@ export default class CastleScene extends THREE.Group {
     private clouds: Clouds;
     private natureGenerator: NatureGenerator;
     private stopButtonActive: boolean = false;
+    private mouseInteractionHelper: MouseInteractionHelper;
 
     private isIntroActive: boolean = true;
 
@@ -120,6 +122,7 @@ export default class CastleScene extends THREE.Group {
         this.initHexTileParts();
         this.initClouds();
         this.initNatureGenerator();
+        this.initMouseInteraction();
 
         this.initGlobalListeners();
     }
@@ -425,6 +428,12 @@ export default class CastleScene extends THREE.Group {
         this.natureGenerator = new NatureGenerator();
     }
 
+    private initMouseInteraction(): void {
+        const canvas = document.querySelector('.threejs-canvas') as HTMLElement;
+        this.mouseInteractionHelper = new MouseInteractionHelper(this.data.camera, this.data.scene, canvas);
+        this.mouseInteractionHelper.setOnHexClick((event: IHexClickEvent) => this.onHexClick(event));
+    }
+
     private showPredefinedLandscapeTiles(): void {
         if (DebugGameConfig.generateType[this.showingEntityType].show === false) {
             return;
@@ -574,6 +583,15 @@ export default class CastleScene extends THREE.Group {
         this.islandsDebug?.reset();
 
         this.clouds.hide();
+        
+        // Cleanup mouse interaction
+        if (this.mouseInteractionHelper) {
+            this.mouseInteractionHelper.destroy();
+            this.mouseInteractionHelper = null;
+        }
+        
+        // Reinitialize mouse interaction for the next session
+        this.initMouseInteraction();
     }
 
     private initGlobalListeners(): void {
@@ -789,6 +807,43 @@ export default class CastleScene extends THREE.Group {
             this.clouds.showInstant();
         } else {
             this.clouds.hideInstant();
+        }
+    }
+
+    private onHexClick(event: IHexClickEvent): void {
+        const { hexCoord } = event;
+        const currentRadius = DefaultWFCConfig.radius;
+        
+        // Check if the clicked coordinate is within the current field
+        const distanceFromCenter = HexGridHelper.getHexDistance(hexCoord);
+        if (distanceFromCenter > currentRadius) {
+            return; // Click is outside the current field
+        }
+        
+        // Check if there's actually a hex tile at this position
+        const hasLandscapeTile = this.hexTileInstances[GenerateEntityType.Landscape]?.some(instance => 
+            instance.hasTileByPosition(hexCoord)
+        );
+        
+        if (!hasLandscapeTile) {
+            return; // No tile at this position
+        }
+        
+        // Check if the clicked hex is on the edge of the current radius
+        if (HexGridHelper.isHexOnRadiusEdge(hexCoord, currentRadius)) {
+            // Check if we can expand (not at max radius)
+            const newRadius = currentRadius + 1;
+            if (newRadius <= GameConfig.gameField.radius.max) {
+                console.log(`Expanding field from radius ${currentRadius} to ${newRadius} after clicking edge hex at (${hexCoord.q}, ${hexCoord.r})`);
+                
+                // Emit radius change event to trigger field expansion
+                GlobalEventBus.emit('game:fieldRadiusChanged', newRadius);
+                
+                // Auto-generate with the new radius after a short delay
+                setTimeout(() => {
+                    GlobalEventBus.emit('game:generate');
+                }, 100);
+            }
         }
     }
 }
